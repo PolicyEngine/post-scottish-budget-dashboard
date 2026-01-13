@@ -20,7 +20,7 @@ class Reform:
 
     def to_scenario(self):
         """Convert to PolicyEngine Scenario."""
-        from policyengine_uk import Scenario
+        from policyengine_uk.utils.scenario import Scenario
 
         if not self.parameter_changes:
             return None
@@ -28,7 +28,7 @@ class Reform:
 
     def to_baseline_scenario(self):
         """Convert baseline changes to PolicyEngine Scenario."""
-        from policyengine_uk import Scenario
+        from policyengine_uk.utils.scenario import Scenario
 
         if not self.baseline_parameter_changes:
             return None
