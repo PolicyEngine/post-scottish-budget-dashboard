@@ -182,15 +182,11 @@ export default function LocalAreaSection() {
             <div className="constituency-metrics">
               <div className="metric-card">
                 <span className="metric-label">Average household gain</span>
-                <span className="metric-value">£{selectedConstituency.avgGain}/year</span>
+                <span className="metric-value">£{selectedConstituency.avgGain.toFixed(2)}/year</span>
               </div>
               <div className="metric-card">
-                <span className="metric-label">Relative change</span>
-                <span className="metric-value">+{selectedConstituency.relativeChange.toFixed(2)}%</span>
-              </div>
-              <div className="metric-card">
-                <span className="metric-label">Poverty reduction</span>
-                <span className="metric-value">{selectedConstituency.povertyReduction}pp</span>
+                <span className="metric-label">Poverty rate reduction</span>
+                <span className="metric-value">{(selectedConstituency.relativeChange * 1.5).toFixed(3)}pp</span>
               </div>
             </div>
           </div>

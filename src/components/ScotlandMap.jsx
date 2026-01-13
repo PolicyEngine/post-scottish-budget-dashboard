@@ -608,7 +608,8 @@ export default function ScotlandMap({
               >
                 {(tooltipData.average_gain || 0) < 0 ? "-" : ""}£
                 {Math.abs(tooltipData.average_gain || 0).toLocaleString("en-GB", {
-                  maximumFractionDigits: 0,
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
                 })}
                 <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "#6b7280" }}>/year</span>
               </p>
@@ -619,20 +620,9 @@ export default function ScotlandMap({
                     className="tooltip-value-secondary"
                     style={{ color: "#16a34a" }}
                   >
-                    -{tooltipData.povertyReduction}pp
+                    -{parseFloat(tooltipData.povertyReduction).toFixed(3)}pp
                   </p>
                   <p className="tooltip-label">Poverty rate reduction</p>
-                </>
-              )}
-              {tooltipData.households !== undefined && (
-                <>
-                  <p
-                    className="tooltip-value-tertiary"
-                    style={{ color: "#374151", fontSize: "1rem", fontWeight: "600", margin: "8px 0 4px 0" }}
-                  >
-                    {(tooltipData.households / 1000).toFixed(0)}k
-                  </p>
-                  <p className="tooltip-label">Households</p>
                 </>
               )}
             </div>
