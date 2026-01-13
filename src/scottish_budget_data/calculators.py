@@ -224,22 +224,30 @@ class ConstituencyCalculator:
         weights: np.ndarray,
         constituency_df: pd.DataFrame,
     ) -> list[dict]:
-        """Calculate average impact for each constituency."""
+        """Calculate average impact for each constituency.
+
+        Args:
+            weights: Array of shape (num_constituencies, num_households)
+            constituency_df: DataFrame with 'code' and 'name' columns.
+                The index should correspond to the row indices in weights.
+        """
         baseline_income = baseline.calculate("household_net_income", year)
         reformed_income = reformed.calculate("household_net_income", year)
         income_change = reformed_income - baseline_income
 
         results = []
 
-        for i, row in constituency_df.iterrows():
+        # Iterate over constituency_df using positional index
+        for idx, (_, row) in enumerate(constituency_df.iterrows()):
             code = row["code"]
             name = row["name"]
 
-            # Get constituency weights (column i of weights matrix)
-            if i >= weights.shape[1]:
+            # Get constituency weights (row idx of weights matrix)
+            # weights shape is (num_constituencies, num_households)
+            if idx >= weights.shape[0]:
                 continue
 
-            const_weights = weights[:, i]
+            const_weights = weights[idx, :]
 
             # Calculate weighted average
             if const_weights.sum() > 0:

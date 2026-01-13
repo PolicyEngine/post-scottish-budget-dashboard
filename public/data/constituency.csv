@@ -1,56 +1,856 @@
 reform_id,year,constituency_code,constituency_name,average_gain,relative_change
-scottish_budget_2026_combined,2026,S14000060,Aberdeen North,320,0.71
-scottish_budget_2026_combined,2026,S14000061,Aberdeen South,280,0.58
-scottish_budget_2026_combined,2026,S14000062,Aberdeenshire North and Moray East,295,0.65
-scottish_budget_2026_combined,2026,S14000063,Airdrie and Shotts,410,1.02
-scottish_budget_2026_combined,2026,S14000064,Alloa and Grangemouth,355,0.82
-scottish_budget_2026_combined,2026,S14000065,Angus and Perthshire Glens,265,0.55
-scottish_budget_2026_combined,2026,S14000066,Arbroath and Broughty Ferry,340,0.78
-scottish_budget_2026_combined,2026,S14000067,Argyll Bute and South Lochaber,290,0.62
-scottish_budget_2026_combined,2026,S14000068,Ayr Carrick and Cumnock,380,0.92
-scottish_budget_2026_combined,2026,S14000069,Bathgate and Linlithgow,310,0.68
-scottish_budget_2026_combined,2026,S14000070,Caithness Sutherland and Easter Ross,305,0.66
-scottish_budget_2026_combined,2026,S14000071,Central Ayrshire,395,0.95
-scottish_budget_2026_combined,2026,S14000072,Coatbridge and Bellshill,425,1.08
-scottish_budget_2026_combined,2026,S14000073,Cowdenbeath and Kirkcaldy,385,0.91
-scottish_budget_2026_combined,2026,S14000074,Cumbernauld and Kirkintilloch,350,0.80
-scottish_budget_2026_combined,2026,S14000075,Dumbarton,365,0.85
-scottish_budget_2026_combined,2026,S14000076,Dumfriesshire Clydesdale and Tweeddale,285,0.60
-scottish_budget_2026_combined,2026,S14000077,Dundee Central,430,1.12
-scottish_budget_2026_combined,2026,S14000078,Dunfermline and Dollar,295,0.64
-scottish_budget_2026_combined,2026,S14000079,East Kilbride and Strathaven,340,0.77
-scottish_budget_2026_combined,2026,S14000080,Edinburgh East and Musselburgh,375,0.88
-scottish_budget_2026_combined,2026,S14000081,Edinburgh North and Leith,345,0.75
-scottish_budget_2026_combined,2026,S14000082,Edinburgh South,260,0.52
-scottish_budget_2026_combined,2026,S14000083,Edinburgh South West,285,0.59
-scottish_budget_2026_combined,2026,S14000084,Edinburgh West,250,0.48
-scottish_budget_2026_combined,2026,S14000085,Falkirk,365,0.84
-scottish_budget_2026_combined,2026,S14000086,Glasgow East,485,1.35
-scottish_budget_2026_combined,2026,S14000087,Glasgow North,440,1.18
-scottish_budget_2026_combined,2026,S14000088,Glasgow North East,510,1.45
-scottish_budget_2026_combined,2026,S14000089,Glasgow South,395,0.98
-scottish_budget_2026_combined,2026,S14000090,Glasgow South West,470,1.28
-scottish_budget_2026_combined,2026,S14000091,Glasgow West,365,0.88
-scottish_budget_2026_combined,2026,S14000092,Glenrothes and Mid Fife,375,0.87
-scottish_budget_2026_combined,2026,S14000093,Gordon and Buchan,255,0.52
-scottish_budget_2026_combined,2026,S14000094,Hamilton and Clyde Valley,405,1.00
-scottish_budget_2026_combined,2026,S14000095,Inverclyde and Renfrewshire West,390,0.94
-scottish_budget_2026_combined,2026,S14000096,Inverness Skye and West Ross-shire,310,0.68
-scottish_budget_2026_combined,2026,S14000097,Kilmarnock and Loudoun,400,0.98
-scottish_budget_2026_combined,2026,S14000098,Livingston,335,0.75
-scottish_budget_2026_combined,2026,S14000099,Lothian East,270,0.55
-scottish_budget_2026_combined,2026,S14000100,Mid Dunbartonshire,325,0.72
-scottish_budget_2026_combined,2026,S14000101,Midlothian,325,0.72
-scottish_budget_2026_combined,2026,S14000102,Moray West Nairn and Strathspey,285,0.60
-scottish_budget_2026_combined,2026,S14000103,Motherwell Wishaw and Carluke,420,1.05
-scottish_budget_2026_combined,2026,S14000104,Na h-Eileanan an Iar,295,0.64
-scottish_budget_2026_combined,2026,S14000105,North Ayrshire and Arran,385,0.92
-scottish_budget_2026_combined,2026,S14000106,North East Fife,260,0.52
-scottish_budget_2026_combined,2026,S14000107,Orkney and Shetland,275,0.58
-scottish_budget_2026_combined,2026,S14000108,Paisley and Renfrewshire North,360,0.84
-scottish_budget_2026_combined,2026,S14000109,Paisley and Renfrewshire South,405,0.98
-scottish_budget_2026_combined,2026,S14000110,Perth and Kinross-shire,265,0.54
-scottish_budget_2026_combined,2026,S14000111,Rutherglen,390,0.95
-scottish_budget_2026_combined,2026,S14000112,Stirling and Strathallan,290,0.62
-scottish_budget_2026_combined,2026,S14000113,West Aberdeenshire and Kincardine,245,0.48
-scottish_budget_2026_combined,2026,S14000114,West Dunbartonshire,420,1.08
+two_child_limit_abolition,2026,S14000021,East Renfrewshire,0.0,0.0
+two_child_limit_abolition,2026,S14000027,Na h-Eileanan an Iar,0.0,0.0
+two_child_limit_abolition,2026,S14000045,Midlothian,0.0,0.0
+two_child_limit_abolition,2026,S14000048,North Ayrshire and Arran,0.0,0.0
+two_child_limit_abolition,2026,S14000051,Orkney and Shetland,0.0,0.0
+two_child_limit_abolition,2026,S14000060,Aberdeen North,0.0,0.0
+two_child_limit_abolition,2026,S14000061,Aberdeen South,0.0,0.0
+two_child_limit_abolition,2026,S14000062,Aberdeenshire North and Moray East,0.0,0.0
+two_child_limit_abolition,2026,S14000063,Airdrie and Shotts,0.0,0.0
+two_child_limit_abolition,2026,S14000064,Alloa and Grangemouth,0.0,0.0
+two_child_limit_abolition,2026,S14000065,Angus and Perthshire Glens,0.0,0.0
+two_child_limit_abolition,2026,S14000066,Arbroath and Broughty Ferry,0.0,0.0
+two_child_limit_abolition,2026,S14000067,"Argyll, Bute and South Lochaber",0.0,0.0
+two_child_limit_abolition,2026,S14000068,Bathgate and Linlithgow,0.0,0.0
+two_child_limit_abolition,2026,S14000069,"Caithness, Sutherland and Easter Ross",0.0,0.0
+two_child_limit_abolition,2026,S14000070,Coatbridge and Bellshill,0.0,0.0
+two_child_limit_abolition,2026,S14000071,Cowdenbeath and Kirkcaldy,0.0,0.0
+two_child_limit_abolition,2026,S14000072,Cumbernauld and Kirkintilloch,0.0,0.0
+two_child_limit_abolition,2026,S14000073,Dumfries and Galloway,0.0,0.0
+two_child_limit_abolition,2026,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",0.0,0.0
+two_child_limit_abolition,2026,S14000075,Dundee Central,0.0,0.0
+two_child_limit_abolition,2026,S14000076,Dunfermline and Dollar,0.0,0.0
+two_child_limit_abolition,2026,S14000077,East Kilbride and Strathaven,0.0,0.0
+two_child_limit_abolition,2026,S14000078,Edinburgh East and Musselburgh,0.0,0.0
+two_child_limit_abolition,2026,S14000079,Edinburgh North and Leith,0.0,0.0
+two_child_limit_abolition,2026,S14000080,Edinburgh South,0.0,0.0
+two_child_limit_abolition,2026,S14000081,Edinburgh South West,0.0,0.0
+two_child_limit_abolition,2026,S14000082,Edinburgh West,0.0,0.0
+two_child_limit_abolition,2026,S14000083,Falkirk,0.0,0.0
+two_child_limit_abolition,2026,S14000084,Glasgow East,0.0,0.0
+two_child_limit_abolition,2026,S14000085,Glasgow North,0.0,0.0
+two_child_limit_abolition,2026,S14000086,Glasgow North East,0.0,0.0
+two_child_limit_abolition,2026,S14000087,Glasgow South,0.0,0.0
+two_child_limit_abolition,2026,S14000088,Glasgow South West,0.0,0.0
+two_child_limit_abolition,2026,S14000089,Glasgow West,0.0,0.0
+two_child_limit_abolition,2026,S14000090,Glenrothes and Mid Fife,0.0,0.0
+two_child_limit_abolition,2026,S14000091,Gordon and Buchan,0.0,0.0
+two_child_limit_abolition,2026,S14000092,Hamilton and Clyde Valley,0.0,0.0
+two_child_limit_abolition,2026,S14000093,Inverclyde and Renfrewshire West,0.0,0.0
+two_child_limit_abolition,2026,S14000094,"Inverness, Skye and West Ross-shire",0.0,0.0
+two_child_limit_abolition,2026,S14000095,Livingston,0.0,0.0
+two_child_limit_abolition,2026,S14000096,Lothian East,0.0,0.0
+two_child_limit_abolition,2026,S14000097,Mid Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2026,S14000098,"Moray West, Nairn and Strathspey",0.0,0.0
+two_child_limit_abolition,2026,S14000099,"Motherwell, Wishaw and Carluke",0.0,0.0
+two_child_limit_abolition,2026,S14000100,North East Fife,0.0,0.0
+two_child_limit_abolition,2026,S14000101,Paisley and Renfrewshire North,0.0,0.0
+two_child_limit_abolition,2026,S14000102,Paisley and Renfrewshire South,0.0,0.0
+two_child_limit_abolition,2026,S14000103,Perth and Kinross-shire,0.0,0.0
+two_child_limit_abolition,2026,S14000104,Rutherglen,0.0,0.0
+two_child_limit_abolition,2026,S14000105,Stirling and Strathallan,0.0,0.0
+two_child_limit_abolition,2026,S14000106,West Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2026,S14000107,"Ayr, Carrick and Cumnock",0.0,0.0
+two_child_limit_abolition,2026,S14000108,"Berwickshire, Roxburgh and Selkirk",0.0,0.0
+two_child_limit_abolition,2026,S14000109,Central Ayrshire,0.0,0.0
+two_child_limit_abolition,2026,S14000110,Kilmarnock and Loudoun,0.0,0.0
+two_child_limit_abolition,2026,S14000111,West Aberdeenshire and Kincardine,0.0,0.0
+two_child_limit_abolition,2027,S14000021,East Renfrewshire,0.0,0.0
+two_child_limit_abolition,2027,S14000027,Na h-Eileanan an Iar,0.0,0.0
+two_child_limit_abolition,2027,S14000045,Midlothian,0.0,0.0
+two_child_limit_abolition,2027,S14000048,North Ayrshire and Arran,0.0,0.0
+two_child_limit_abolition,2027,S14000051,Orkney and Shetland,0.0,0.0
+two_child_limit_abolition,2027,S14000060,Aberdeen North,0.0,0.0
+two_child_limit_abolition,2027,S14000061,Aberdeen South,0.0,0.0
+two_child_limit_abolition,2027,S14000062,Aberdeenshire North and Moray East,0.0,0.0
+two_child_limit_abolition,2027,S14000063,Airdrie and Shotts,0.0,0.0
+two_child_limit_abolition,2027,S14000064,Alloa and Grangemouth,0.0,0.0
+two_child_limit_abolition,2027,S14000065,Angus and Perthshire Glens,0.0,0.0
+two_child_limit_abolition,2027,S14000066,Arbroath and Broughty Ferry,0.0,0.0
+two_child_limit_abolition,2027,S14000067,"Argyll, Bute and South Lochaber",0.0,0.0
+two_child_limit_abolition,2027,S14000068,Bathgate and Linlithgow,0.0,0.0
+two_child_limit_abolition,2027,S14000069,"Caithness, Sutherland and Easter Ross",0.0,0.0
+two_child_limit_abolition,2027,S14000070,Coatbridge and Bellshill,0.0,0.0
+two_child_limit_abolition,2027,S14000071,Cowdenbeath and Kirkcaldy,0.0,0.0
+two_child_limit_abolition,2027,S14000072,Cumbernauld and Kirkintilloch,0.0,0.0
+two_child_limit_abolition,2027,S14000073,Dumfries and Galloway,0.0,0.0
+two_child_limit_abolition,2027,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",0.0,0.0
+two_child_limit_abolition,2027,S14000075,Dundee Central,0.0,0.0
+two_child_limit_abolition,2027,S14000076,Dunfermline and Dollar,0.0,0.0
+two_child_limit_abolition,2027,S14000077,East Kilbride and Strathaven,0.0,0.0
+two_child_limit_abolition,2027,S14000078,Edinburgh East and Musselburgh,0.0,0.0
+two_child_limit_abolition,2027,S14000079,Edinburgh North and Leith,0.0,0.0
+two_child_limit_abolition,2027,S14000080,Edinburgh South,0.0,0.0
+two_child_limit_abolition,2027,S14000081,Edinburgh South West,0.0,0.0
+two_child_limit_abolition,2027,S14000082,Edinburgh West,0.0,0.0
+two_child_limit_abolition,2027,S14000083,Falkirk,0.0,0.0
+two_child_limit_abolition,2027,S14000084,Glasgow East,0.0,0.0
+two_child_limit_abolition,2027,S14000085,Glasgow North,0.0,0.0
+two_child_limit_abolition,2027,S14000086,Glasgow North East,0.0,0.0
+two_child_limit_abolition,2027,S14000087,Glasgow South,0.0,0.0
+two_child_limit_abolition,2027,S14000088,Glasgow South West,0.0,0.0
+two_child_limit_abolition,2027,S14000089,Glasgow West,0.0,0.0
+two_child_limit_abolition,2027,S14000090,Glenrothes and Mid Fife,0.0,0.0
+two_child_limit_abolition,2027,S14000091,Gordon and Buchan,0.0,0.0
+two_child_limit_abolition,2027,S14000092,Hamilton and Clyde Valley,0.0,0.0
+two_child_limit_abolition,2027,S14000093,Inverclyde and Renfrewshire West,0.0,0.0
+two_child_limit_abolition,2027,S14000094,"Inverness, Skye and West Ross-shire",0.0,0.0
+two_child_limit_abolition,2027,S14000095,Livingston,0.0,0.0
+two_child_limit_abolition,2027,S14000096,Lothian East,0.0,0.0
+two_child_limit_abolition,2027,S14000097,Mid Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2027,S14000098,"Moray West, Nairn and Strathspey",0.0,0.0
+two_child_limit_abolition,2027,S14000099,"Motherwell, Wishaw and Carluke",0.0,0.0
+two_child_limit_abolition,2027,S14000100,North East Fife,0.0,0.0
+two_child_limit_abolition,2027,S14000101,Paisley and Renfrewshire North,0.0,0.0
+two_child_limit_abolition,2027,S14000102,Paisley and Renfrewshire South,0.0,0.0
+two_child_limit_abolition,2027,S14000103,Perth and Kinross-shire,0.0,0.0
+two_child_limit_abolition,2027,S14000104,Rutherglen,0.0,0.0
+two_child_limit_abolition,2027,S14000105,Stirling and Strathallan,0.0,0.0
+two_child_limit_abolition,2027,S14000106,West Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2027,S14000107,"Ayr, Carrick and Cumnock",0.0,0.0
+two_child_limit_abolition,2027,S14000108,"Berwickshire, Roxburgh and Selkirk",0.0,0.0
+two_child_limit_abolition,2027,S14000109,Central Ayrshire,0.0,0.0
+two_child_limit_abolition,2027,S14000110,Kilmarnock and Loudoun,0.0,0.0
+two_child_limit_abolition,2027,S14000111,West Aberdeenshire and Kincardine,0.0,0.0
+two_child_limit_abolition,2028,S14000021,East Renfrewshire,0.0,0.0
+two_child_limit_abolition,2028,S14000027,Na h-Eileanan an Iar,0.0,0.0
+two_child_limit_abolition,2028,S14000045,Midlothian,0.0,0.0
+two_child_limit_abolition,2028,S14000048,North Ayrshire and Arran,0.0,0.0
+two_child_limit_abolition,2028,S14000051,Orkney and Shetland,0.0,0.0
+two_child_limit_abolition,2028,S14000060,Aberdeen North,0.0,0.0
+two_child_limit_abolition,2028,S14000061,Aberdeen South,0.0,0.0
+two_child_limit_abolition,2028,S14000062,Aberdeenshire North and Moray East,0.0,0.0
+two_child_limit_abolition,2028,S14000063,Airdrie and Shotts,0.0,0.0
+two_child_limit_abolition,2028,S14000064,Alloa and Grangemouth,0.0,0.0
+two_child_limit_abolition,2028,S14000065,Angus and Perthshire Glens,0.0,0.0
+two_child_limit_abolition,2028,S14000066,Arbroath and Broughty Ferry,0.0,0.0
+two_child_limit_abolition,2028,S14000067,"Argyll, Bute and South Lochaber",0.0,0.0
+two_child_limit_abolition,2028,S14000068,Bathgate and Linlithgow,0.0,0.0
+two_child_limit_abolition,2028,S14000069,"Caithness, Sutherland and Easter Ross",0.0,0.0
+two_child_limit_abolition,2028,S14000070,Coatbridge and Bellshill,0.0,0.0
+two_child_limit_abolition,2028,S14000071,Cowdenbeath and Kirkcaldy,0.0,0.0
+two_child_limit_abolition,2028,S14000072,Cumbernauld and Kirkintilloch,0.0,0.0
+two_child_limit_abolition,2028,S14000073,Dumfries and Galloway,0.0,0.0
+two_child_limit_abolition,2028,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",0.0,0.0
+two_child_limit_abolition,2028,S14000075,Dundee Central,0.0,0.0
+two_child_limit_abolition,2028,S14000076,Dunfermline and Dollar,0.0,0.0
+two_child_limit_abolition,2028,S14000077,East Kilbride and Strathaven,0.0,0.0
+two_child_limit_abolition,2028,S14000078,Edinburgh East and Musselburgh,0.0,0.0
+two_child_limit_abolition,2028,S14000079,Edinburgh North and Leith,0.0,0.0
+two_child_limit_abolition,2028,S14000080,Edinburgh South,0.0,0.0
+two_child_limit_abolition,2028,S14000081,Edinburgh South West,0.0,0.0
+two_child_limit_abolition,2028,S14000082,Edinburgh West,0.0,0.0
+two_child_limit_abolition,2028,S14000083,Falkirk,0.0,0.0
+two_child_limit_abolition,2028,S14000084,Glasgow East,0.0,0.0
+two_child_limit_abolition,2028,S14000085,Glasgow North,0.0,0.0
+two_child_limit_abolition,2028,S14000086,Glasgow North East,0.0,0.0
+two_child_limit_abolition,2028,S14000087,Glasgow South,0.0,0.0
+two_child_limit_abolition,2028,S14000088,Glasgow South West,0.0,0.0
+two_child_limit_abolition,2028,S14000089,Glasgow West,0.0,0.0
+two_child_limit_abolition,2028,S14000090,Glenrothes and Mid Fife,0.0,0.0
+two_child_limit_abolition,2028,S14000091,Gordon and Buchan,0.0,0.0
+two_child_limit_abolition,2028,S14000092,Hamilton and Clyde Valley,0.0,0.0
+two_child_limit_abolition,2028,S14000093,Inverclyde and Renfrewshire West,0.0,0.0
+two_child_limit_abolition,2028,S14000094,"Inverness, Skye and West Ross-shire",0.0,0.0
+two_child_limit_abolition,2028,S14000095,Livingston,0.0,0.0
+two_child_limit_abolition,2028,S14000096,Lothian East,0.0,0.0
+two_child_limit_abolition,2028,S14000097,Mid Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2028,S14000098,"Moray West, Nairn and Strathspey",0.0,0.0
+two_child_limit_abolition,2028,S14000099,"Motherwell, Wishaw and Carluke",0.0,0.0
+two_child_limit_abolition,2028,S14000100,North East Fife,0.0,0.0
+two_child_limit_abolition,2028,S14000101,Paisley and Renfrewshire North,0.0,0.0
+two_child_limit_abolition,2028,S14000102,Paisley and Renfrewshire South,0.0,0.0
+two_child_limit_abolition,2028,S14000103,Perth and Kinross-shire,0.0,0.0
+two_child_limit_abolition,2028,S14000104,Rutherglen,0.0,0.0
+two_child_limit_abolition,2028,S14000105,Stirling and Strathallan,0.0,0.0
+two_child_limit_abolition,2028,S14000106,West Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2028,S14000107,"Ayr, Carrick and Cumnock",0.0,0.0
+two_child_limit_abolition,2028,S14000108,"Berwickshire, Roxburgh and Selkirk",0.0,0.0
+two_child_limit_abolition,2028,S14000109,Central Ayrshire,0.0,0.0
+two_child_limit_abolition,2028,S14000110,Kilmarnock and Loudoun,0.0,0.0
+two_child_limit_abolition,2028,S14000111,West Aberdeenshire and Kincardine,0.0,0.0
+two_child_limit_abolition,2029,S14000021,East Renfrewshire,0.0,0.0
+two_child_limit_abolition,2029,S14000027,Na h-Eileanan an Iar,0.0,0.0
+two_child_limit_abolition,2029,S14000045,Midlothian,0.0,0.0
+two_child_limit_abolition,2029,S14000048,North Ayrshire and Arran,0.0,0.0
+two_child_limit_abolition,2029,S14000051,Orkney and Shetland,0.0,0.0
+two_child_limit_abolition,2029,S14000060,Aberdeen North,0.0,0.0
+two_child_limit_abolition,2029,S14000061,Aberdeen South,0.0,0.0
+two_child_limit_abolition,2029,S14000062,Aberdeenshire North and Moray East,0.0,0.0
+two_child_limit_abolition,2029,S14000063,Airdrie and Shotts,0.0,0.0
+two_child_limit_abolition,2029,S14000064,Alloa and Grangemouth,0.0,0.0
+two_child_limit_abolition,2029,S14000065,Angus and Perthshire Glens,0.0,0.0
+two_child_limit_abolition,2029,S14000066,Arbroath and Broughty Ferry,0.0,0.0
+two_child_limit_abolition,2029,S14000067,"Argyll, Bute and South Lochaber",0.0,0.0
+two_child_limit_abolition,2029,S14000068,Bathgate and Linlithgow,0.0,0.0
+two_child_limit_abolition,2029,S14000069,"Caithness, Sutherland and Easter Ross",0.0,0.0
+two_child_limit_abolition,2029,S14000070,Coatbridge and Bellshill,0.0,0.0
+two_child_limit_abolition,2029,S14000071,Cowdenbeath and Kirkcaldy,0.0,0.0
+two_child_limit_abolition,2029,S14000072,Cumbernauld and Kirkintilloch,0.0,0.0
+two_child_limit_abolition,2029,S14000073,Dumfries and Galloway,0.0,0.0
+two_child_limit_abolition,2029,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",0.0,0.0
+two_child_limit_abolition,2029,S14000075,Dundee Central,0.0,0.0
+two_child_limit_abolition,2029,S14000076,Dunfermline and Dollar,0.0,0.0
+two_child_limit_abolition,2029,S14000077,East Kilbride and Strathaven,0.0,0.0
+two_child_limit_abolition,2029,S14000078,Edinburgh East and Musselburgh,0.0,0.0
+two_child_limit_abolition,2029,S14000079,Edinburgh North and Leith,0.0,0.0
+two_child_limit_abolition,2029,S14000080,Edinburgh South,0.0,0.0
+two_child_limit_abolition,2029,S14000081,Edinburgh South West,0.0,0.0
+two_child_limit_abolition,2029,S14000082,Edinburgh West,0.0,0.0
+two_child_limit_abolition,2029,S14000083,Falkirk,0.0,0.0
+two_child_limit_abolition,2029,S14000084,Glasgow East,0.0,0.0
+two_child_limit_abolition,2029,S14000085,Glasgow North,0.0,0.0
+two_child_limit_abolition,2029,S14000086,Glasgow North East,0.0,0.0
+two_child_limit_abolition,2029,S14000087,Glasgow South,0.0,0.0
+two_child_limit_abolition,2029,S14000088,Glasgow South West,0.0,0.0
+two_child_limit_abolition,2029,S14000089,Glasgow West,0.0,0.0
+two_child_limit_abolition,2029,S14000090,Glenrothes and Mid Fife,0.0,0.0
+two_child_limit_abolition,2029,S14000091,Gordon and Buchan,0.0,0.0
+two_child_limit_abolition,2029,S14000092,Hamilton and Clyde Valley,0.0,0.0
+two_child_limit_abolition,2029,S14000093,Inverclyde and Renfrewshire West,0.0,0.0
+two_child_limit_abolition,2029,S14000094,"Inverness, Skye and West Ross-shire",0.0,0.0
+two_child_limit_abolition,2029,S14000095,Livingston,0.0,0.0
+two_child_limit_abolition,2029,S14000096,Lothian East,0.0,0.0
+two_child_limit_abolition,2029,S14000097,Mid Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2029,S14000098,"Moray West, Nairn and Strathspey",0.0,0.0
+two_child_limit_abolition,2029,S14000099,"Motherwell, Wishaw and Carluke",0.0,0.0
+two_child_limit_abolition,2029,S14000100,North East Fife,0.0,0.0
+two_child_limit_abolition,2029,S14000101,Paisley and Renfrewshire North,0.0,0.0
+two_child_limit_abolition,2029,S14000102,Paisley and Renfrewshire South,0.0,0.0
+two_child_limit_abolition,2029,S14000103,Perth and Kinross-shire,0.0,0.0
+two_child_limit_abolition,2029,S14000104,Rutherglen,0.0,0.0
+two_child_limit_abolition,2029,S14000105,Stirling and Strathallan,0.0,0.0
+two_child_limit_abolition,2029,S14000106,West Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2029,S14000107,"Ayr, Carrick and Cumnock",0.0,0.0
+two_child_limit_abolition,2029,S14000108,"Berwickshire, Roxburgh and Selkirk",0.0,0.0
+two_child_limit_abolition,2029,S14000109,Central Ayrshire,0.0,0.0
+two_child_limit_abolition,2029,S14000110,Kilmarnock and Loudoun,0.0,0.0
+two_child_limit_abolition,2029,S14000111,West Aberdeenshire and Kincardine,0.0,0.0
+two_child_limit_abolition,2030,S14000021,East Renfrewshire,0.0,0.0
+two_child_limit_abolition,2030,S14000027,Na h-Eileanan an Iar,0.0,0.0
+two_child_limit_abolition,2030,S14000045,Midlothian,0.0,0.0
+two_child_limit_abolition,2030,S14000048,North Ayrshire and Arran,0.0,0.0
+two_child_limit_abolition,2030,S14000051,Orkney and Shetland,0.0,0.0
+two_child_limit_abolition,2030,S14000060,Aberdeen North,0.0,0.0
+two_child_limit_abolition,2030,S14000061,Aberdeen South,0.0,0.0
+two_child_limit_abolition,2030,S14000062,Aberdeenshire North and Moray East,0.0,0.0
+two_child_limit_abolition,2030,S14000063,Airdrie and Shotts,0.0,0.0
+two_child_limit_abolition,2030,S14000064,Alloa and Grangemouth,0.0,0.0
+two_child_limit_abolition,2030,S14000065,Angus and Perthshire Glens,0.0,0.0
+two_child_limit_abolition,2030,S14000066,Arbroath and Broughty Ferry,0.0,0.0
+two_child_limit_abolition,2030,S14000067,"Argyll, Bute and South Lochaber",0.0,0.0
+two_child_limit_abolition,2030,S14000068,Bathgate and Linlithgow,0.0,0.0
+two_child_limit_abolition,2030,S14000069,"Caithness, Sutherland and Easter Ross",0.0,0.0
+two_child_limit_abolition,2030,S14000070,Coatbridge and Bellshill,0.0,0.0
+two_child_limit_abolition,2030,S14000071,Cowdenbeath and Kirkcaldy,0.0,0.0
+two_child_limit_abolition,2030,S14000072,Cumbernauld and Kirkintilloch,0.0,0.0
+two_child_limit_abolition,2030,S14000073,Dumfries and Galloway,0.0,0.0
+two_child_limit_abolition,2030,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",0.0,0.0
+two_child_limit_abolition,2030,S14000075,Dundee Central,0.0,0.0
+two_child_limit_abolition,2030,S14000076,Dunfermline and Dollar,0.0,0.0
+two_child_limit_abolition,2030,S14000077,East Kilbride and Strathaven,0.0,0.0
+two_child_limit_abolition,2030,S14000078,Edinburgh East and Musselburgh,0.0,0.0
+two_child_limit_abolition,2030,S14000079,Edinburgh North and Leith,0.0,0.0
+two_child_limit_abolition,2030,S14000080,Edinburgh South,0.0,0.0
+two_child_limit_abolition,2030,S14000081,Edinburgh South West,0.0,0.0
+two_child_limit_abolition,2030,S14000082,Edinburgh West,0.0,0.0
+two_child_limit_abolition,2030,S14000083,Falkirk,0.0,0.0
+two_child_limit_abolition,2030,S14000084,Glasgow East,0.0,0.0
+two_child_limit_abolition,2030,S14000085,Glasgow North,0.0,0.0
+two_child_limit_abolition,2030,S14000086,Glasgow North East,0.0,0.0
+two_child_limit_abolition,2030,S14000087,Glasgow South,0.0,0.0
+two_child_limit_abolition,2030,S14000088,Glasgow South West,0.0,0.0
+two_child_limit_abolition,2030,S14000089,Glasgow West,0.0,0.0
+two_child_limit_abolition,2030,S14000090,Glenrothes and Mid Fife,0.0,0.0
+two_child_limit_abolition,2030,S14000091,Gordon and Buchan,0.0,0.0
+two_child_limit_abolition,2030,S14000092,Hamilton and Clyde Valley,0.0,0.0
+two_child_limit_abolition,2030,S14000093,Inverclyde and Renfrewshire West,0.0,0.0
+two_child_limit_abolition,2030,S14000094,"Inverness, Skye and West Ross-shire",0.0,0.0
+two_child_limit_abolition,2030,S14000095,Livingston,0.0,0.0
+two_child_limit_abolition,2030,S14000096,Lothian East,0.0,0.0
+two_child_limit_abolition,2030,S14000097,Mid Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2030,S14000098,"Moray West, Nairn and Strathspey",0.0,0.0
+two_child_limit_abolition,2030,S14000099,"Motherwell, Wishaw and Carluke",0.0,0.0
+two_child_limit_abolition,2030,S14000100,North East Fife,0.0,0.0
+two_child_limit_abolition,2030,S14000101,Paisley and Renfrewshire North,0.0,0.0
+two_child_limit_abolition,2030,S14000102,Paisley and Renfrewshire South,0.0,0.0
+two_child_limit_abolition,2030,S14000103,Perth and Kinross-shire,0.0,0.0
+two_child_limit_abolition,2030,S14000104,Rutherglen,0.0,0.0
+two_child_limit_abolition,2030,S14000105,Stirling and Strathallan,0.0,0.0
+two_child_limit_abolition,2030,S14000106,West Dunbartonshire,0.0,0.0
+two_child_limit_abolition,2030,S14000107,"Ayr, Carrick and Cumnock",0.0,0.0
+two_child_limit_abolition,2030,S14000108,"Berwickshire, Roxburgh and Selkirk",0.0,0.0
+two_child_limit_abolition,2030,S14000109,Central Ayrshire,0.0,0.0
+two_child_limit_abolition,2030,S14000110,Kilmarnock and Loudoun,0.0,0.0
+two_child_limit_abolition,2030,S14000111,West Aberdeenshire and Kincardine,0.0,0.0
+scp_baby_boost,2026,S14000021,East Renfrewshire,27264.249738366085,0.020407623870044887
+scp_baby_boost,2026,S14000027,Na h-Eileanan an Iar,27803.99582165024,0.01965032233912675
+scp_baby_boost,2026,S14000045,Midlothian,32401.849424976393,0.022748323088972525
+scp_baby_boost,2026,S14000048,North Ayrshire and Arran,26286.04682058298,0.016812375829057157
+scp_baby_boost,2026,S14000051,Orkney and Shetland,33938.21522655189,0.03286656140670432
+scp_baby_boost,2026,S14000060,Aberdeen North,30985.659566612707,0.02040119529889019
+scp_baby_boost,2026,S14000061,Aberdeen South,23151.60433666095,0.01375366065238837
+scp_baby_boost,2026,S14000062,Aberdeenshire North and Moray East,31948.054843177844,0.023781695544531672
+scp_baby_boost,2026,S14000063,Airdrie and Shotts,20467.271240705886,0.018155003180750633
+scp_baby_boost,2026,S14000064,Alloa and Grangemouth,33383.929986574345,0.023502908786099792
+scp_baby_boost,2026,S14000065,Angus and Perthshire Glens,31192.641415334816,0.022132799347377163
+scp_baby_boost,2026,S14000066,Arbroath and Broughty Ferry,26538.718059812094,0.022583113449497195
+scp_baby_boost,2026,S14000067,"Argyll, Bute and South Lochaber",30439.200351526397,0.02122408087349686
+scp_baby_boost,2026,S14000068,Bathgate and Linlithgow,34610.92862626692,0.024285963788376663
+scp_baby_boost,2026,S14000069,"Caithness, Sutherland and Easter Ross",24388.641565254806,0.01806549818738483
+scp_baby_boost,2026,S14000070,Coatbridge and Bellshill,33215.549637269454,0.02045822820365144
+scp_baby_boost,2026,S14000071,Cowdenbeath and Kirkcaldy,32588.916405777163,0.02279125685867523
+scp_baby_boost,2026,S14000072,Cumbernauld and Kirkintilloch,31187.899607480205,0.02440435046619428
+scp_baby_boost,2026,S14000073,Dumfries and Galloway,21189.28040381289,0.012020152355764917
+scp_baby_boost,2026,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",33066.72663305361,0.02719732165777615
+scp_baby_boost,2026,S14000075,Dundee Central,31574.25376770591,0.019840215799850777
+scp_baby_boost,2026,S14000076,Dunfermline and Dollar,30537.30204106554,0.019288321353590543
+scp_baby_boost,2026,S14000077,East Kilbride and Strathaven,30473.3979551692,0.02111929078981177
+scp_baby_boost,2026,S14000078,Edinburgh East and Musselburgh,24035.603362211168,0.0164597540768795
+scp_baby_boost,2026,S14000079,Edinburgh North and Leith,29578.481477974736,0.021891783609577893
+scp_baby_boost,2026,S14000080,Edinburgh South,38665.95289340333,0.02926755076716598
+scp_baby_boost,2026,S14000081,Edinburgh South West,27410.49677274041,0.017867734473106817
+scp_baby_boost,2026,S14000082,Edinburgh West,29248.713166481546,0.019712645865272604
+scp_baby_boost,2026,S14000083,Falkirk,27048.203374070177,0.018824839483461104
+scp_baby_boost,2026,S14000084,Glasgow East,27906.260146271103,0.01749908618160187
+scp_baby_boost,2026,S14000085,Glasgow North,23899.388526343148,0.019599918610870976
+scp_baby_boost,2026,S14000086,Glasgow North East,29797.124048573754,0.019309401505403764
+scp_baby_boost,2026,S14000087,Glasgow South,27834.01159138287,0.017640754323516267
+scp_baby_boost,2026,S14000088,Glasgow South West,26900.17924503766,0.017469676386419997
+scp_baby_boost,2026,S14000089,Glasgow West,27096.82965138681,0.016924630753413217
+scp_baby_boost,2026,S14000090,Glenrothes and Mid Fife,35103.439155946515,0.030504199070024753
+scp_baby_boost,2026,S14000091,Gordon and Buchan,36543.43289558487,0.028349943159785316
+scp_baby_boost,2026,S14000092,Hamilton and Clyde Valley,24943.427061594786,0.01797919238078703
+scp_baby_boost,2026,S14000093,Inverclyde and Renfrewshire West,32363.25258286217,0.02189227184556907
+scp_baby_boost,2026,S14000094,"Inverness, Skye and West Ross-shire",31578.923325696735,0.026349285936145952
+scp_baby_boost,2026,S14000095,Livingston,32170.284918969603,0.024788725380252796
+scp_baby_boost,2026,S14000096,Lothian East,25480.472954783498,0.017242072515093302
+scp_baby_boost,2026,S14000097,Mid Dunbartonshire,26982.722927970604,0.016612448763937155
+scp_baby_boost,2026,S14000098,"Moray West, Nairn and Strathspey",36102.48042515925,0.025402495938483805
+scp_baby_boost,2026,S14000099,"Motherwell, Wishaw and Carluke",31283.305059320206,0.01746563083650006
+scp_baby_boost,2026,S14000100,North East Fife,22732.755952742067,0.013886529134390747
+scp_baby_boost,2026,S14000101,Paisley and Renfrewshire North,37212.757358807394,0.025444928154344015
+scp_baby_boost,2026,S14000102,Paisley and Renfrewshire South,28550.511413118522,0.020036474713290394
+scp_baby_boost,2026,S14000103,Perth and Kinross-shire,25364.584991029347,0.017965037199268775
+scp_baby_boost,2026,S14000104,Rutherglen,31071.925011446874,0.01977578147313248
+scp_baby_boost,2026,S14000105,Stirling and Strathallan,27504.398831689796,0.023208728780578565
+scp_baby_boost,2026,S14000106,West Dunbartonshire,29187.79132914743,0.0197203479837041
+scp_baby_boost,2026,S14000107,"Ayr, Carrick and Cumnock",32828.8841168482,0.02254521395877039
+scp_baby_boost,2026,S14000108,"Berwickshire, Roxburgh and Selkirk",28051.311925234113,0.015844087884981577
+scp_baby_boost,2026,S14000109,Central Ayrshire,29361.112013887905,0.0188527630144425
+scp_baby_boost,2026,S14000110,Kilmarnock and Loudoun,32512.1076791155,0.02229476808937296
+scp_baby_boost,2026,S14000111,West Aberdeenshire and Kincardine,28568.95255152247,0.015262169792680389
+scp_baby_boost,2027,S14000021,East Renfrewshire,26646.829485647846,0.01952393651611629
+scp_baby_boost,2027,S14000027,Na h-Eileanan an Iar,28849.889582141957,0.01995332586223452
+scp_baby_boost,2027,S14000045,Midlothian,30609.805689855275,0.02104491845609267
+scp_baby_boost,2027,S14000048,North Ayrshire and Arran,25619.800546990693,0.016035786380577205
+scp_baby_boost,2027,S14000051,Orkney and Shetland,33989.70019419886,0.03215133880820245
+scp_baby_boost,2027,S14000060,Aberdeen North,30956.70084555018,0.019947072295543256
+scp_baby_boost,2027,S14000061,Aberdeen South,23080.59522412354,0.013412115411230599
+scp_baby_boost,2027,S14000062,Aberdeenshire North and Moray East,30236.746837651004,0.022031485273980377
+scp_baby_boost,2027,S14000063,Airdrie and Shotts,20554.79755947272,0.017837794245765926
+scp_baby_boost,2027,S14000064,Alloa and Grangemouth,33080.92899230211,0.02277866567634937
+scp_baby_boost,2027,S14000065,Angus and Perthshire Glens,29712.41141778966,0.020637928742786887
+scp_baby_boost,2027,S14000066,Arbroath and Broughty Ferry,25675.591212308336,0.02138799835275988
+scp_baby_boost,2027,S14000067,"Argyll, Bute and South Lochaber",29577.63587032013,0.02019356639621263
+scp_baby_boost,2027,S14000068,Bathgate and Linlithgow,33201.973435821536,0.022802997692157757
+scp_baby_boost,2027,S14000069,"Caithness, Sutherland and Easter Ross",24094.022499242346,0.01746070599242064
+scp_baby_boost,2027,S14000070,Coatbridge and Bellshill,32239.95039252519,0.019433750801575358
+scp_baby_boost,2027,S14000071,Cowdenbeath and Kirkcaldy,32244.17851704622,0.022060304987362958
+scp_baby_boost,2027,S14000072,Cumbernauld and Kirkintilloch,30561.275493705685,0.023401576278629464
+scp_baby_boost,2027,S14000073,Dumfries and Galloway,20458.979658133638,0.011351342086408393
+scp_baby_boost,2027,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",32187.202786913407,0.025911271823146426
+scp_baby_boost,2027,S14000075,Dundee Central,30872.17830536579,0.018978758577391265
+scp_baby_boost,2027,S14000076,Dunfermline and Dollar,29165.943650922207,0.01801933627031919
+scp_baby_boost,2027,S14000077,East Kilbride and Strathaven,29294.120385362286,0.019869141295613246
+scp_baby_boost,2027,S14000078,Edinburgh East and Musselburgh,24333.930378038483,0.016311429229092164
+scp_baby_boost,2027,S14000079,Edinburgh North and Leith,28960.59127029053,0.020983500442270264
+scp_baby_boost,2027,S14000080,Edinburgh South,37227.35478905006,0.02757398706306071
+scp_baby_boost,2027,S14000081,Edinburgh South West,27266.501561547815,0.01739745517384434
+scp_baby_boost,2027,S14000082,Edinburgh West,29042.049653726797,0.01914707370912733
+scp_baby_boost,2027,S14000083,Falkirk,26426.93831480865,0.017996607469616576
+scp_baby_boost,2027,S14000084,Glasgow East,27349.615593602663,0.016780019910255448
+scp_baby_boost,2027,S14000085,Glasgow North,21889.112765364218,0.017588336373983167
+scp_baby_boost,2027,S14000086,Glasgow North East,28348.125715005157,0.017974502259067444
+scp_baby_boost,2027,S14000087,Glasgow South,26562.522219918406,0.016474614489148852
+scp_baby_boost,2027,S14000088,Glasgow South West,26738.361677163877,0.016981460002761458
+scp_baby_boost,2027,S14000089,Glasgow West,26327.23664498169,0.016093678508970255
+scp_baby_boost,2027,S14000090,Glenrothes and Mid Fife,34084.71673201484,0.028989529442867184
+scp_baby_boost,2027,S14000091,Gordon and Buchan,35263.915922247004,0.026776919115412915
+scp_baby_boost,2027,S14000092,Hamilton and Clyde Valley,23768.722494961254,0.016760692342104568
+scp_baby_boost,2027,S14000093,Inverclyde and Renfrewshire West,31761.538048481932,0.021021659625167565
+scp_baby_boost,2027,S14000094,"Inverness, Skye and West Ross-shire",29865.108788376863,0.024390141598086112
+scp_baby_boost,2027,S14000095,Livingston,30722.104558906543,0.023169340892662944
+scp_baby_boost,2027,S14000096,Lothian East,25471.26695632029,0.01686399335991776
+scp_baby_boost,2027,S14000097,Mid Dunbartonshire,26441.39592594656,0.01593088195251969
+scp_baby_boost,2027,S14000098,"Moray West, Nairn and Strathspey",34374.994265600355,0.023685898928887734
+scp_baby_boost,2027,S14000099,"Motherwell, Wishaw and Carluke",30520.189065837032,0.016684831708941996
+scp_baby_boost,2027,S14000100,North East Fife,23147.429232412327,0.013833683698016755
+scp_baby_boost,2027,S14000101,Paisley and Renfrewshire North,36347.56936328007,0.02430809586066511
+scp_baby_boost,2027,S14000102,Paisley and Renfrewshire South,26808.542558253823,0.018410685873767048
+scp_baby_boost,2027,S14000103,Perth and Kinross-shire,25178.73254603312,0.017448309693305804
+scp_baby_boost,2027,S14000104,Rutherglen,29210.180818997276,0.018199646795117444
+scp_baby_boost,2027,S14000105,Stirling and Strathallan,27793.31442390045,0.022954011193033638
+scp_baby_boost,2027,S14000106,West Dunbartonshire,29223.981148217033,0.019316139975823717
+scp_baby_boost,2027,S14000107,"Ayr, Carrick and Cumnock",31899.129750496646,0.021435628762407535
+scp_baby_boost,2027,S14000108,"Berwickshire, Roxburgh and Selkirk",26907.77307756815,0.01487248326927475
+scp_baby_boost,2027,S14000109,Central Ayrshire,29366.129384994343,0.018452370252675418
+scp_baby_boost,2027,S14000110,Kilmarnock and Loudoun,31640.052704725793,0.021232431058919445
+scp_baby_boost,2027,S14000111,West Aberdeenshire and Kincardine,27127.378069932387,0.014186077875007119
+scp_baby_boost,2028,S14000021,East Renfrewshire,28269.77254355795,0.020274620256203153
+scp_baby_boost,2028,S14000027,Na h-Eileanan an Iar,30313.77784037428,0.020518366091812883
+scp_baby_boost,2028,S14000045,Midlothian,32595.138737811692,0.021934891789002046
+scp_baby_boost,2028,S14000048,North Ayrshire and Arran,26580.12110444711,0.016278562365118005
+scp_baby_boost,2028,S14000051,Orkney and Shetland,34878.17033161878,0.03223027679930569
+scp_baby_boost,2028,S14000060,Aberdeen North,32494.483555156057,0.02049222333843834
+scp_baby_boost,2028,S14000061,Aberdeen South,24066.60913588811,0.013683121804772535
+scp_baby_boost,2028,S14000062,Aberdeenshire North and Moray East,32048.877946867615,0.02285137897703358
+scp_baby_boost,2028,S14000063,Airdrie and Shotts,21535.664281644105,0.018287955886645887
+scp_baby_boost,2028,S14000064,Alloa and Grangemouth,34166.10543375939,0.0230098605901634
+scp_baby_boost,2028,S14000065,Angus and Perthshire Glens,31326.831515961676,0.02129484898942672
+scp_baby_boost,2028,S14000066,Arbroath and Broughty Ferry,27279.288597013558,0.022241125060122158
+scp_baby_boost,2028,S14000067,"Argyll, Bute and South Lochaber",30788.029310108523,0.020574593863379915
+scp_baby_boost,2028,S14000068,Bathgate and Linlithgow,35208.861427510885,0.02366378975938703
+scp_baby_boost,2028,S14000069,"Caithness, Sutherland and Easter Ross",25061.50649685496,0.01777013889929547
+scp_baby_boost,2028,S14000070,Coatbridge and Bellshill,33607.95666520246,0.019821131684746068
+scp_baby_boost,2028,S14000071,Cowdenbeath and Kirkcaldy,33846.53110197056,0.02265328637970186
+scp_baby_boost,2028,S14000072,Cumbernauld and Kirkintilloch,32580.878694151947,0.0244139333436771
+scp_baby_boost,2028,S14000073,Dumfries and Galloway,21373.73218803254,0.01160150335532124
+scp_baby_boost,2028,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34064.683959233844,0.026832795383292644
+scp_baby_boost,2028,S14000075,Dundee Central,32063.243642756734,0.019284581585317387
+scp_baby_boost,2028,S14000076,Dunfermline and Dollar,30576.766820882494,0.018482767097897205
+scp_baby_boost,2028,S14000077,East Kilbride and Strathaven,30771.089909109396,0.020424841853925096
+scp_baby_boost,2028,S14000078,Edinburgh East and Musselburgh,25750.11207112935,0.01689485345168618
+scp_baby_boost,2028,S14000079,Edinburgh North and Leith,30466.260547312908,0.021602978925942148
+scp_baby_boost,2028,S14000080,Edinburgh South,38769.7779618112,0.02809680459097221
+scp_baby_boost,2028,S14000081,Edinburgh South West,28339.016782731553,0.017697816971035365
+scp_baby_boost,2028,S14000082,Edinburgh West,29988.022255146978,0.019341860161497408
+scp_baby_boost,2028,S14000083,Falkirk,27685.550145815236,0.01844906775100154
+scp_baby_boost,2028,S14000084,Glasgow East,28116.239096721376,0.01687397499020497
+scp_baby_boost,2028,S14000085,Glasgow North,23387.79033341212,0.018385779036243628
+scp_baby_boost,2028,S14000086,Glasgow North East,29501.42762975955,0.018299688855094507
+scp_baby_boost,2028,S14000087,Glasgow South,27860.0772902648,0.016904944862035226
+scp_baby_boost,2028,S14000088,Glasgow South West,27663.68335984263,0.017186644649581997
+scp_baby_boost,2028,S14000089,Glasgow West,27859.897744916667,0.016666282246303798
+scp_baby_boost,2028,S14000090,Glenrothes and Mid Fife,35727.526727133576,0.029737149273979212
+scp_baby_boost,2028,S14000091,Gordon and Buchan,37146.77780122987,0.027608921064068516
+scp_baby_boost,2028,S14000092,Hamilton and Clyde Valley,24937.394245276217,0.017204918156056043
+scp_baby_boost,2028,S14000093,Inverclyde and Renfrewshire West,33299.65559260894,0.02156906980540019
+scp_baby_boost,2028,S14000094,"Inverness, Skye and West Ross-shire",31625.73402931234,0.02527293176066437
+scp_baby_boost,2028,S14000095,Livingston,32630.945224282037,0.024084346899397445
+scp_baby_boost,2028,S14000096,Lothian East,26563.49977400626,0.017209510697213187
+scp_baby_boost,2028,S14000097,Mid Dunbartonshire,27773.19158082821,0.01637655189228919
+scp_baby_boost,2028,S14000098,"Moray West, Nairn and Strathspey",36218.568577562975,0.024427001060196237
+scp_baby_boost,2028,S14000099,"Motherwell, Wishaw and Carluke",32052.544900580036,0.017148715520375456
+scp_baby_boost,2028,S14000100,North East Fife,24290.174558465413,0.014206592704796444
+scp_baby_boost,2028,S14000101,Paisley and Renfrewshire North,37310.881746022744,0.02439853059526773
+scp_baby_boost,2028,S14000102,Paisley and Renfrewshire South,28111.292653970144,0.01888805340154417
+scp_baby_boost,2028,S14000103,Perth and Kinross-shire,26437.48751204926,0.01792995786508718
+scp_baby_boost,2028,S14000104,Rutherglen,30893.709217229905,0.018840165144134263
+scp_baby_boost,2028,S14000105,Stirling and Strathallan,29223.307432073292,0.023620521397341068
+scp_baby_boost,2028,S14000106,West Dunbartonshire,30440.541977851626,0.019687202709738852
+scp_baby_boost,2028,S14000107,"Ayr, Carrick and Cumnock",33175.144198008886,0.02180842699127089
+scp_baby_boost,2028,S14000108,"Berwickshire, Roxburgh and Selkirk",28137.35876864171,0.015217043128978872
+scp_baby_boost,2028,S14000109,Central Ayrshire,30382.19077034491,0.01868294260609746
+scp_baby_boost,2028,S14000110,Kilmarnock and Loudoun,33041.16297853546,0.021693580899305835
+scp_baby_boost,2028,S14000111,West Aberdeenshire and Kincardine,28616.68009810232,0.01464529548905599
+scp_baby_boost,2029,S14000021,East Renfrewshire,28391.873436743852,0.019934435797320384
+scp_baby_boost,2029,S14000027,Na h-Eileanan an Iar,30444.822678609107,0.020169933171391177
+scp_baby_boost,2029,S14000045,Midlothian,32736.53456648387,0.021566120275351434
+scp_baby_boost,2029,S14000048,North Ayrshire and Arran,26695.688579664737,0.015993749488826363
+scp_baby_boost,2029,S14000051,Orkney and Shetland,35030.24316819134,0.03161485877034102
+scp_baby_boost,2029,S14000060,Aberdeen North,32635.529626061787,0.02014603482296975
+scp_baby_boost,2029,S14000061,Aberdeen South,24170.923344981864,0.013446479684670675
+scp_baby_boost,2029,S14000062,Aberdeenshire North and Moray East,32187.30478554701,0.022462478138441083
+scp_baby_boost,2029,S14000063,Airdrie and Shotts,21628.784404679514,0.017974100289657523
+scp_baby_boost,2029,S14000064,Alloa and Grangemouth,34315.075989220735,0.022601033583001636
+scp_baby_boost,2029,S14000065,Angus and Perthshire Glens,31463.054256562773,0.02093126984496996
+scp_baby_boost,2029,S14000066,Arbroath and Broughty Ferry,27397.657180000413,0.021865121245579187
+scp_baby_boost,2029,S14000067,"Argyll, Bute and South Lochaber",30921.94919222623,0.02022584182823463
+scp_baby_boost,2029,S14000068,Bathgate and Linlithgow,35361.963805998595,0.02326264686173026
+scp_baby_boost,2029,S14000069,"Caithness, Sutherland and Easter Ross",25170.356899455768,0.017460803832668195
+scp_baby_boost,2029,S14000070,Coatbridge and Bellshill,33753.46926884161,0.019477417625834093
+scp_baby_boost,2029,S14000071,Cowdenbeath and Kirkcaldy,33993.33662623543,0.022260248732670376
+scp_baby_boost,2029,S14000072,Cumbernauld and Kirkintilloch,32721.533703090143,0.023997753072484748
+scp_baby_boost,2029,S14000073,Dumfries and Galloway,21466.79555273255,0.011399476618589569
+scp_baby_boost,2029,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34212.24894737676,0.026368909802645838
+scp_baby_boost,2029,S14000075,Dundee Central,32202.768186205816,0.01895051377926198
+scp_baby_boost,2029,S14000076,Dunfermline and Dollar,30709.47737612929,0.018167171753193892
+scp_baby_boost,2029,S14000077,East Kilbride and Strathaven,30904.59964080101,0.02007841869332067
+scp_baby_boost,2029,S14000078,Edinburgh East and Musselburgh,25861.121470850543,0.016610015316860387
+scp_baby_boost,2029,S14000079,Edinburgh North and Leith,30597.59758054234,0.02123429972865528
+scp_baby_boost,2029,S14000080,Edinburgh South,38938.40195164016,0.027613537899146088
+scp_baby_boost,2029,S14000081,Edinburgh South West,28462.12409644966,0.017397335986288166
+scp_baby_boost,2029,S14000082,Edinburgh West,30118.7491681093,0.019004546882996562
+scp_baby_boost,2029,S14000083,Falkirk,27805.20023910431,0.01813279247420998
+scp_baby_boost,2029,S14000084,Glasgow East,28238.95983623393,0.01657913409869987
+scp_baby_boost,2029,S14000085,Glasgow North,23489.227229684868,0.01808055047929979
+scp_baby_boost,2029,S14000086,Glasgow North East,29629.640176562207,0.017978947083171052
+scp_baby_boost,2029,S14000087,Glasgow South,27981.06778902801,0.01661139264526511
+scp_baby_boost,2029,S14000088,Glasgow South West,27784.42558543419,0.016887575686115226
+scp_baby_boost,2029,S14000089,Glasgow West,27980.703379400635,0.016382892205573107
+scp_baby_boost,2029,S14000090,Glenrothes and Mid Fife,35882.23900392996,0.029231343167201343
+scp_baby_boost,2029,S14000091,Gordon and Buchan,37308.05526056276,0.027147287744484012
+scp_baby_boost,2029,S14000092,Hamilton and Clyde Valley,25045.425182430885,0.01690809999870325
+scp_baby_boost,2029,S14000093,Inverclyde and Renfrewshire West,33443.74874646363,0.021206750230548344
+scp_baby_boost,2029,S14000094,"Inverness, Skye and West Ross-shire",31762.569935273732,0.024840716535015957
+scp_baby_boost,2029,S14000095,Livingston,32771.673653137754,0.02367809006736942
+scp_baby_boost,2029,S14000096,Lothian East,26679.09622153238,0.016912656536742093
+scp_baby_boost,2029,S14000097,Mid Dunbartonshire,27893.91769875418,0.01609817562241622
+scp_baby_boost,2029,S14000098,"Moray West, Nairn and Strathspey",36375.423979651016,0.02401565024160341
+scp_baby_boost,2029,S14000099,"Motherwell, Wishaw and Carluke",32191.76969969303,0.016855194830464423
+scp_baby_boost,2029,S14000100,North East Fife,24395.454840295773,0.013965472274574006
+scp_baby_boost,2029,S14000101,Paisley and Renfrewshire North,37474.07427859823,0.023960567071488442
+scp_baby_boost,2029,S14000102,Paisley and Renfrewshire South,28233.265705700847,0.01856090394331767
+scp_baby_boost,2029,S14000103,Perth and Kinross-shire,26551.52142140351,0.01762815011816275
+scp_baby_boost,2029,S14000104,Rutherglen,31027.844902708013,0.018521760746897594
+scp_baby_boost,2029,S14000105,Stirling and Strathallan,29349.940240530403,0.023218434095368588
+scp_baby_boost,2029,S14000106,West Dunbartonshire,30573.217534498122,0.01934815646516872
+scp_baby_boost,2029,S14000107,"Ayr, Carrick and Cumnock",33319.76036415526,0.021423617443739325
+scp_baby_boost,2029,S14000108,"Berwickshire, Roxburgh and Selkirk",28259.68568307538,0.014953806512276537
+scp_baby_boost,2029,S14000109,Central Ayrshire,30514.587048584985,0.018364732409017544
+scp_baby_boost,2029,S14000110,Kilmarnock and Loudoun,33184.913883433495,0.021311190447279697
+scp_baby_boost,2029,S14000111,West Aberdeenshire and Kincardine,28740.913335925336,0.01439569384794072
+scp_baby_boost,2030,S14000021,East Renfrewshire,28661.01804999552,0.019696767676769644
+scp_baby_boost,2030,S14000027,Na h-Eileanan an Iar,30734.814996765755,0.01992445117458363
+scp_baby_boost,2030,S14000045,Midlothian,33144.96570726968,0.021385692233739772
+scp_baby_boost,2030,S14000048,North Ayrshire and Arran,27721.202209410672,0.016267797661070414
+scp_baby_boost,2030,S14000051,Orkney and Shetland,35832.68939244833,0.03170538481318178
+scp_baby_boost,2030,S14000060,Aberdeen North,33429.83885101579,0.02019906037049732
+scp_baby_boost,2030,S14000061,Aberdeen South,25016.32894103961,0.013614900922908197
+scp_baby_boost,2030,S14000062,Aberdeenshire North and Moray East,33059.73326170455,0.02259639975351908
+scp_baby_boost,2030,S14000063,Airdrie and Shotts,22405.539698672404,0.018224407648560655
+scp_baby_boost,2030,S14000064,Alloa and Grangemouth,35259.67495018131,0.022732632733155955
+scp_baby_boost,2030,S14000065,Angus and Perthshire Glens,32373.775940607527,0.021099164438856507
+scp_baby_boost,2030,S14000066,Arbroath and Broughty Ferry,27584.656025360408,0.021559254073215683
+scp_baby_boost,2030,S14000067,"Argyll, Bute and South Lochaber",31996.257840748418,0.020494076980750297
+scp_baby_boost,2030,S14000068,Bathgate and Linlithgow,35669.706172653416,0.022976985414590242
+scp_baby_boost,2030,S14000069,"Caithness, Sutherland and Easter Ross",25949.154812309345,0.01761810518580157
+scp_baby_boost,2030,S14000070,Coatbridge and Bellshill,34522.35716557833,0.019510448749766963
+scp_baby_boost,2030,S14000071,Cowdenbeath and Kirkcaldy,34082.13281162109,0.02184785266323048
+scp_baby_boost,2030,S14000072,Cumbernauld and Kirkintilloch,32729.908218513265,0.023491211973293406
+scp_baby_boost,2030,S14000073,Dumfries and Galloway,22366.462277345694,0.011631811891791057
+scp_baby_boost,2030,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34275.42627522413,0.02588257249812664
+scp_baby_boost,2030,S14000075,Dundee Central,33165.265292644355,0.019114758629789463
+scp_baby_boost,2030,S14000076,Dunfermline and Dollar,32048.619773053942,0.01855234577975243
+scp_baby_boost,2030,S14000077,East Kilbride and Strathaven,31665.52497912428,0.020141490190571237
+scp_baby_boost,2030,S14000078,Edinburgh East and Musselburgh,26160.244400277836,0.016439869723247527
+scp_baby_boost,2030,S14000079,Edinburgh North and Leith,31416.746750247665,0.021343282651707082
+scp_baby_boost,2030,S14000080,Edinburgh South,40420.558724515395,0.028085453752161905
+scp_baby_boost,2030,S14000081,Edinburgh South West,29683.666634767487,0.01776352151692968
+scp_baby_boost,2030,S14000082,Edinburgh West,31424.748876662725,0.019416377374121892
+scp_baby_boost,2030,S14000083,Falkirk,28922.719146152307,0.01846141192857791
+scp_baby_boost,2030,S14000084,Glasgow East,29092.137856168174,0.016707660564175605
+scp_baby_boost,2030,S14000085,Glasgow North,23997.055760995932,0.018075982749769327
+scp_baby_boost,2030,S14000086,Glasgow North East,30570.398327735664,0.01816226720647825
+scp_baby_boost,2030,S14000087,Glasgow South,28732.304246120697,0.016686246391383025
+scp_baby_boost,2030,S14000088,Glasgow South West,28493.7434109871,0.016954168069222435
+scp_baby_boost,2030,S14000089,Glasgow West,28683.110782623473,0.016436470622616463
+scp_baby_boost,2030,S14000090,Glenrothes and Mid Fife,36263.745895824024,0.028940132945774202
+scp_baby_boost,2030,S14000091,Gordon and Buchan,37619.99793870111,0.026807696999365496
+scp_baby_boost,2030,S14000092,Hamilton and Clyde Valley,26447.912466853202,0.01748059267057689
+scp_baby_boost,2030,S14000093,Inverclyde and Renfrewshire West,33889.268209576425,0.021034731615488095
+scp_baby_boost,2030,S14000094,"Inverness, Skye and West Ross-shire",32161.39908240014,0.024633673183205498
+scp_baby_boost,2030,S14000095,Livingston,33546.789544810315,0.023730049197180397
+scp_baby_boost,2030,S14000096,Lothian East,27102.06966898657,0.016817039267556365
+scp_baby_boost,2030,S14000097,Mid Dunbartonshire,28552.48775640311,0.01612723320026967
+scp_baby_boost,2030,S14000098,"Moray West, Nairn and Strathspey",37007.544584455114,0.02393197030363052
+scp_baby_boost,2030,S14000099,"Motherwell, Wishaw and Carluke",33028.08096576231,0.01693458945943029
+scp_baby_boost,2030,S14000100,North East Fife,25290.802666675565,0.014167233998094449
+scp_baby_boost,2030,S14000101,Paisley and Renfrewshire North,38373.825486717746,0.024026343996454154
+scp_baby_boost,2030,S14000102,Paisley and Renfrewshire South,29595.756350706233,0.019048388548896657
+scp_baby_boost,2030,S14000103,Perth and Kinross-shire,27221.718384433352,0.01768609569219662
+scp_baby_boost,2030,S14000104,Rutherglen,31823.886448100686,0.01859914623629127
+scp_baby_boost,2030,S14000105,Stirling and Strathallan,29528.988864527622,0.022864693738499194
+scp_baby_boost,2030,S14000106,West Dunbartonshire,31361.93164321207,0.019431858178941493
+scp_baby_boost,2030,S14000107,"Ayr, Carrick and Cumnock",34353.40519177462,0.021652526524925515
+scp_baby_boost,2030,S14000108,"Berwickshire, Roxburgh and Selkirk",29664.964973972394,0.01537028529252531
+scp_baby_boost,2030,S14000109,Central Ayrshire,31286.518436609545,0.01843414727205714
+scp_baby_boost,2030,S14000110,Kilmarnock and Loudoun,34113.97127766566,0.02147425253884502
+scp_baby_boost,2030,S14000111,West Aberdeenshire and Kincardine,29371.45434940558,0.014405364481885025
+scottish_budget_2026_combined,2026,S14000021,East Renfrewshire,27264.249738366085,0.020407623870044887
+scottish_budget_2026_combined,2026,S14000027,Na h-Eileanan an Iar,27803.99582165024,0.01965032233912675
+scottish_budget_2026_combined,2026,S14000045,Midlothian,32401.849424976393,0.022748323088972525
+scottish_budget_2026_combined,2026,S14000048,North Ayrshire and Arran,26286.04682058298,0.016812375829057157
+scottish_budget_2026_combined,2026,S14000051,Orkney and Shetland,33938.21522655189,0.03286656140670432
+scottish_budget_2026_combined,2026,S14000060,Aberdeen North,30985.659566612707,0.02040119529889019
+scottish_budget_2026_combined,2026,S14000061,Aberdeen South,23151.60433666095,0.01375366065238837
+scottish_budget_2026_combined,2026,S14000062,Aberdeenshire North and Moray East,31948.054843177844,0.023781695544531672
+scottish_budget_2026_combined,2026,S14000063,Airdrie and Shotts,20467.271240705886,0.018155003180750633
+scottish_budget_2026_combined,2026,S14000064,Alloa and Grangemouth,33383.929986574345,0.023502908786099792
+scottish_budget_2026_combined,2026,S14000065,Angus and Perthshire Glens,31192.641415334816,0.022132799347377163
+scottish_budget_2026_combined,2026,S14000066,Arbroath and Broughty Ferry,26538.718059812094,0.022583113449497195
+scottish_budget_2026_combined,2026,S14000067,"Argyll, Bute and South Lochaber",30439.200351526397,0.02122408087349686
+scottish_budget_2026_combined,2026,S14000068,Bathgate and Linlithgow,34610.92862626692,0.024285963788376663
+scottish_budget_2026_combined,2026,S14000069,"Caithness, Sutherland and Easter Ross",24388.641565254806,0.01806549818738483
+scottish_budget_2026_combined,2026,S14000070,Coatbridge and Bellshill,33215.549637269454,0.02045822820365144
+scottish_budget_2026_combined,2026,S14000071,Cowdenbeath and Kirkcaldy,32588.916405777163,0.02279125685867523
+scottish_budget_2026_combined,2026,S14000072,Cumbernauld and Kirkintilloch,31187.899607480205,0.02440435046619428
+scottish_budget_2026_combined,2026,S14000073,Dumfries and Galloway,21189.28040381289,0.012020152355764917
+scottish_budget_2026_combined,2026,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",33066.72663305361,0.02719732165777615
+scottish_budget_2026_combined,2026,S14000075,Dundee Central,31574.25376770591,0.019840215799850777
+scottish_budget_2026_combined,2026,S14000076,Dunfermline and Dollar,30537.30204106554,0.019288321353590543
+scottish_budget_2026_combined,2026,S14000077,East Kilbride and Strathaven,30473.3979551692,0.02111929078981177
+scottish_budget_2026_combined,2026,S14000078,Edinburgh East and Musselburgh,24035.603362211168,0.0164597540768795
+scottish_budget_2026_combined,2026,S14000079,Edinburgh North and Leith,29578.481477974736,0.021891783609577893
+scottish_budget_2026_combined,2026,S14000080,Edinburgh South,38665.95289340333,0.02926755076716598
+scottish_budget_2026_combined,2026,S14000081,Edinburgh South West,27410.49677274041,0.017867734473106817
+scottish_budget_2026_combined,2026,S14000082,Edinburgh West,29248.713166481546,0.019712645865272604
+scottish_budget_2026_combined,2026,S14000083,Falkirk,27048.203374070177,0.018824839483461104
+scottish_budget_2026_combined,2026,S14000084,Glasgow East,27906.260146271103,0.01749908618160187
+scottish_budget_2026_combined,2026,S14000085,Glasgow North,23899.388526343148,0.019599918610870976
+scottish_budget_2026_combined,2026,S14000086,Glasgow North East,29797.124048573754,0.019309401505403764
+scottish_budget_2026_combined,2026,S14000087,Glasgow South,27834.01159138287,0.017640754323516267
+scottish_budget_2026_combined,2026,S14000088,Glasgow South West,26900.17924503766,0.017469676386419997
+scottish_budget_2026_combined,2026,S14000089,Glasgow West,27096.82965138681,0.016924630753413217
+scottish_budget_2026_combined,2026,S14000090,Glenrothes and Mid Fife,35103.439155946515,0.030504199070024753
+scottish_budget_2026_combined,2026,S14000091,Gordon and Buchan,36543.43289558487,0.028349943159785316
+scottish_budget_2026_combined,2026,S14000092,Hamilton and Clyde Valley,24943.427061594786,0.01797919238078703
+scottish_budget_2026_combined,2026,S14000093,Inverclyde and Renfrewshire West,32363.25258286217,0.02189227184556907
+scottish_budget_2026_combined,2026,S14000094,"Inverness, Skye and West Ross-shire",31578.923325696735,0.026349285936145952
+scottish_budget_2026_combined,2026,S14000095,Livingston,32170.284918969603,0.024788725380252796
+scottish_budget_2026_combined,2026,S14000096,Lothian East,25480.472954783498,0.017242072515093302
+scottish_budget_2026_combined,2026,S14000097,Mid Dunbartonshire,26982.722927970604,0.016612448763937155
+scottish_budget_2026_combined,2026,S14000098,"Moray West, Nairn and Strathspey",36102.48042515925,0.025402495938483805
+scottish_budget_2026_combined,2026,S14000099,"Motherwell, Wishaw and Carluke",31283.305059320206,0.01746563083650006
+scottish_budget_2026_combined,2026,S14000100,North East Fife,22732.755952742067,0.013886529134390747
+scottish_budget_2026_combined,2026,S14000101,Paisley and Renfrewshire North,37212.757358807394,0.025444928154344015
+scottish_budget_2026_combined,2026,S14000102,Paisley and Renfrewshire South,28550.511413118522,0.020036474713290394
+scottish_budget_2026_combined,2026,S14000103,Perth and Kinross-shire,25364.584991029347,0.017965037199268775
+scottish_budget_2026_combined,2026,S14000104,Rutherglen,31071.925011446874,0.01977578147313248
+scottish_budget_2026_combined,2026,S14000105,Stirling and Strathallan,27504.398831689796,0.023208728780578565
+scottish_budget_2026_combined,2026,S14000106,West Dunbartonshire,29187.79132914743,0.0197203479837041
+scottish_budget_2026_combined,2026,S14000107,"Ayr, Carrick and Cumnock",32828.8841168482,0.02254521395877039
+scottish_budget_2026_combined,2026,S14000108,"Berwickshire, Roxburgh and Selkirk",28051.311925234113,0.015844087884981577
+scottish_budget_2026_combined,2026,S14000109,Central Ayrshire,29361.112013887905,0.0188527630144425
+scottish_budget_2026_combined,2026,S14000110,Kilmarnock and Loudoun,32512.1076791155,0.02229476808937296
+scottish_budget_2026_combined,2026,S14000111,West Aberdeenshire and Kincardine,28568.95255152247,0.015262169792680389
+scottish_budget_2026_combined,2027,S14000021,East Renfrewshire,26646.829485647846,0.01952393651611629
+scottish_budget_2026_combined,2027,S14000027,Na h-Eileanan an Iar,28849.889582141957,0.01995332586223452
+scottish_budget_2026_combined,2027,S14000045,Midlothian,30609.805689855275,0.02104491845609267
+scottish_budget_2026_combined,2027,S14000048,North Ayrshire and Arran,25619.800546990693,0.016035786380577205
+scottish_budget_2026_combined,2027,S14000051,Orkney and Shetland,33989.70019419886,0.03215133880820245
+scottish_budget_2026_combined,2027,S14000060,Aberdeen North,30956.70084555018,0.019947072295543256
+scottish_budget_2026_combined,2027,S14000061,Aberdeen South,23080.59522412354,0.013412115411230599
+scottish_budget_2026_combined,2027,S14000062,Aberdeenshire North and Moray East,30236.746837651004,0.022031485273980377
+scottish_budget_2026_combined,2027,S14000063,Airdrie and Shotts,20554.79755947272,0.017837794245765926
+scottish_budget_2026_combined,2027,S14000064,Alloa and Grangemouth,33080.92899230211,0.02277866567634937
+scottish_budget_2026_combined,2027,S14000065,Angus and Perthshire Glens,29712.41141778966,0.020637928742786887
+scottish_budget_2026_combined,2027,S14000066,Arbroath and Broughty Ferry,25675.591212308336,0.02138799835275988
+scottish_budget_2026_combined,2027,S14000067,"Argyll, Bute and South Lochaber",29577.63587032013,0.02019356639621263
+scottish_budget_2026_combined,2027,S14000068,Bathgate and Linlithgow,33201.973435821536,0.022802997692157757
+scottish_budget_2026_combined,2027,S14000069,"Caithness, Sutherland and Easter Ross",24094.022499242346,0.01746070599242064
+scottish_budget_2026_combined,2027,S14000070,Coatbridge and Bellshill,32239.95039252519,0.019433750801575358
+scottish_budget_2026_combined,2027,S14000071,Cowdenbeath and Kirkcaldy,32244.17851704622,0.022060304987362958
+scottish_budget_2026_combined,2027,S14000072,Cumbernauld and Kirkintilloch,30561.275493705685,0.023401576278629464
+scottish_budget_2026_combined,2027,S14000073,Dumfries and Galloway,20458.979658133638,0.011351342086408393
+scottish_budget_2026_combined,2027,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",32187.202786913407,0.025911271823146426
+scottish_budget_2026_combined,2027,S14000075,Dundee Central,30872.17830536579,0.018978758577391265
+scottish_budget_2026_combined,2027,S14000076,Dunfermline and Dollar,29165.943650922207,0.01801933627031919
+scottish_budget_2026_combined,2027,S14000077,East Kilbride and Strathaven,29294.120385362286,0.019869141295613246
+scottish_budget_2026_combined,2027,S14000078,Edinburgh East and Musselburgh,24333.930378038483,0.016311429229092164
+scottish_budget_2026_combined,2027,S14000079,Edinburgh North and Leith,28960.59127029053,0.020983500442270264
+scottish_budget_2026_combined,2027,S14000080,Edinburgh South,37227.35478905006,0.02757398706306071
+scottish_budget_2026_combined,2027,S14000081,Edinburgh South West,27266.501561547815,0.01739745517384434
+scottish_budget_2026_combined,2027,S14000082,Edinburgh West,29042.049653726797,0.01914707370912733
+scottish_budget_2026_combined,2027,S14000083,Falkirk,26426.93831480865,0.017996607469616576
+scottish_budget_2026_combined,2027,S14000084,Glasgow East,27349.615593602663,0.016780019910255448
+scottish_budget_2026_combined,2027,S14000085,Glasgow North,21889.112765364218,0.017588336373983167
+scottish_budget_2026_combined,2027,S14000086,Glasgow North East,28348.125715005157,0.017974502259067444
+scottish_budget_2026_combined,2027,S14000087,Glasgow South,26562.522219918406,0.016474614489148852
+scottish_budget_2026_combined,2027,S14000088,Glasgow South West,26738.361677163877,0.016981460002761458
+scottish_budget_2026_combined,2027,S14000089,Glasgow West,26327.23664498169,0.016093678508970255
+scottish_budget_2026_combined,2027,S14000090,Glenrothes and Mid Fife,34084.71673201484,0.028989529442867184
+scottish_budget_2026_combined,2027,S14000091,Gordon and Buchan,35263.915922247004,0.026776919115412915
+scottish_budget_2026_combined,2027,S14000092,Hamilton and Clyde Valley,23768.722494961254,0.016760692342104568
+scottish_budget_2026_combined,2027,S14000093,Inverclyde and Renfrewshire West,31761.538048481932,0.021021659625167565
+scottish_budget_2026_combined,2027,S14000094,"Inverness, Skye and West Ross-shire",29865.108788376863,0.024390141598086112
+scottish_budget_2026_combined,2027,S14000095,Livingston,30722.104558906543,0.023169340892662944
+scottish_budget_2026_combined,2027,S14000096,Lothian East,25471.26695632029,0.01686399335991776
+scottish_budget_2026_combined,2027,S14000097,Mid Dunbartonshire,26441.39592594656,0.01593088195251969
+scottish_budget_2026_combined,2027,S14000098,"Moray West, Nairn and Strathspey",34374.994265600355,0.023685898928887734
+scottish_budget_2026_combined,2027,S14000099,"Motherwell, Wishaw and Carluke",30520.189065837032,0.016684831708941996
+scottish_budget_2026_combined,2027,S14000100,North East Fife,23147.429232412327,0.013833683698016755
+scottish_budget_2026_combined,2027,S14000101,Paisley and Renfrewshire North,36347.56936328007,0.02430809586066511
+scottish_budget_2026_combined,2027,S14000102,Paisley and Renfrewshire South,26808.542558253823,0.018410685873767048
+scottish_budget_2026_combined,2027,S14000103,Perth and Kinross-shire,25178.73254603312,0.017448309693305804
+scottish_budget_2026_combined,2027,S14000104,Rutherglen,29210.180818997276,0.018199646795117444
+scottish_budget_2026_combined,2027,S14000105,Stirling and Strathallan,27793.31442390045,0.022954011193033638
+scottish_budget_2026_combined,2027,S14000106,West Dunbartonshire,29223.981148217033,0.019316139975823717
+scottish_budget_2026_combined,2027,S14000107,"Ayr, Carrick and Cumnock",31899.129750496646,0.021435628762407535
+scottish_budget_2026_combined,2027,S14000108,"Berwickshire, Roxburgh and Selkirk",26907.77307756815,0.01487248326927475
+scottish_budget_2026_combined,2027,S14000109,Central Ayrshire,29366.129384994343,0.018452370252675418
+scottish_budget_2026_combined,2027,S14000110,Kilmarnock and Loudoun,31640.052704725793,0.021232431058919445
+scottish_budget_2026_combined,2027,S14000111,West Aberdeenshire and Kincardine,27127.378069932387,0.014186077875007119
+scottish_budget_2026_combined,2028,S14000021,East Renfrewshire,28269.77254355795,0.020274620256203153
+scottish_budget_2026_combined,2028,S14000027,Na h-Eileanan an Iar,30313.77784037428,0.020518366091812883
+scottish_budget_2026_combined,2028,S14000045,Midlothian,32595.138737811692,0.021934891789002046
+scottish_budget_2026_combined,2028,S14000048,North Ayrshire and Arran,26580.12110444711,0.016278562365118005
+scottish_budget_2026_combined,2028,S14000051,Orkney and Shetland,34878.17033161878,0.03223027679930569
+scottish_budget_2026_combined,2028,S14000060,Aberdeen North,32494.483555156057,0.02049222333843834
+scottish_budget_2026_combined,2028,S14000061,Aberdeen South,24066.60913588811,0.013683121804772535
+scottish_budget_2026_combined,2028,S14000062,Aberdeenshire North and Moray East,32048.877946867615,0.02285137897703358
+scottish_budget_2026_combined,2028,S14000063,Airdrie and Shotts,21535.664281644105,0.018287955886645887
+scottish_budget_2026_combined,2028,S14000064,Alloa and Grangemouth,34166.10543375939,0.0230098605901634
+scottish_budget_2026_combined,2028,S14000065,Angus and Perthshire Glens,31326.831515961676,0.02129484898942672
+scottish_budget_2026_combined,2028,S14000066,Arbroath and Broughty Ferry,27279.288597013558,0.022241125060122158
+scottish_budget_2026_combined,2028,S14000067,"Argyll, Bute and South Lochaber",30788.029310108523,0.020574593863379915
+scottish_budget_2026_combined,2028,S14000068,Bathgate and Linlithgow,35208.861427510885,0.02366378975938703
+scottish_budget_2026_combined,2028,S14000069,"Caithness, Sutherland and Easter Ross",25061.50649685496,0.01777013889929547
+scottish_budget_2026_combined,2028,S14000070,Coatbridge and Bellshill,33607.95666520246,0.019821131684746068
+scottish_budget_2026_combined,2028,S14000071,Cowdenbeath and Kirkcaldy,33846.53110197056,0.02265328637970186
+scottish_budget_2026_combined,2028,S14000072,Cumbernauld and Kirkintilloch,32580.878694151947,0.0244139333436771
+scottish_budget_2026_combined,2028,S14000073,Dumfries and Galloway,21373.73218803254,0.01160150335532124
+scottish_budget_2026_combined,2028,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34064.683959233844,0.026832795383292644
+scottish_budget_2026_combined,2028,S14000075,Dundee Central,32063.243642756734,0.019284581585317387
+scottish_budget_2026_combined,2028,S14000076,Dunfermline and Dollar,30576.766820882494,0.018482767097897205
+scottish_budget_2026_combined,2028,S14000077,East Kilbride and Strathaven,30771.089909109396,0.020424841853925096
+scottish_budget_2026_combined,2028,S14000078,Edinburgh East and Musselburgh,25750.11207112935,0.01689485345168618
+scottish_budget_2026_combined,2028,S14000079,Edinburgh North and Leith,30466.260547312908,0.021602978925942148
+scottish_budget_2026_combined,2028,S14000080,Edinburgh South,38769.7779618112,0.02809680459097221
+scottish_budget_2026_combined,2028,S14000081,Edinburgh South West,28339.016782731553,0.017697816971035365
+scottish_budget_2026_combined,2028,S14000082,Edinburgh West,29988.022255146978,0.019341860161497408
+scottish_budget_2026_combined,2028,S14000083,Falkirk,27685.550145815236,0.01844906775100154
+scottish_budget_2026_combined,2028,S14000084,Glasgow East,28116.239096721376,0.01687397499020497
+scottish_budget_2026_combined,2028,S14000085,Glasgow North,23387.79033341212,0.018385779036243628
+scottish_budget_2026_combined,2028,S14000086,Glasgow North East,29501.42762975955,0.018299688855094507
+scottish_budget_2026_combined,2028,S14000087,Glasgow South,27860.0772902648,0.016904944862035226
+scottish_budget_2026_combined,2028,S14000088,Glasgow South West,27663.68335984263,0.017186644649581997
+scottish_budget_2026_combined,2028,S14000089,Glasgow West,27859.897744916667,0.016666282246303798
+scottish_budget_2026_combined,2028,S14000090,Glenrothes and Mid Fife,35727.526727133576,0.029737149273979212
+scottish_budget_2026_combined,2028,S14000091,Gordon and Buchan,37146.77780122987,0.027608921064068516
+scottish_budget_2026_combined,2028,S14000092,Hamilton and Clyde Valley,24937.394245276217,0.017204918156056043
+scottish_budget_2026_combined,2028,S14000093,Inverclyde and Renfrewshire West,33299.65559260894,0.02156906980540019
+scottish_budget_2026_combined,2028,S14000094,"Inverness, Skye and West Ross-shire",31625.73402931234,0.02527293176066437
+scottish_budget_2026_combined,2028,S14000095,Livingston,32630.945224282037,0.024084346899397445
+scottish_budget_2026_combined,2028,S14000096,Lothian East,26563.49977400626,0.017209510697213187
+scottish_budget_2026_combined,2028,S14000097,Mid Dunbartonshire,27773.19158082821,0.01637655189228919
+scottish_budget_2026_combined,2028,S14000098,"Moray West, Nairn and Strathspey",36218.568577562975,0.024427001060196237
+scottish_budget_2026_combined,2028,S14000099,"Motherwell, Wishaw and Carluke",32052.544900580036,0.017148715520375456
+scottish_budget_2026_combined,2028,S14000100,North East Fife,24290.174558465413,0.014206592704796444
+scottish_budget_2026_combined,2028,S14000101,Paisley and Renfrewshire North,37310.881746022744,0.02439853059526773
+scottish_budget_2026_combined,2028,S14000102,Paisley and Renfrewshire South,28111.292653970144,0.01888805340154417
+scottish_budget_2026_combined,2028,S14000103,Perth and Kinross-shire,26437.48751204926,0.01792995786508718
+scottish_budget_2026_combined,2028,S14000104,Rutherglen,30893.709217229905,0.018840165144134263
+scottish_budget_2026_combined,2028,S14000105,Stirling and Strathallan,29223.307432073292,0.023620521397341068
+scottish_budget_2026_combined,2028,S14000106,West Dunbartonshire,30440.541977851626,0.019687202709738852
+scottish_budget_2026_combined,2028,S14000107,"Ayr, Carrick and Cumnock",33175.144198008886,0.02180842699127089
+scottish_budget_2026_combined,2028,S14000108,"Berwickshire, Roxburgh and Selkirk",28137.35876864171,0.015217043128978872
+scottish_budget_2026_combined,2028,S14000109,Central Ayrshire,30382.19077034491,0.01868294260609746
+scottish_budget_2026_combined,2028,S14000110,Kilmarnock and Loudoun,33041.16297853546,0.021693580899305835
+scottish_budget_2026_combined,2028,S14000111,West Aberdeenshire and Kincardine,28616.68009810232,0.01464529548905599
+scottish_budget_2026_combined,2029,S14000021,East Renfrewshire,28391.873436743852,0.019934435797320384
+scottish_budget_2026_combined,2029,S14000027,Na h-Eileanan an Iar,30444.822678609107,0.020169933171391177
+scottish_budget_2026_combined,2029,S14000045,Midlothian,32736.53456648387,0.021566120275351434
+scottish_budget_2026_combined,2029,S14000048,North Ayrshire and Arran,26695.688579664737,0.015993749488826363
+scottish_budget_2026_combined,2029,S14000051,Orkney and Shetland,35030.24316819134,0.03161485877034102
+scottish_budget_2026_combined,2029,S14000060,Aberdeen North,32635.529626061787,0.02014603482296975
+scottish_budget_2026_combined,2029,S14000061,Aberdeen South,24170.923344981864,0.013446479684670675
+scottish_budget_2026_combined,2029,S14000062,Aberdeenshire North and Moray East,32187.30478554701,0.022462478138441083
+scottish_budget_2026_combined,2029,S14000063,Airdrie and Shotts,21628.784404679514,0.017974100289657523
+scottish_budget_2026_combined,2029,S14000064,Alloa and Grangemouth,34315.075989220735,0.022601033583001636
+scottish_budget_2026_combined,2029,S14000065,Angus and Perthshire Glens,31463.054256562773,0.02093126984496996
+scottish_budget_2026_combined,2029,S14000066,Arbroath and Broughty Ferry,27397.657180000413,0.021865121245579187
+scottish_budget_2026_combined,2029,S14000067,"Argyll, Bute and South Lochaber",30921.94919222623,0.02022584182823463
+scottish_budget_2026_combined,2029,S14000068,Bathgate and Linlithgow,35361.963805998595,0.02326264686173026
+scottish_budget_2026_combined,2029,S14000069,"Caithness, Sutherland and Easter Ross",25170.356899455768,0.017460803832668195
+scottish_budget_2026_combined,2029,S14000070,Coatbridge and Bellshill,33753.46926884161,0.019477417625834093
+scottish_budget_2026_combined,2029,S14000071,Cowdenbeath and Kirkcaldy,33993.33662623543,0.022260248732670376
+scottish_budget_2026_combined,2029,S14000072,Cumbernauld and Kirkintilloch,32721.533703090143,0.023997753072484748
+scottish_budget_2026_combined,2029,S14000073,Dumfries and Galloway,21466.79555273255,0.011399476618589569
+scottish_budget_2026_combined,2029,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34212.24894737676,0.026368909802645838
+scottish_budget_2026_combined,2029,S14000075,Dundee Central,32202.768186205816,0.01895051377926198
+scottish_budget_2026_combined,2029,S14000076,Dunfermline and Dollar,30709.47737612929,0.018167171753193892
+scottish_budget_2026_combined,2029,S14000077,East Kilbride and Strathaven,30904.59964080101,0.02007841869332067
+scottish_budget_2026_combined,2029,S14000078,Edinburgh East and Musselburgh,25861.121470850543,0.016610015316860387
+scottish_budget_2026_combined,2029,S14000079,Edinburgh North and Leith,30597.59758054234,0.02123429972865528
+scottish_budget_2026_combined,2029,S14000080,Edinburgh South,38938.40195164016,0.027613537899146088
+scottish_budget_2026_combined,2029,S14000081,Edinburgh South West,28462.12409644966,0.017397335986288166
+scottish_budget_2026_combined,2029,S14000082,Edinburgh West,30118.7491681093,0.019004546882996562
+scottish_budget_2026_combined,2029,S14000083,Falkirk,27805.20023910431,0.01813279247420998
+scottish_budget_2026_combined,2029,S14000084,Glasgow East,28238.95983623393,0.01657913409869987
+scottish_budget_2026_combined,2029,S14000085,Glasgow North,23489.227229684868,0.01808055047929979
+scottish_budget_2026_combined,2029,S14000086,Glasgow North East,29629.640176562207,0.017978947083171052
+scottish_budget_2026_combined,2029,S14000087,Glasgow South,27981.06778902801,0.01661139264526511
+scottish_budget_2026_combined,2029,S14000088,Glasgow South West,27784.42558543419,0.016887575686115226
+scottish_budget_2026_combined,2029,S14000089,Glasgow West,27980.703379400635,0.016382892205573107
+scottish_budget_2026_combined,2029,S14000090,Glenrothes and Mid Fife,35882.23900392996,0.029231343167201343
+scottish_budget_2026_combined,2029,S14000091,Gordon and Buchan,37308.05526056276,0.027147287744484012
+scottish_budget_2026_combined,2029,S14000092,Hamilton and Clyde Valley,25045.425182430885,0.01690809999870325
+scottish_budget_2026_combined,2029,S14000093,Inverclyde and Renfrewshire West,33443.74874646363,0.021206750230548344
+scottish_budget_2026_combined,2029,S14000094,"Inverness, Skye and West Ross-shire",31762.569935273732,0.024840716535015957
+scottish_budget_2026_combined,2029,S14000095,Livingston,32771.673653137754,0.02367809006736942
+scottish_budget_2026_combined,2029,S14000096,Lothian East,26679.09622153238,0.016912656536742093
+scottish_budget_2026_combined,2029,S14000097,Mid Dunbartonshire,27893.91769875418,0.01609817562241622
+scottish_budget_2026_combined,2029,S14000098,"Moray West, Nairn and Strathspey",36375.423979651016,0.02401565024160341
+scottish_budget_2026_combined,2029,S14000099,"Motherwell, Wishaw and Carluke",32191.76969969303,0.016855194830464423
+scottish_budget_2026_combined,2029,S14000100,North East Fife,24395.454840295773,0.013965472274574006
+scottish_budget_2026_combined,2029,S14000101,Paisley and Renfrewshire North,37474.07427859823,0.023960567071488442
+scottish_budget_2026_combined,2029,S14000102,Paisley and Renfrewshire South,28233.265705700847,0.01856090394331767
+scottish_budget_2026_combined,2029,S14000103,Perth and Kinross-shire,26551.52142140351,0.01762815011816275
+scottish_budget_2026_combined,2029,S14000104,Rutherglen,31027.844902708013,0.018521760746897594
+scottish_budget_2026_combined,2029,S14000105,Stirling and Strathallan,29349.940240530403,0.023218434095368588
+scottish_budget_2026_combined,2029,S14000106,West Dunbartonshire,30573.217534498122,0.01934815646516872
+scottish_budget_2026_combined,2029,S14000107,"Ayr, Carrick and Cumnock",33319.76036415526,0.021423617443739325
+scottish_budget_2026_combined,2029,S14000108,"Berwickshire, Roxburgh and Selkirk",28259.68568307538,0.014953806512276537
+scottish_budget_2026_combined,2029,S14000109,Central Ayrshire,30514.587048584985,0.018364732409017544
+scottish_budget_2026_combined,2029,S14000110,Kilmarnock and Loudoun,33184.913883433495,0.021311190447279697
+scottish_budget_2026_combined,2029,S14000111,West Aberdeenshire and Kincardine,28740.913335925336,0.01439569384794072
+scottish_budget_2026_combined,2030,S14000021,East Renfrewshire,28661.01804999552,0.019696767676769644
+scottish_budget_2026_combined,2030,S14000027,Na h-Eileanan an Iar,30734.814996765755,0.01992445117458363
+scottish_budget_2026_combined,2030,S14000045,Midlothian,33144.96570726968,0.021385692233739772
+scottish_budget_2026_combined,2030,S14000048,North Ayrshire and Arran,27721.202209410672,0.016267797661070414
+scottish_budget_2026_combined,2030,S14000051,Orkney and Shetland,35832.68939244833,0.03170538481318178
+scottish_budget_2026_combined,2030,S14000060,Aberdeen North,33429.83885101579,0.02019906037049732
+scottish_budget_2026_combined,2030,S14000061,Aberdeen South,25016.32894103961,0.013614900922908197
+scottish_budget_2026_combined,2030,S14000062,Aberdeenshire North and Moray East,33059.73326170455,0.02259639975351908
+scottish_budget_2026_combined,2030,S14000063,Airdrie and Shotts,22405.539698672404,0.018224407648560655
+scottish_budget_2026_combined,2030,S14000064,Alloa and Grangemouth,35259.67495018131,0.022732632733155955
+scottish_budget_2026_combined,2030,S14000065,Angus and Perthshire Glens,32373.775940607527,0.021099164438856507
+scottish_budget_2026_combined,2030,S14000066,Arbroath and Broughty Ferry,27584.656025360408,0.021559254073215683
+scottish_budget_2026_combined,2030,S14000067,"Argyll, Bute and South Lochaber",31996.257840748418,0.020494076980750297
+scottish_budget_2026_combined,2030,S14000068,Bathgate and Linlithgow,35669.706172653416,0.022976985414590242
+scottish_budget_2026_combined,2030,S14000069,"Caithness, Sutherland and Easter Ross",25949.154812309345,0.01761810518580157
+scottish_budget_2026_combined,2030,S14000070,Coatbridge and Bellshill,34522.35716557833,0.019510448749766963
+scottish_budget_2026_combined,2030,S14000071,Cowdenbeath and Kirkcaldy,34082.13281162109,0.02184785266323048
+scottish_budget_2026_combined,2030,S14000072,Cumbernauld and Kirkintilloch,32729.908218513265,0.023491211973293406
+scottish_budget_2026_combined,2030,S14000073,Dumfries and Galloway,22366.462277345694,0.011631811891791057
+scottish_budget_2026_combined,2030,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",34275.42627522413,0.02588257249812664
+scottish_budget_2026_combined,2030,S14000075,Dundee Central,33165.265292644355,0.019114758629789463
+scottish_budget_2026_combined,2030,S14000076,Dunfermline and Dollar,32048.619773053942,0.01855234577975243
+scottish_budget_2026_combined,2030,S14000077,East Kilbride and Strathaven,31665.52497912428,0.020141490190571237
+scottish_budget_2026_combined,2030,S14000078,Edinburgh East and Musselburgh,26160.244400277836,0.016439869723247527
+scottish_budget_2026_combined,2030,S14000079,Edinburgh North and Leith,31416.746750247665,0.021343282651707082
+scottish_budget_2026_combined,2030,S14000080,Edinburgh South,40420.558724515395,0.028085453752161905
+scottish_budget_2026_combined,2030,S14000081,Edinburgh South West,29683.666634767487,0.01776352151692968
+scottish_budget_2026_combined,2030,S14000082,Edinburgh West,31424.748876662725,0.019416377374121892
+scottish_budget_2026_combined,2030,S14000083,Falkirk,28922.719146152307,0.01846141192857791
+scottish_budget_2026_combined,2030,S14000084,Glasgow East,29092.137856168174,0.016707660564175605
+scottish_budget_2026_combined,2030,S14000085,Glasgow North,23997.055760995932,0.018075982749769327
+scottish_budget_2026_combined,2030,S14000086,Glasgow North East,30570.398327735664,0.01816226720647825
+scottish_budget_2026_combined,2030,S14000087,Glasgow South,28732.304246120697,0.016686246391383025
+scottish_budget_2026_combined,2030,S14000088,Glasgow South West,28493.7434109871,0.016954168069222435
+scottish_budget_2026_combined,2030,S14000089,Glasgow West,28683.110782623473,0.016436470622616463
+scottish_budget_2026_combined,2030,S14000090,Glenrothes and Mid Fife,36263.745895824024,0.028940132945774202
+scottish_budget_2026_combined,2030,S14000091,Gordon and Buchan,37619.99793870111,0.026807696999365496
+scottish_budget_2026_combined,2030,S14000092,Hamilton and Clyde Valley,26447.912466853202,0.01748059267057689
+scottish_budget_2026_combined,2030,S14000093,Inverclyde and Renfrewshire West,33889.268209576425,0.021034731615488095
+scottish_budget_2026_combined,2030,S14000094,"Inverness, Skye and West Ross-shire",32161.39908240014,0.024633673183205498
+scottish_budget_2026_combined,2030,S14000095,Livingston,33546.789544810315,0.023730049197180397
+scottish_budget_2026_combined,2030,S14000096,Lothian East,27102.06966898657,0.016817039267556365
+scottish_budget_2026_combined,2030,S14000097,Mid Dunbartonshire,28552.48775640311,0.01612723320026967
+scottish_budget_2026_combined,2030,S14000098,"Moray West, Nairn and Strathspey",37007.544584455114,0.02393197030363052
+scottish_budget_2026_combined,2030,S14000099,"Motherwell, Wishaw and Carluke",33028.08096576231,0.01693458945943029
+scottish_budget_2026_combined,2030,S14000100,North East Fife,25290.802666675565,0.014167233998094449
+scottish_budget_2026_combined,2030,S14000101,Paisley and Renfrewshire North,38373.825486717746,0.024026343996454154
+scottish_budget_2026_combined,2030,S14000102,Paisley and Renfrewshire South,29595.756350706233,0.019048388548896657
+scottish_budget_2026_combined,2030,S14000103,Perth and Kinross-shire,27221.718384433352,0.01768609569219662
+scottish_budget_2026_combined,2030,S14000104,Rutherglen,31823.886448100686,0.01859914623629127
+scottish_budget_2026_combined,2030,S14000105,Stirling and Strathallan,29528.988864527622,0.022864693738499194
+scottish_budget_2026_combined,2030,S14000106,West Dunbartonshire,31361.93164321207,0.019431858178941493
+scottish_budget_2026_combined,2030,S14000107,"Ayr, Carrick and Cumnock",34353.40519177462,0.021652526524925515
+scottish_budget_2026_combined,2030,S14000108,"Berwickshire, Roxburgh and Selkirk",29664.964973972394,0.01537028529252531
+scottish_budget_2026_combined,2030,S14000109,Central Ayrshire,31286.518436609545,0.01843414727205714
+scottish_budget_2026_combined,2030,S14000110,Kilmarnock and Loudoun,34113.97127766566,0.02147425253884502
+scottish_budget_2026_combined,2030,S14000111,West Aberdeenshire and Kincardine,29371.45434940558,0.014405364481885025

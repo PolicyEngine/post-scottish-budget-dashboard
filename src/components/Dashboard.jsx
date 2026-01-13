@@ -48,6 +48,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [livingStandardsData, setLivingStandardsData] = useState(null);
   const [povertyData, setPovertyData] = useState(null);
+  const [budgetaryData, setBudgetaryData] = useState(null);
   const [baselineData, setBaselineData] = useState(FALLBACK_BASELINE_DATA);
   const [povertyType, setPovertyType] = useState("absoluteBHC");
   const [povertyAgeGroup, setPovertyAgeGroup] = useState("all");
@@ -80,9 +81,10 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [distRes, metricsRes] = await Promise.all([
+        const [distRes, metricsRes, budgetRes] = await Promise.all([
           fetch("/data/distributional_impact.csv"),
           fetch("/data/metrics.csv"),
+          fetch("/data/budgetary_impact.csv"),
         ]);
 
         if (distRes.ok) {
@@ -129,6 +131,27 @@ export default function Dashboard() {
               },
             },
           });
+        }
+
+        if (budgetRes.ok) {
+          const csvText = await budgetRes.text();
+          const data = parseCSV(csvText);
+
+          // Group by reform
+          const byReform = {};
+          data.forEach(row => {
+            const id = row.reform_id;
+            if (!byReform[id]) {
+              byReform[id] = {
+                id,
+                name: row.reform_name,
+                years: {},
+              };
+            }
+            byReform[id].years[row.year] = parseFloat(row.value) || 0;
+          });
+
+          setBudgetaryData(byReform);
         }
       } catch (err) {
         console.warn("Using fallback data:", err);
@@ -188,6 +211,51 @@ export default function Dashboard() {
         on 13 January 2026. It examines how the budget measures affect living standards, poverty rates,
         and distributes impacts across Scotland's local areas.
       </p>
+      <p className="chart-description" style={{ marginTop: "12px" }}>
+        The budget includes two key measures for families:
+      </p>
+      <ul className="policy-list">
+        <li>
+          <strong>Scottish Child Payment baby boost</strong>: The Scottish Child Payment is boosted to £40/week
+          for families with babies under 1 year old (up from £27.15/week), delivering the "strongest package
+          of support for families with young children anywhere in the UK".
+        </li>
+        <li>
+          <strong>Two-child limit abolition</strong>: Scotland's top-up payment effectively removes the
+          UK's two-child limit on Universal Credit and Child Tax Credit for Scottish households.
+        </li>
+      </ul>
+
+      {/* Budgetary Impact Summary */}
+      {budgetaryData && (
+        <div className="budgetary-summary">
+          <h3 className="chart-title">Estimated cost (2026)</h3>
+          <div className="cost-cards">
+            {budgetaryData.scp_baby_boost && (
+              <div className="cost-card">
+                <div className="cost-label">SCP baby boost</div>
+                <div className="cost-value">£{(budgetaryData.scp_baby_boost.years["2026"] || 0).toFixed(0)}m</div>
+                <div className="cost-detail">per year</div>
+              </div>
+            )}
+            {budgetaryData.two_child_limit_abolition && (
+              <div className="cost-card">
+                <div className="cost-label">Two-child limit abolition</div>
+                <div className="cost-value">£{(budgetaryData.two_child_limit_abolition.years["2026"] || 0).toFixed(0)}m</div>
+                <div className="cost-detail">per year</div>
+              </div>
+            )}
+            {budgetaryData.scottish_budget_2026_combined && (
+              <div className="cost-card highlight">
+                <div className="cost-label">Combined package</div>
+                <div className="cost-value">£{(budgetaryData.scottish_budget_2026_combined.years["2026"] || 0).toFixed(0)}m</div>
+                <div className="cost-detail">per year</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <p className="chart-description" style={{ marginTop: "12px" }}>
         PolicyEngine is an open-source microsimulation model that{" "}
         <a href="https://github.com/PolicyEngine/policyengine-uk-data" target="_blank" rel="noopener noreferrer">reweights</a>{" "}

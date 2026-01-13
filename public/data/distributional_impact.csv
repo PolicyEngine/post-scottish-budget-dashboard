@@ -1,21 +1,151 @@
 reform_id,reform_name,year,decile,value,absolute_change
-two_child_limit_abolition,Two-child limit abolition,2026,1st,2.8,350
-two_child_limit_abolition,Two-child limit abolition,2026,2nd,2.1,420
-two_child_limit_abolition,Two-child limit abolition,2026,3rd,1.2,310
-two_child_limit_abolition,Two-child limit abolition,2026,4th,0.6,180
-two_child_limit_abolition,Two-child limit abolition,2026,5th,0.3,110
-two_child_limit_abolition,Two-child limit abolition,2026,6th,0.15,65
-two_child_limit_abolition,Two-child limit abolition,2026,7th,0.08,40
-two_child_limit_abolition,Two-child limit abolition,2026,8th,0.03,20
-two_child_limit_abolition,Two-child limit abolition,2026,9th,0.01,10
-two_child_limit_abolition,Two-child limit abolition,2026,10th,0.0,0
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,1st,2.8,350
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,2nd,2.1,420
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,3rd,1.2,310
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,4th,0.6,180
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,5th,0.3,110
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,6th,0.15,65
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,7th,0.08,40
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,8th,0.03,20
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,9th,0.01,10
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,10th,0.0,0
+two_child_limit_abolition,Two-child limit abolition,2026,1st,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,2nd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,3rd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,4th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,5th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,6th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,7th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,8th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,9th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2026,10th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,1st,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,2nd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,3rd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,4th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,5th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,6th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,7th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,8th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,9th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,10th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,1st,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,2nd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,3rd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,4th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,5th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,6th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,7th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,8th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,9th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,10th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,1st,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,2nd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,3rd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,4th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,5th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,6th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,7th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,8th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,9th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,10th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,1st,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,2nd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,3rd,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,4th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,5th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,6th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,7th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,8th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,9th,0.0,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,10th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,1st,0.013750751,2.538686
+scp_baby_boost,SCP baby boost (£40/week),2026,2nd,0.009549242,2.8399804
+scp_baby_boost,SCP baby boost (£40/week),2026,3rd,0.0046487893,1.7095026
+scp_baby_boost,SCP baby boost (£40/week),2026,4th,0.0017536965,0.703212
+scp_baby_boost,SCP baby boost (£40/week),2026,5th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,6th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,7th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,8th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,9th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,10th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,1st,0.00879621,1.6255368
+scp_baby_boost,SCP baby boost (£40/week),2027,2nd,0.009487345,2.8543546
+scp_baby_boost,SCP baby boost (£40/week),2027,3rd,0.0045820647,1.7259245
+scp_baby_boost,SCP baby boost (£40/week),2027,4th,0.0023599237,0.9657055
+scp_baby_boost,SCP baby boost (£40/week),2027,5th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,6th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,7th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,8th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,9th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,10th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,1st,0.010504788,1.9641074
+scp_baby_boost,SCP baby boost (£40/week),2028,2nd,0.009344136,2.8496056
+scp_baby_boost,SCP baby boost (£40/week),2028,3rd,0.0045627975,1.7478071
+scp_baby_boost,SCP baby boost (£40/week),2028,4th,0.0029043865,1.2093745
+scp_baby_boost,SCP baby boost (£40/week),2028,5th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,6th,3.7057686e-07,0.0001851669
+scp_baby_boost,SCP baby boost (£40/week),2028,7th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,8th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,9th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,10th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,1st,0.010373728,1.9553937
+scp_baby_boost,SCP baby boost (£40/week),2029,2nd,0.0092110755,2.856536
+scp_baby_boost,SCP baby boost (£40/week),2029,3rd,0.0044343127,1.7187428
+scp_baby_boost,SCP baby boost (£40/week),2029,4th,0.0028625992,1.2069119
+scp_baby_boost,SCP baby boost (£40/week),2029,5th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,6th,3.6931775e-07,0.00018708479
+scp_baby_boost,SCP baby boost (£40/week),2029,7th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,8th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,9th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,10th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,1st,0.011576037,2.1803045
+scp_baby_boost,SCP baby boost (£40/week),2030,2nd,0.009104096,2.8765109
+scp_baby_boost,SCP baby boost (£40/week),2030,3rd,0.004373116,1.7092174
+scp_baby_boost,SCP baby boost (£40/week),2030,4th,0.0027991668,1.1956496
+scp_baby_boost,SCP baby boost (£40/week),2030,5th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,6th,3.591472e-07,0.00018546896
+scp_baby_boost,SCP baby boost (£40/week),2030,7th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,8th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,9th,0.0,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,10th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,1st,0.013750751,2.538686
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,2nd,0.009549242,2.8399804
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,3rd,0.0046487893,1.7095026
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,4th,0.0017536965,0.703212
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,5th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,6th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,7th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,8th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,9th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,10th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,1st,0.00879621,1.6255368
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,2nd,0.009487345,2.8543546
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,3rd,0.0045820647,1.7259245
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,4th,0.0023599237,0.9657055
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,5th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,6th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,7th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,8th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,9th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,10th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,1st,0.010504788,1.9641074
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,2nd,0.009344136,2.8496056
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,3rd,0.0045627975,1.7478071
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,4th,0.0029043865,1.2093745
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,5th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,6th,3.7057686e-07,0.0001851669
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,7th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,8th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,9th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,10th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,1st,0.010373728,1.9553937
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,2nd,0.0092110755,2.856536
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,3rd,0.0044343127,1.7187428
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,4th,0.0028625992,1.2069119
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,5th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,6th,3.6931775e-07,0.00018708479
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,7th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,8th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,9th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,10th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,1st,0.011576037,2.1803045
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,2nd,0.009104096,2.8765109
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,3rd,0.004373116,1.7092174
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,4th,0.0027991668,1.1956496
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,5th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,6th,3.591472e-07,0.00018546896
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,7th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,8th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,9th,0.0,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,10th,0.0,0.0

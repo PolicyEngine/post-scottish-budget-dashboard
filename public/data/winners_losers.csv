@@ -1,7 +1,46 @@
 reform_id,reform_name,year,metric,value
-two_child_limit_abolition,Two-child limit abolition,2026,winners_pct,12.5
+two_child_limit_abolition,Two-child limit abolition,2026,winners_pct,0.0
 two_child_limit_abolition,Two-child limit abolition,2026,losers_pct,0.0
-two_child_limit_abolition,Two-child limit abolition,2026,unchanged_pct,87.5
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,winners_pct,12.5
+two_child_limit_abolition,Two-child limit abolition,2026,unchanged_pct,100.0
+two_child_limit_abolition,Two-child limit abolition,2027,winners_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,losers_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2027,unchanged_pct,100.0
+two_child_limit_abolition,Two-child limit abolition,2028,winners_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,losers_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2028,unchanged_pct,100.0
+two_child_limit_abolition,Two-child limit abolition,2029,winners_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,losers_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2029,unchanged_pct,100.0
+two_child_limit_abolition,Two-child limit abolition,2030,winners_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,losers_pct,0.0
+two_child_limit_abolition,Two-child limit abolition,2030,unchanged_pct,100.0
+scp_baby_boost,SCP baby boost (£40/week),2026,winners_pct,0.11823602
+scp_baby_boost,SCP baby boost (£40/week),2026,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,unchanged_pct,99.88176
+scp_baby_boost,SCP baby boost (£40/week),2027,winners_pct,0.107738435
+scp_baby_boost,SCP baby boost (£40/week),2027,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,unchanged_pct,99.892265
+scp_baby_boost,SCP baby boost (£40/week),2028,winners_pct,0.116971284
+scp_baby_boost,SCP baby boost (£40/week),2028,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,unchanged_pct,99.883026
+scp_baby_boost,SCP baby boost (£40/week),2029,winners_pct,0.11654032
+scp_baby_boost,SCP baby boost (£40/week),2029,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,unchanged_pct,99.88346
+scp_baby_boost,SCP baby boost (£40/week),2030,winners_pct,0.11998709
+scp_baby_boost,SCP baby boost (£40/week),2030,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,unchanged_pct,99.88001
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,winners_pct,0.11823602
 scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,losers_pct,0.0
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,unchanged_pct,87.5
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,unchanged_pct,99.88176
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,winners_pct,0.107738435
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,losers_pct,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,unchanged_pct,99.892265
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,winners_pct,0.116971284
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,losers_pct,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,unchanged_pct,99.883026
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,winners_pct,0.11654032
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,losers_pct,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,unchanged_pct,99.88346
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,winners_pct,0.11998709
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,losers_pct,0.0
+scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,unchanged_pct,99.88001

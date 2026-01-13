@@ -83,6 +83,9 @@ def generate_all_data(
         # Filter to Scottish constituencies if requested
         if scotland_only:
             scottish_mask = constituency_df["code"].str.startswith("S")
+            scottish_indices = scottish_mask.values
+            # Filter both weights and constituency_df to Scottish only
+            weights = weights[scottish_indices, :]
             constituency_df = constituency_df[scottish_mask].reset_index(drop=True)
             print(f"Filtering to {len(constituency_df)} Scottish constituencies")
 
