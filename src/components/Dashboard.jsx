@@ -287,6 +287,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
         <PovertyImpactTable
           data={povertyMetrics}
           title="Poverty rate impact by year"
+          policyName={`the ${policyInfo.name} policy`}
         />
       )}
 

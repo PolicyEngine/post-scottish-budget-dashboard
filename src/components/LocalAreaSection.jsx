@@ -63,7 +63,13 @@ function getRegion(constituencyName) {
   return "Scotland";
 }
 
+const POLICY_NAMES = {
+  scp_baby_boost: "SCP baby boost",
+  income_tax_threshold_uplift: "income tax threshold uplift",
+};
+
 export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) {
+  const policyName = POLICY_NAMES[selectedPolicy] || "the selected policy";
   const [constituencyData, setConstituencyData] = useState([]);
   const [selectedConstituency, setSelectedConstituency] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState("All regions");
@@ -190,6 +196,7 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
           selectedYear={2026}
           selectedConstituency={selectedConstituency ? { code: selectedConstituency.code, name: selectedConstituency.name } : null}
           onConstituencySelect={handleConstituencySelect}
+          policyName={policyName}
         />
       </div>
 
@@ -218,7 +225,7 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
       <div className="section-box">
         <h3 className="chart-title">Regional comparison</h3>
         <p className="chart-description">
-          Average household gain by Scottish region from the SCP baby boost policy.
+          Average household gain by Scottish region from the {policyName} policy.
         </p>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={350}>

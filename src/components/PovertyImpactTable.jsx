@@ -3,7 +3,7 @@ import "./PovertyImpactTable.css";
 /**
  * Table showing poverty rate impacts by year.
  */
-export default function PovertyImpactTable({ data, title }) {
+export default function PovertyImpactTable({ data, title, policyName = "the selected policy" }) {
   if (!data || data.length === 0) {
     return (
       <div className="poverty-table-container">
@@ -40,7 +40,7 @@ export default function PovertyImpactTable({ data, title }) {
     <div className="poverty-table-container">
       <h3 className="chart-title">{title || "Poverty rate impact by year"}</h3>
       <p className="chart-description">
-        Change in poverty rates under the SCP baby boost policy compared to baseline.
+        Change in poverty rates under {policyName} compared to baseline.
       </p>
 
       <div className="table-wrapper">

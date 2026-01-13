@@ -6,8 +6,7 @@ import "./ScotlandMap.css";
 
 // Chart metadata for export
 const CHART_TITLE = "Scottish constituency-level impacts";
-const CHART_DESCRIPTION =
-  "This map shows the average annual household gain from the SCP baby boost across Scottish constituencies. Green shading indicates larger gains.";
+// Note: CHART_DESCRIPTION is now generated dynamically using policyName prop
 
 // Fixed color scale extent for average gain (in £) - consistent across all years
 const FIXED_COLOR_EXTENT = 15;
@@ -23,6 +22,7 @@ export default function ScotlandMap({
   selectedYear = 2026,
   selectedConstituency: controlledConstituency = null,
   onConstituencySelect = null,
+  policyName = "SCP baby boost",
 }) {
   const svgRef = useRef(null);
   const [internalSelectedConstituency, setInternalSelectedConstituency] = useState(null);
@@ -422,7 +422,7 @@ export default function ScotlandMap({
 
     await exportMapAsSvg(svgRef.current, `scotland-map-${selectedYear}`, {
       title: `${CHART_TITLE}, ${formatYearRange(selectedYear)}`,
-      description: CHART_DESCRIPTION,
+      description: `This map shows the average annual household gain from the ${policyName} across Scottish constituencies. Green shading indicates larger gains.`,
       logo: CHART_LOGO,
       tooltipData,
     });
@@ -444,7 +444,7 @@ export default function ScotlandMap({
           <div>
             <h3 className="chart-title">Constituency impacts, {formatYearRange(selectedYear)}</h3>
             <p className="chart-description">
-              This map shows the average annual household gain from the SCP baby boost
+              This map shows the average annual household gain from the {policyName}
               across Scottish constituencies. Darker green indicates larger gains.
             </p>
           </div>
