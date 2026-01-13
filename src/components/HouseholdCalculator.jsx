@@ -1,48 +1,7 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { REFORMS, API_BASE_URL } from "../utils/reformConfig";
 import "./HouseholdCalculator.css";
-
-// Scottish Budget 2026-27 reforms configuration
-const REFORMS = [
-  {
-    key: "scp_baby_boost",
-    label: "SCP baby boost",
-    color: "#2C6496", // PolicyEngine blue
-    description: "Extra £12.85/week for babies under 1",
-  },
-  {
-    key: "income_tax_threshold",
-    label: "Income tax threshold uplift",
-    color: "#29AB87", // PolicyEngine green
-    description: "7.4% increase in basic and intermediate thresholds",
-  },
-];
-
-// Scottish income tax bands 2025-26 (baseline)
-const BASELINE_BANDS = {
-  personalAllowance: 12571,
-  starterRate: { threshold: 14876, rate: 0.19 }, // £12,571 - £14,876
-  basicRate: { threshold: 26561, rate: 0.20 }, // £14,877 - £26,561 (£2,305 + £12,571)
-  intermediateRate: { threshold: 43662, rate: 0.21 }, // £26,562 - £43,662 (£14,921 + £12,571)
-  higherRate: { threshold: 75000, rate: 0.42 }, // £43,663 - £75,000
-  advancedRate: { threshold: 125140, rate: 0.45 }, // £75,001 - £125,140
-  topRate: { threshold: Infinity, rate: 0.48 }, // Over £125,140
-};
-
-// Reformed bands (7.4% uplift on basic and intermediate thresholds)
-const REFORMED_BANDS = {
-  ...BASELINE_BANDS,
-  basicRate: { threshold: 29527, rate: 0.20 }, // £16,537 - £12,571 = £3,966 above PA, absolute = £29,527
-  intermediateRate: { threshold: 43662, rate: 0.21 }, // Higher rate unchanged at £43,663
-};
-
-// SCP eligibility constants
-const SCP_WEEKLY_STANDARD = 27.15;
-const SCP_WEEKLY_BABY = 40.0;
-const SCP_BABY_BOOST = (SCP_WEEKLY_BABY - SCP_WEEKLY_STANDARD) * 52; // £668.20/year
-
-// Income threshold for SCP eligibility (approximate - based on UC eligibility)
-const SCP_INCOME_THRESHOLD = 35000; // Approximate max household income for UC eligibility
 
 // Default input values
 const DEFAULT_INPUTS = {
@@ -50,6 +9,13 @@ const DEFAULT_INPUTS = {
   is_married: false,
   partner_income: 0,
   children_ages: [],
+};
+
+// Chart colors matching REFORMS
+const CHART_COLORS = {
+  total: "#319795",
+  scp_baby_boost: "#2C6496",
+  income_tax_threshold_uplift: "#29AB87",
 };
 
 // Slider configurations
@@ -67,6 +33,17 @@ const SLIDER_CONFIGS = [
 function HouseholdCalculator() {
   const [inputs, setInputs] = useState(DEFAULT_INPUTS);
   const [childAgeInput, setChildAgeInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [impacts, setImpacts] = useState({
+    scp_baby_boost: 0,
+    income_tax_threshold_uplift: 0,
+    total: 0,
+  });
+  const [variationData, setVariationData] = useState([]);
+  const [chartLoading, setChartLoading] = useState(false);
+  const chartRef = useRef(null);
+  const chartContainerRef = useRef(null);
 
   // Handle input change
   const handleInputChange = useCallback((id, value) => {
@@ -96,126 +73,263 @@ function HouseholdCalculator() {
     }));
   }, []);
 
-  // Calculate Scottish income tax
-  const calculateScottishTax = useCallback((income, bands) => {
-    if (income <= bands.personalAllowance) return 0;
+  // Combined calculate function for both single calc and variation
+  const calculateAll = useCallback(async () => {
+    setLoading(true);
+    setChartLoading(true);
+    setError(null);
 
-    let tax = 0;
-    let remainingIncome = income;
+    try {
+      // Run both calculations in parallel
+      const [calcResponse, variationResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/calculate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(inputs),
+        }),
+        fetch(`${API_BASE_URL}/calculate-variation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            is_married: inputs.is_married,
+            partner_income: inputs.partner_income,
+            children_ages: inputs.children_ages,
+          }),
+        }),
+      ]);
 
-    // Personal allowance tapering (above £100k)
-    let effectivePA = bands.personalAllowance;
-    if (income > 100000) {
-      const reduction = Math.min(effectivePA, (income - 100000) * 0.5);
-      effectivePA = Math.max(0, effectivePA - reduction);
+      // Process single calculation
+      if (calcResponse.ok) {
+        const calcResult = await calcResponse.json();
+        if (!calcResult.error) {
+          setImpacts({
+            scp_baby_boost: calcResult.impacts.scp_baby_boost ?? 0,
+            income_tax_threshold_uplift: calcResult.impacts.income_tax_threshold_uplift ?? 0,
+            total: calcResult.total ?? 0,
+          });
+        } else {
+          setError(calcResult.error);
+        }
+      }
+
+      // Process variation data
+      if (variationResponse.ok) {
+        const variationResult = await variationResponse.json();
+        if (variationResult.data) {
+          setVariationData(variationResult.data);
+        }
+      }
+    } catch (err) {
+      console.error("Error calculating:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+      setChartLoading(false);
+    }
+  }, [inputs]);
+
+  // Draw the earnings variation chart
+  useEffect(() => {
+    if (!variationData.length || !chartRef.current || !chartContainerRef.current) return;
+
+    const svg = d3.select(chartRef.current);
+    svg.selectAll("*").remove();
+
+    const containerWidth = chartContainerRef.current.clientWidth;
+    const margin = { top: 20, right: 24, bottom: 50, left: 70 };
+    const width = containerWidth - margin.left - margin.right;
+    const height = 280 - margin.top - margin.bottom;
+
+    svg.attr("width", containerWidth).attr("height", 280);
+
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales
+    const x = d3
+      .scaleLinear()
+      .domain([0, 150000])
+      .range([0, width]);
+
+    const allValues = variationData.flatMap((d) => [
+      d.total,
+      d.scp_baby_boost,
+      d.income_tax_threshold_uplift,
+    ]);
+    const yMax = Math.max(100, d3.max(allValues) * 1.1);
+    const yMin = Math.min(0, d3.min(allValues) * 1.1);
+    const y = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]);
+
+    // Grid lines
+    g.append("g")
+      .attr("class", "grid-lines")
+      .selectAll("line")
+      .data(y.ticks(5))
+      .enter()
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", (d) => y(d))
+      .attr("y2", (d) => y(d))
+      .attr("stroke", "#E2E8F0")
+      .attr("stroke-dasharray", "2,2");
+
+    // Zero line
+    g.append("line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", y(0))
+      .attr("y2", y(0))
+      .attr("stroke", "#94a3b8")
+      .attr("stroke-width", 1);
+
+    // X axis
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(
+        d3
+          .axisBottom(x)
+          .tickValues([0, 25000, 50000, 75000, 100000, 125000, 150000])
+          .tickFormat((d) => `£${d / 1000}k`)
+          .tickSize(0)
+          .tickPadding(10)
+      )
+      .call((g) => g.select(".domain").attr("stroke", "#D1D5DB"))
+      .selectAll("text")
+      .attr("fill", "#6B7280")
+      .attr("font-size", "11px");
+
+    // X axis label
+    g.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + 40)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#475569")
+      .attr("font-size", "12px")
+      .text("Employment income");
+
+    // Y axis
+    g.append("g")
+      .call(
+        d3
+          .axisLeft(y)
+          .ticks(5)
+          .tickFormat((d) => `£${d}`)
+          .tickSize(0)
+          .tickPadding(10)
+      )
+      .call((g) => g.select(".domain").remove())
+      .selectAll("text")
+      .attr("fill", "#6B7280")
+      .attr("font-size", "11px");
+
+    // Y axis label
+    g.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", -55)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#475569")
+      .attr("font-size", "12px")
+      .text("Annual impact (£)");
+
+    // Line generators
+    const lineTotal = d3
+      .line()
+      .x((d) => x(d.earnings))
+      .y((d) => y(d.total))
+      .curve(d3.curveMonotoneX);
+
+    const lineScp = d3
+      .line()
+      .x((d) => x(d.earnings))
+      .y((d) => y(d.scp_baby_boost))
+      .curve(d3.curveMonotoneX);
+
+    const lineTax = d3
+      .line()
+      .x((d) => x(d.earnings))
+      .y((d) => y(d.income_tax_threshold_uplift))
+      .curve(d3.curveMonotoneX);
+
+    // Draw lines
+    g.append("path")
+      .datum(variationData)
+      .attr("fill", "none")
+      .attr("stroke", CHART_COLORS.income_tax_threshold_uplift)
+      .attr("stroke-width", 2)
+      .attr("d", lineTax);
+
+    g.append("path")
+      .datum(variationData)
+      .attr("fill", "none")
+      .attr("stroke", CHART_COLORS.scp_baby_boost)
+      .attr("stroke-width", 2)
+      .attr("d", lineScp);
+
+    g.append("path")
+      .datum(variationData)
+      .attr("fill", "none")
+      .attr("stroke", CHART_COLORS.total)
+      .attr("stroke-width", 2.5)
+      .attr("d", lineTotal);
+
+    // Current income marker
+    const currentIncome = inputs.employment_income;
+    const currentPoint = variationData.find((d) => d.earnings === currentIncome) ||
+      variationData.reduce((prev, curr) =>
+        Math.abs(curr.earnings - currentIncome) < Math.abs(prev.earnings - currentIncome) ? curr : prev
+      );
+
+    if (currentPoint) {
+      // Vertical line at current income
+      g.append("line")
+        .attr("x1", x(currentIncome))
+        .attr("x2", x(currentIncome))
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "#319795")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "4,4")
+        .attr("opacity", 0.6);
+
+      // Dot at current total
+      g.append("circle")
+        .attr("cx", x(currentIncome))
+        .attr("cy", y(currentPoint.total))
+        .attr("r", 6)
+        .attr("fill", CHART_COLORS.total)
+        .attr("stroke", "white")
+        .attr("stroke-width", 2);
     }
 
-    remainingIncome -= effectivePA;
+    // Legend
+    const legend = g.append("g").attr("transform", `translate(${width - 200}, 0)`);
 
-    // Starter rate (19%)
-    const starterBand = Math.min(
-      remainingIncome,
-      bands.starterRate.threshold - bands.personalAllowance
-    );
-    if (starterBand > 0) {
-      tax += starterBand * bands.starterRate.rate;
-      remainingIncome -= starterBand;
-    }
+    const legendItems = [
+      { label: "Total", color: CHART_COLORS.total },
+      { label: "Income tax", color: CHART_COLORS.income_tax_threshold_uplift },
+      { label: "SCP baby boost", color: CHART_COLORS.scp_baby_boost },
+    ];
 
-    // Basic rate (20%)
-    const basicBand = Math.min(
-      remainingIncome,
-      bands.basicRate.threshold - bands.starterRate.threshold
-    );
-    if (basicBand > 0) {
-      tax += basicBand * bands.basicRate.rate;
-      remainingIncome -= basicBand;
-    }
-
-    // Intermediate rate (21%)
-    const intermediateBand = Math.min(
-      remainingIncome,
-      bands.intermediateRate.threshold - bands.basicRate.threshold
-    );
-    if (intermediateBand > 0) {
-      tax += intermediateBand * bands.intermediateRate.rate;
-      remainingIncome -= intermediateBand;
-    }
-
-    // Higher rate (42%)
-    const higherBand = Math.min(
-      remainingIncome,
-      bands.higherRate.threshold - bands.intermediateRate.threshold
-    );
-    if (higherBand > 0) {
-      tax += higherBand * bands.higherRate.rate;
-      remainingIncome -= higherBand;
-    }
-
-    // Advanced rate (45%)
-    const advancedBand = Math.min(
-      remainingIncome,
-      bands.advancedRate.threshold - bands.higherRate.threshold
-    );
-    if (advancedBand > 0) {
-      tax += advancedBand * bands.advancedRate.rate;
-      remainingIncome -= advancedBand;
-    }
-
-    // Top rate (48%)
-    if (remainingIncome > 0) {
-      tax += remainingIncome * bands.topRate.rate;
-    }
-
-    return tax;
-  }, []);
-
-  // Calculate impacts
-  const impacts = useMemo(() => {
-    const { employment_income, is_married, partner_income, children_ages } = inputs;
-
-    // Calculate total household income
-    const totalIncome = employment_income + (is_married ? partner_income : 0);
-
-    // SCP Baby Boost calculation
-    const babiesCount = children_ages.filter((age) => age < 1).length;
-    // SCP eligibility based on income threshold (proxy for UC/qualifying benefits eligibility)
-    const eligibleForSCP = totalIncome <= SCP_INCOME_THRESHOLD && children_ages.length > 0;
-
-    const scpBabyBoostImpact = eligibleForSCP && babiesCount > 0
-      ? SCP_BABY_BOOST * babiesCount
-      : 0;
-
-    // Income tax threshold uplift calculation
-    // Calculate tax under baseline and reform
-    const baselineTax = calculateScottishTax(employment_income, BASELINE_BANDS);
-    const reformTax = calculateScottishTax(employment_income, REFORMED_BANDS);
-    const taxSaving = baselineTax - reformTax;
-
-    // Partner tax saving
-    let partnerTaxSaving = 0;
-    if (is_married && partner_income > 0) {
-      const partnerBaselineTax = calculateScottishTax(partner_income, BASELINE_BANDS);
-      const partnerReformTax = calculateScottishTax(partner_income, REFORMED_BANDS);
-      partnerTaxSaving = partnerBaselineTax - partnerReformTax;
-    }
-
-    const totalTaxSaving = taxSaving + partnerTaxSaving;
-
-    return {
-      scp_baby_boost: scpBabyBoostImpact,
-      income_tax_threshold: totalTaxSaving,
-      total: scpBabyBoostImpact + totalTaxSaving,
-      details: {
-        babiesCount,
-        eligibleForSCP,
-        baselineTax,
-        reformTax,
-        taxSaving,
-        partnerTaxSaving,
-      },
-    };
-  }, [inputs, calculateScottishTax]);
+    legendItems.forEach((item, i) => {
+      const row = legend.append("g").attr("transform", `translate(0, ${i * 18})`);
+      row
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", 16)
+        .attr("y1", 0)
+        .attr("y2", 0)
+        .attr("stroke", item.color)
+        .attr("stroke-width", 2);
+      row
+        .append("text")
+        .attr("x", 22)
+        .attr("y", 4)
+        .attr("fill", "#475569")
+        .attr("font-size", "11px")
+        .text(item.label);
+    });
+  }, [variationData, inputs.employment_income]);
 
   // Format currency
   const formatCurrency = useCallback((value, showSign = true) => {
@@ -327,12 +441,37 @@ function HouseholdCalculator() {
             </span>
           </div>
 
+          {/* Calculate button */}
+          <button
+            type="button"
+            onClick={calculateAll}
+            className="calculate-btn"
+            disabled={loading || chartLoading}
+          >
+            {loading || chartLoading ? "Calculating..." : "Calculate"}
+          </button>
         </div>
 
         {/* Results */}
         <div className="calculator-results">
+          {/* Loading/Error state */}
+          {loading && (
+            <div className="loading-indicator">
+              <div className="spinner"></div>
+              <span>Calculating...</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="error-message">
+              Error: {error}. Please try again.
+            </div>
+          )}
+
           {/* Total impact card */}
-          <div className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}>
+          <div
+            className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}
+          >
             <div className="total-label">Your estimated annual gain</div>
             <div className="total-value">{formatCurrency(impacts.total)}</div>
             <div className="total-context">
@@ -346,17 +485,19 @@ function HouseholdCalculator() {
           <div className="impact-breakdown">
             <h4>Breakdown by policy</h4>
             {REFORMS.map((reform) => {
-              const value = impacts[reform.key];
+              const value = impacts[reform.id] ?? 0;
               return (
-                <div key={reform.key} className="reform-row">
+                <div key={reform.id} className="reform-row">
                   <div className="reform-info">
                     <div className="reform-color" style={{ backgroundColor: reform.color }} />
                     <div className="reform-details">
-                      <span className="reform-label">{reform.label}</span>
+                      <span className="reform-label">{reform.name}</span>
                       <span className="reform-description">{reform.description}</span>
                     </div>
                   </div>
-                  <div className={`reform-value ${value > 0 ? "positive" : value < 0 ? "negative" : ""}`}>
+                  <div
+                    className={`reform-value ${value > 0 ? "positive" : value < 0 ? "negative" : ""}`}
+                  >
                     {formatCurrency(value)}
                   </div>
                 </div>
@@ -364,6 +505,29 @@ function HouseholdCalculator() {
             })}
           </div>
 
+          {/* Earnings variation chart */}
+          <div className="earnings-chart-section">
+            <h4>Impact by earnings level</h4>
+            <p className="chart-subtitle">
+              How the reforms affect households at different income levels
+            </p>
+            <div ref={chartContainerRef} className="earnings-chart-container">
+              {chartLoading ? (
+                <div className="chart-loading">
+                  <div className="spinner"></div>
+                  <span>Calculating impacts across earnings...</span>
+                </div>
+              ) : variationData.length > 0 ? (
+                <svg ref={chartRef}></svg>
+              ) : (
+                <div className="chart-placeholder">
+                  <span className="chart-hint">
+                    Click Calculate to see how impacts vary across the income range
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -371,12 +535,13 @@ function HouseholdCalculator() {
       <div className="reforms-explanation">
         <h4>About the reforms</h4>
         <p>
-          <strong>SCP Baby Boost:</strong> The Scottish Child Payment increases to £40/week for babies
-          under 1 (up from £27.15/week), for families receiving Universal Credit or other qualifying benefits.
+          <strong>SCP Baby Boost:</strong> The Scottish Child Payment increases to £40/week for
+          babies under 1 (up from £27.15/week), for families receiving Universal Credit or other
+          qualifying benefits.
         </p>
         <p>
-          <strong>Income Tax Threshold Uplift:</strong> The basic rate threshold rises from £14,877 to
-          £16,537, and the intermediate rate threshold from £26,562 to £29,527 (7.4% increases).
+          <strong>Income Tax Threshold Uplift:</strong> The basic rate threshold rises from £14,877
+          to £16,537, and the intermediate rate threshold from £26,562 to £29,527 (7.4% increases).
         </p>
       </div>
     </div>
