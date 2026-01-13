@@ -152,7 +152,7 @@ export default function LocalAreaSection() {
     });
     return Object.values(regionStats).map(r => ({
       region: r.region.replace("and ", "& "),
-      avgGain: Math.round(r.totalGain / r.count),
+      avgGain: parseFloat((r.totalGain / r.count).toFixed(2)),
     })).sort((a, b) => b.avgGain - a.avgGain);
   }, [constituencyData]);
 
@@ -207,10 +207,10 @@ export default function LocalAreaSection() {
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={regionalData} layout="vertical" margin={{ top: 20, right: 30, left: 150, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis type="number" tickFormatter={(v) => `£${v}`} />
+              <XAxis type="number" tickFormatter={(v) => `£${v.toFixed(2)}`} />
               <YAxis type="category" dataKey="region" width={140} tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value) => [`£${value}`, "Avg. gain"]}
+                formatter={(value) => [`£${value.toFixed(2)}`, "Avg. gain"]}
               />
               <Bar dataKey="avgGain" fill="#319795" name="Avg. gain" radius={[0, 4, 4, 0]} />
             </BarChart>
