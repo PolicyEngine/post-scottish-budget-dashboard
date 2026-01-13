@@ -1,0 +1,188 @@
+/* Local Area Section styling */
+
+.local-area-section {
+  margin-top: var(--pe-space-lg);
+}
+
+/* Constituency controls */
+.constituency-controls {
+  display: flex;
+  gap: var(--pe-space-md);
+  margin-bottom: var(--pe-space-lg);
+  flex-wrap: wrap;
+}
+
+.constituency-select {
+  min-width: 280px;
+  flex: 1;
+}
+
+/* Constituency details card */
+.constituency-details {
+  background: var(--pe-surface);
+  border: 1px solid var(--pe-gray-200);
+  border-radius: var(--pe-radius-lg);
+  padding: var(--pe-space-lg);
+  margin-top: var(--pe-space-md);
+}
+
+.constituency-name {
+  font-family: var(--pe-font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--pe-gray-900);
+  margin: 0 0 var(--pe-space-xs) 0;
+}
+
+.constituency-region {
+  font-size: 0.9rem;
+  color: var(--pe-gray-500);
+  margin: 0 0 var(--pe-space-md) 0;
+}
+
+/* Metrics grid */
+.constituency-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--pe-space-md);
+}
+
+.metric-card {
+  background: var(--pe-gray-50);
+  border-radius: var(--pe-radius-md);
+  padding: var(--pe-space-md);
+  text-align: center;
+}
+
+.metric-card .metric-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pe-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--pe-space-xs);
+}
+
+.metric-card .metric-value {
+  display: block;
+  font-family: var(--pe-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pe-teal-700);
+}
+
+/* Chart container */
+.chart-container {
+  margin-top: var(--pe-space-md);
+}
+
+/* Constituency list */
+.constituency-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-sm);
+}
+
+.constituency-item {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-md);
+  padding: var(--pe-space-sm) var(--pe-space-md);
+  background: var(--pe-surface);
+  border: 1px solid var(--pe-gray-200);
+  border-radius: var(--pe-radius-md);
+  transition: all var(--pe-transition-fast);
+}
+
+.constituency-item:hover {
+  border-color: var(--pe-teal-300);
+  box-shadow: var(--pe-shadow-sm);
+}
+
+.constituency-item .rank {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pe-gray-100);
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--pe-gray-600);
+  flex-shrink: 0;
+}
+
+.constituency-item .constituency-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.constituency-item .name {
+  display: block;
+  font-weight: 600;
+  color: var(--pe-gray-900);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.constituency-item .region {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--pe-gray-400);
+}
+
+.constituency-item .gain {
+  font-family: var(--pe-font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pe-teal-600);
+  flex-shrink: 0;
+}
+
+/* Two-column layout for lists */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pe-space-lg);
+  margin-top: var(--pe-space-lg);
+}
+
+@media (min-width: 900px) {
+  .charts-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .constituency-controls {
+    flex-direction: column;
+  }
+
+  .constituency-select {
+    min-width: 100%;
+  }
+
+  .constituency-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .metric-card .metric-label {
+    margin-bottom: 0;
+  }
+
+  .metric-card .metric-value {
+    font-size: 1.25rem;
+  }
+}
