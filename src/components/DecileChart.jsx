@@ -37,14 +37,15 @@ export default function DecileChart({ data, title, description }) {
 
   const chartData = data.map((d) => ({
     decile: d.decile,
-    value: viewMode === "relative" ? d.relativeChange : d.absoluteChange,
+    // Multiply relative by 100 to convert decimal to percentage
+    value: viewMode === "relative" ? d.relativeChange * 100 : d.absoluteChange,
   }));
 
-  // Calculate y-axis domain
+  // Calculate y-axis domain with sensible ranges
   const maxValue = Math.max(...chartData.map((d) => d.value));
   const yMax = viewMode === "relative"
-    ? Math.ceil(maxValue * 1.2 * 2) / 2 // Round to 0.5 for percentages
-    : Math.ceil(maxValue * 1.2 / 100) * 100; // Round to 100 for £
+    ? Math.max(0.5, Math.ceil(maxValue * 1.2 * 10) / 10) // Min 0.5%, round to 0.1
+    : Math.max(5, Math.ceil(maxValue * 1.2)); // Min £5, round up
 
   return (
     <div className="decile-chart">
