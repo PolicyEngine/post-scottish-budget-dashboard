@@ -7,10 +7,10 @@ import "./ScotlandMap.css";
 // Chart metadata for export
 const CHART_TITLE = "Scottish constituency-level impacts";
 const CHART_DESCRIPTION =
-  "This map shows the average annual change in household net income across Scottish constituencies. Green shading indicates gains, amber indicates losses, measured as a percentage of baseline income.";
+  "This map shows the average annual household gain from the SCP baby boost across Scottish constituencies. Green shading indicates larger gains.";
 
-// Fixed color scale extent - consistent across all years
-const FIXED_COLOR_EXTENT = 1.5;
+// Fixed color scale extent for average gain (in £) - consistent across all years
+const FIXED_COLOR_EXTENT = 15;
 
 // Format year for display (e.g., 2026 -> "2026-27")
 const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
@@ -200,7 +200,8 @@ export default function ScotlandMap({
     const path = d3.geoPath().projection(projection);
 
     // Color scale - diverging with white at 0, amber for losses, teal for gains
-    const getValue = (d) => d.relative_change || 0;
+    // Uses average_gain (absolute £ values)
+    const getValue = (d) => d.average_gain || 0;
 
     const colorScale = d3
       .scaleDiverging()
@@ -443,9 +444,8 @@ export default function ScotlandMap({
           <div>
             <h3 className="chart-title">Constituency impacts, {formatYearRange(selectedYear)}</h3>
             <p className="chart-description">
-              This map shows the average annual change in household net income
-              across Scottish constituencies. Green shading indicates gains,
-              amber indicates losses.
+              This map shows the average annual household gain from the SCP baby boost
+              across Scottish constituencies. Darker green indicates larger gains.
             </p>
           </div>
           <button
@@ -510,9 +510,9 @@ export default function ScotlandMap({
           <div className="legend-horizontal-content">
             <div className="legend-gradient-horizontal" />
             <div className="legend-labels-horizontal">
-              <span>-{FIXED_COLOR_EXTENT}%</span>
-              <span className="legend-zero">0%</span>
-              <span>+{FIXED_COLOR_EXTENT}%</span>
+              <span>-£{FIXED_COLOR_EXTENT}</span>
+              <span className="legend-zero">£0</span>
+              <span>+£{FIXED_COLOR_EXTENT}</span>
             </div>
           </div>
         </div>
