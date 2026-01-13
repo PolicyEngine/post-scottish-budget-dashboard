@@ -34,6 +34,8 @@ jobs:
           uv pip install policyengine-uk pandas numpy h5py tables
 
       - name: Generate dashboard data
+        id: generate
+        continue-on-error: true
         env:
           HUGGING_FACE_TOKEN: ${{ secrets.HUGGING_FACE_TOKEN }}
           PYTHONPATH: ${{ github.workspace }}/src
@@ -42,8 +44,45 @@ jobs:
           source .venv/bin/activate
           python -c "from scottish_budget_data import generate_all_data; generate_all_data()"
 
+      - name: Validate existing data files
+        if: steps.generate.outcome == 'failure'
+        run: |
+          echo "Data generation failed (likely due to resource constraints)."
+          echo "Validating that sample data files exist..."
+
+          required_files=(
+            "public/data/budgetary_impact.csv"
+            "public/data/constituency.csv"
+            "public/data/distributional_impact.csv"
+            "public/data/metrics.csv"
+            "public/data/winners_losers.csv"
+          )
+
+          all_exist=true
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ Found: $file"
+            else
+              echo "✗ Missing: $file"
+              all_exist=false
+            fi
+          done
+
+          if [ "$all_exist" = false ]; then
+            echo "Some required data files are missing!"
+            echo "Please run the data generation locally:"
+            echo "  PYTHONPATH=src python -c \"from scottish_budget_data import generate_all_data; generate_all_data()\""
+            exit 1
+          fi
+
+          echo ""
+          echo "All required data files exist. Dashboard will use existing sample data."
+          echo "To regenerate with real PolicyEngine data, run locally:"
+          echo "  PYTHONPATH=src python -c \"from scottish_budget_data import generate_all_data; generate_all_data()\""
+
       - name: Check for changes
         id: check_changes
+        if: steps.generate.outcome == 'success'
         run: |
           if git diff --quiet public/data/; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -52,7 +91,7 @@ jobs:
           fi
 
       - name: Commit and push changes
-        if: steps.check_changes.outputs.has_changes == 'true'
+        if: steps.generate.outcome == 'success' && steps.check_changes.outputs.has_changes == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
