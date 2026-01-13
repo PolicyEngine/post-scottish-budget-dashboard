@@ -41,16 +41,16 @@ function parseCSVLine(line) {
   return result;
 }
 
-// Scottish regions mapping
+// Scottish regions mapping (names must match CSV exactly, including commas)
 const REGION_MAPPING = {
   "Glasgow": ["Glasgow East", "Glasgow North", "Glasgow North East", "Glasgow South", "Glasgow South West", "Glasgow West", "Rutherglen"],
   "Lothian": ["Edinburgh East and Musselburgh", "Edinburgh North and Leith", "Edinburgh South", "Edinburgh South West", "Edinburgh West", "Lothian East", "Midlothian", "Livingston", "Bathgate and Linlithgow"],
-  "Central Scotland": ["Airdrie and Shotts", "Coatbridge and Bellshill", "Cumbernauld and Kirkintilloch", "East Kilbride and Strathaven", "Falkirk", "Hamilton and Clyde Valley", "Motherwell Wishaw and Carluke"],
-  "West Scotland": ["Dumbarton", "Inverclyde and Renfrewshire West", "Mid Dunbartonshire", "Paisley and Renfrewshire North", "Paisley and Renfrewshire South", "West Dunbartonshire"],
-  "South Scotland": ["Ayr Carrick and Cumnock", "Central Ayrshire", "Dumfriesshire Clydesdale and Tweeddale", "Kilmarnock and Loudoun", "North Ayrshire and Arran"],
+  "Central Scotland": ["Airdrie and Shotts", "Coatbridge and Bellshill", "Cumbernauld and Kirkintilloch", "East Kilbride and Strathaven", "Falkirk", "Hamilton and Clyde Valley", "Motherwell, Wishaw and Carluke"],
+  "West Scotland": ["Dumbarton", "Inverclyde and Renfrewshire West", "Mid Dunbartonshire", "Paisley and Renfrewshire North", "Paisley and Renfrewshire South", "West Dunbartonshire", "East Renfrewshire"],
+  "South Scotland": ["Ayr, Carrick and Cumnock", "Central Ayrshire", "Dumfriesshire, Clydesdale and Tweeddale", "Kilmarnock and Loudoun", "North Ayrshire and Arran", "Dumfries and Galloway", "Berwickshire, Roxburgh and Selkirk"],
   "Mid Scotland and Fife": ["Alloa and Grangemouth", "Cowdenbeath and Kirkcaldy", "Dunfermline and Dollar", "Glenrothes and Mid Fife", "North East Fife", "Perth and Kinross-shire", "Stirling and Strathallan"],
   "North East Scotland": ["Aberdeen North", "Aberdeen South", "Aberdeenshire North and Moray East", "Angus and Perthshire Glens", "Arbroath and Broughty Ferry", "Dundee Central", "Gordon and Buchan", "West Aberdeenshire and Kincardine"],
-  "Highlands and Islands": ["Argyll Bute and South Lochaber", "Caithness Sutherland and Easter Ross", "Inverness Skye and West Ross-shire", "Moray West Nairn and Strathspey", "Na h-Eileanan an Iar", "Orkney and Shetland"],
+  "Highlands and Islands": ["Argyll, Bute and South Lochaber", "Caithness, Sutherland and Easter Ross", "Inverness, Skye and West Ross-shire", "Moray West, Nairn and Strathspey", "Na h-Eileanan an Iar", "Orkney and Shetland"],
 };
 
 // Get region for a constituency
