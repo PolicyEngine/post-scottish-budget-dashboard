@@ -112,25 +112,8 @@ def get_scottish_budget_reforms() -> list[Reform]:
     """
     reforms = []
 
-    # Two-child limit abolition (Scotland top-up to fully offset)
-    # This effectively removes the two-child limit for Scottish households
-    reforms.append(
-        Reform(
-            id="two_child_limit_abolition",
-            name="Two-child limit abolition",
-            description="Abolish the two-child limit on benefits for Scottish households",
-            parameter_changes={
-                "gov.dwp.universal_credit.elements.child.limit.child_count": {
-                    "2026-01-01": float("inf"),
-                },
-                "gov.dwp.tax_credits.child_tax_credit.limit.child_count": {
-                    "2026-01-01": float("inf"),
-                },
-            },
-        )
-    )
-
     # SCP Baby Boost (£40/week for babies under 1)
+    # This is the main reform from Scottish Budget 2026-27
     reforms.append(
         Reform(
             id="scp_baby_boost",
@@ -143,43 +126,11 @@ def get_scottish_budget_reforms() -> list[Reform]:
         )
     )
 
-    # Combined Scottish Budget (all measures)
-    reforms.append(
-        Reform(
-            id="scottish_budget_2026_combined",
-            name="Scottish Budget 2026 (combined)",
-            description=(
-                "All Scottish Budget 2026-27 measures combined: "
-                "two-child limit abolition and SCP baby boost to £40/week"
-            ),
-            parameter_changes={
-                "gov.dwp.universal_credit.elements.child.limit.child_count": {
-                    "2026-01-01": float("inf"),
-                },
-                "gov.dwp.tax_credits.child_tax_credit.limit.child_count": {
-                    "2026-01-01": float("inf"),
-                },
-            },
-            simulation_modifier=_scp_baby_boost_modifier,
-        )
-    )
-
     return reforms
 
 
 # Policy metadata for dashboard
 POLICIES = [
-    {
-        "id": "two_child_limit_abolition",
-        "name": "Two-child limit abolition",
-        "description": "Abolish the two-child limit on benefits",
-        "explanation": """
-            The two-child limit restricts Universal Credit and Child Tax Credit payments
-            to a maximum of two children per family. The Scottish Government's top-up
-            payment effectively abolishes this limit for Scottish households, allowing
-            families to receive full child-related benefit payments for all children.
-        """,
-    },
     {
         "id": "scp_baby_boost",
         "name": "SCP baby boost (£40/week)",
@@ -197,6 +148,6 @@ PRESETS = [
     {
         "id": "scottish-budget-2026",
         "name": "Scottish Budget 2026",
-        "policies": ["two_child_limit_abolition", "scp_baby_boost"],
+        "policies": ["scp_baby_boost"],
     },
 ]

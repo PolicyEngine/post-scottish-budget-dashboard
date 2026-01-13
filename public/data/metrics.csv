@@ -1,34 +1,4 @@
 reform_id,reform_name,year,metric,value
-two_child_limit_abolition,Two-child limit abolition,2026,poverty_rate_baseline,9.500675
-two_child_limit_abolition,Two-child limit abolition,2026,poverty_rate_reform,9.500675
-two_child_limit_abolition,Two-child limit abolition,2026,poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2026,child_poverty_rate_baseline,13.891864
-two_child_limit_abolition,Two-child limit abolition,2026,child_poverty_rate_reform,13.891864
-two_child_limit_abolition,Two-child limit abolition,2026,child_poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2027,poverty_rate_baseline,9.437299
-two_child_limit_abolition,Two-child limit abolition,2027,poverty_rate_reform,9.437299
-two_child_limit_abolition,Two-child limit abolition,2027,poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2027,child_poverty_rate_baseline,13.71581
-two_child_limit_abolition,Two-child limit abolition,2027,child_poverty_rate_reform,13.71581
-two_child_limit_abolition,Two-child limit abolition,2027,child_poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2028,poverty_rate_baseline,9.703111
-two_child_limit_abolition,Two-child limit abolition,2028,poverty_rate_reform,9.703111
-two_child_limit_abolition,Two-child limit abolition,2028,poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2028,child_poverty_rate_baseline,14.292452
-two_child_limit_abolition,Two-child limit abolition,2028,child_poverty_rate_reform,14.292452
-two_child_limit_abolition,Two-child limit abolition,2028,child_poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2029,poverty_rate_baseline,9.691227
-two_child_limit_abolition,Two-child limit abolition,2029,poverty_rate_reform,9.691227
-two_child_limit_abolition,Two-child limit abolition,2029,poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2029,child_poverty_rate_baseline,14.268857
-two_child_limit_abolition,Two-child limit abolition,2029,child_poverty_rate_reform,14.268857
-two_child_limit_abolition,Two-child limit abolition,2029,child_poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2030,poverty_rate_baseline,9.774882
-two_child_limit_abolition,Two-child limit abolition,2030,poverty_rate_reform,9.774882
-two_child_limit_abolition,Two-child limit abolition,2030,poverty_rate_change,0.0
-two_child_limit_abolition,Two-child limit abolition,2030,child_poverty_rate_baseline,14.4737215
-two_child_limit_abolition,Two-child limit abolition,2030,child_poverty_rate_reform,14.4737215
-two_child_limit_abolition,Two-child limit abolition,2030,child_poverty_rate_change,0.0
 scp_baby_boost,SCP baby boost (£40/week),2026,poverty_rate_baseline,9.500675
 scp_baby_boost,SCP baby boost (£40/week),2026,poverty_rate_reform,9.496693
 scp_baby_boost,SCP baby boost (£40/week),2026,poverty_rate_change,-0.003982544
@@ -59,33 +29,3 @@ scp_baby_boost,SCP baby boost (£40/week),2030,poverty_rate_change,-0.0039844513
 scp_baby_boost,SCP baby boost (£40/week),2030,child_poverty_rate_baseline,14.4737215
 scp_baby_boost,SCP baby boost (£40/week),2030,child_poverty_rate_reform,14.464198
 scp_baby_boost,SCP baby boost (£40/week),2030,child_poverty_rate_change,-0.009523392
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,poverty_rate_baseline,9.500675
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,poverty_rate_reform,9.496693
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,poverty_rate_change,-0.003982544
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,child_poverty_rate_baseline,13.891864
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,child_poverty_rate_reform,13.882342
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2026,child_poverty_rate_change,-0.009521484
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,poverty_rate_baseline,9.437299
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,poverty_rate_reform,9.433315
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,poverty_rate_change,-0.0039834976
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,child_poverty_rate_baseline,13.71581
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,child_poverty_rate_reform,13.706287
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2027,child_poverty_rate_change,-0.009522438
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,poverty_rate_baseline,9.703111
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,poverty_rate_reform,9.699125
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,poverty_rate_change,-0.003985405
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,child_poverty_rate_baseline,14.292452
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,child_poverty_rate_reform,14.28293
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2028,child_poverty_rate_change,-0.009521484
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,poverty_rate_baseline,9.691227
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,poverty_rate_reform,9.687243
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,poverty_rate_change,-0.0039834976
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,child_poverty_rate_baseline,14.268857
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,child_poverty_rate_reform,14.2593355
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2029,child_poverty_rate_change,-0.009521484
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,poverty_rate_baseline,9.774882
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,poverty_rate_reform,9.770898
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,poverty_rate_change,-0.0039844513
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,child_poverty_rate_baseline,14.4737215
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,child_poverty_rate_reform,14.464198
-scottish_budget_2026_combined,Scottish Budget 2026 (combined),2030,child_poverty_rate_change,-0.009523392

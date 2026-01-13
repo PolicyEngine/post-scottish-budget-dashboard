@@ -91,16 +91,33 @@ export default function Dashboard() {
           const csvText = await distRes.text();
           const data = parseCSV(csvText);
 
-          // Transform to decile format for chart
+          // Transform to decile format for chart (2026 data)
           const decileData = data
-            .filter(row => row.year === "2026" && row.reform_id === "scottish_budget_2026_combined")
+            .filter(row => row.year === "2026" && row.reform_id === "scp_baby_boost")
             .map(row => ({
               decile: row.decile,
               relativeChange: parseFloat(row.value) || 0,
               absoluteChange: parseFloat(row.absolute_change) || 0,
             }));
 
-          setLivingStandardsData({ byDecile: decileData });
+          // Calculate average income change per year for baseline vs reform chart
+          const incomeChangeByYear = {};
+          data.filter(row => row.reform_id === "scp_baby_boost").forEach(row => {
+            const year = parseInt(row.year);
+            if (!incomeChangeByYear[year]) {
+              incomeChangeByYear[year] = { totalChange: 0, count: 0 };
+            }
+            incomeChangeByYear[year].totalChange += parseFloat(row.absolute_change) || 0;
+            incomeChangeByYear[year].count += 1;
+          });
+
+          // Calculate average change per year
+          const avgChangeByYear = {};
+          Object.entries(incomeChangeByYear).forEach(([year, data]) => {
+            avgChangeByYear[year] = data.count > 0 ? data.totalChange / data.count : 0;
+          });
+
+          setLivingStandardsData({ byDecile: decileData, avgChangeByYear });
         }
 
         if (metricsRes.ok) {
@@ -109,7 +126,7 @@ export default function Dashboard() {
 
           // Extract poverty metrics
           const metrics2026 = data.filter(row =>
-            row.year === "2026" && row.reform_id === "scottish_budget_2026_combined"
+            row.year === "2026" && row.reform_id === "scp_baby_boost"
           );
 
           const povertyRates = {};
@@ -212,7 +229,7 @@ export default function Dashboard() {
         and distributes impacts across Scotland's local areas.
       </p>
       <p className="chart-description" style={{ marginTop: "12px" }}>
-        The budget includes two key measures for families:
+        The budget includes a key measure for families with young children:
       </p>
       <ul className="policy-list">
         <li>
@@ -220,38 +237,18 @@ export default function Dashboard() {
           for families with babies under 1 year old (up from £27.15/week), delivering the "strongest package
           of support for families with young children anywhere in the UK".
         </li>
-        <li>
-          <strong>Two-child limit abolition</strong>: Scotland's top-up payment effectively removes the
-          UK's two-child limit on Universal Credit and Child Tax Credit for Scottish households.
-        </li>
       </ul>
 
       {/* Budgetary Impact Summary */}
-      {budgetaryData && (
+      {budgetaryData && budgetaryData.scp_baby_boost && (
         <div className="budgetary-summary">
           <h3 className="chart-title">Estimated cost (2026)</h3>
           <div className="cost-cards">
-            {budgetaryData.scp_baby_boost && (
-              <div className="cost-card">
-                <div className="cost-label">SCP baby boost</div>
-                <div className="cost-value">£{(budgetaryData.scp_baby_boost.years["2026"] || 0).toFixed(0)}m</div>
-                <div className="cost-detail">per year</div>
-              </div>
-            )}
-            {budgetaryData.two_child_limit_abolition && (
-              <div className="cost-card">
-                <div className="cost-label">Two-child limit abolition</div>
-                <div className="cost-value">£{(budgetaryData.two_child_limit_abolition.years["2026"] || 0).toFixed(0)}m</div>
-                <div className="cost-detail">per year</div>
-              </div>
-            )}
-            {budgetaryData.scottish_budget_2026_combined && (
-              <div className="cost-card highlight">
-                <div className="cost-label">Combined package</div>
-                <div className="cost-value">£{(budgetaryData.scottish_budget_2026_combined.years["2026"] || 0).toFixed(0)}m</div>
-                <div className="cost-detail">per year</div>
-              </div>
-            )}
+            <div className="cost-card highlight">
+              <div className="cost-label">SCP baby boost</div>
+              <div className="cost-value">£{(budgetaryData.scp_baby_boost.years["2026"] || 0).toFixed(0)}m</div>
+              <div className="cost-detail">per year</div>
+            </div>
           </div>
         </div>
       )}
@@ -323,6 +320,8 @@ export default function Dashboard() {
           <D3LineChart
             data={(() => {
               const merged = {};
+              const avgChange = livingStandardsData?.avgChangeByYear || {};
+
               HISTORICAL_HOUSEHOLD_INCOME_DATA.forEach(d => {
                 const historicalKey = incomeAdjustment === "real"
                   ? (incomeType === "mean" ? "meanIncomeReal" : "medianIncomeReal")
@@ -337,12 +336,25 @@ export default function Dashboard() {
                 if (incomeAdjustment === "real" && CPI_DEFLATORS[d.year]) {
                   projectionValue = projectionValue / CPI_DEFLATORS[d.year];
                 }
+
+                // Calculate reform value (baseline + average change from SCP baby boost)
+                let reformValue = projectionValue;
+                if (avgChange[d.year]) {
+                  let change = avgChange[d.year];
+                  if (incomeAdjustment === "real" && CPI_DEFLATORS[d.year]) {
+                    change = change / CPI_DEFLATORS[d.year];
+                  }
+                  reformValue = projectionValue + change;
+                }
+
                 if (merged[d.year]) {
                   merged[d.year].projection = projectionValue;
+                  merged[d.year].reform = d.year >= 2026 ? reformValue : null;
                 } else {
                   merged[d.year] = {
                     year: d.year,
                     projection: projectionValue,
+                    reform: d.year >= 2026 ? reformValue : null,
                   };
                 }
               });
@@ -352,6 +364,7 @@ export default function Dashboard() {
             yFormat={(v) => `£${(v / 1000).toFixed(0)}k`}
             yDomain={[0, 70000]}
             viewMode={incomeViewMode}
+            showReform={true}
           />
         </div>
       </div>

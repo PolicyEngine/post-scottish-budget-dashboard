@@ -9,13 +9,16 @@ export default function D3LineChart({
   xKey = "year",
   historicalKey = "historical",
   projectionKey = "projection",
+  reformKey = "reform",
   yLabel = "Value",
   yFormat = (v) => v.toFixed(0),
   yDomain,
   historicalLabel = "Official (historical)",
-  projectionLabel = "PolicyEngine (projection)",
+  projectionLabel = "Baseline (projection)",
+  reformLabel = "With SCP baby boost",
   height = 320,
   viewMode = "both", // "outturn", "forecast", "both"
+  showReform = false,
 }) {
   const showHistorical = viewMode === "both" || viewMode === "outturn";
   const showProjection = viewMode === "both" || viewMode === "forecast";
@@ -67,6 +70,7 @@ export default function D3LineChart({
       const vals = [];
       if (showHistorical && d[historicalKey] != null) vals.push(d[historicalKey]);
       if (showProjection && d[projectionKey] != null) vals.push(d[projectionKey]);
+      if (showReform && d[reformKey] != null) vals.push(d[reformKey]);
       return vals;
     });
     const yExtent = yDomain || [0, d3.max(allValues) * 1.1];
@@ -147,6 +151,13 @@ export default function D3LineChart({
       .defined((d) => d[projectionKey] != null)
       .x((d) => x(d[xKey]))
       .y((d) => y(d[projectionKey]))
+      .curve(d3.curveMonotoneX);
+
+    const lineReform = d3
+      .line()
+      .defined((d) => d[reformKey] != null)
+      .x((d) => x(d[xKey]))
+      .y((d) => y(d[reformKey]))
       .curve(d3.curveMonotoneX);
 
     // Draw historical line (solid, gray)
@@ -234,6 +245,47 @@ export default function D3LineChart({
         .attr("r", 6);
     }
 
+    // Draw reform line (solid, green)
+    const reformData = data.filter((d) => d[reformKey] != null);
+    if (showReform && reformData.length > 0) {
+      const reformPath = g
+        .append("path")
+        .datum(reformData)
+        .attr("class", "line-reform")
+        .attr("fill", "none")
+        .attr("stroke", "#38A169")
+        .attr("stroke-width", 3)
+        .attr("d", lineReform);
+
+      // Animate
+      const totalLength = reformPath.node().getTotalLength();
+      reformPath
+        .attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .delay(800)
+        .duration(1000)
+        .ease(d3.easeQuadOut)
+        .attr("stroke-dashoffset", 0);
+
+      // Dots for reform
+      g.selectAll(".dot-reform")
+        .data(reformData)
+        .enter()
+        .append("circle")
+        .attr("class", "dot-reform")
+        .attr("cx", (d) => x(d[xKey]))
+        .attr("cy", (d) => y(d[reformKey]))
+        .attr("r", 0)
+        .attr("fill", "#38A169")
+        .attr("stroke", "white")
+        .attr("stroke-width", 2)
+        .transition()
+        .delay((_, i) => 1600 + i * 80)
+        .duration(300)
+        .attr("r", 6);
+    }
+
     // Legend
     const legend = g
       .append("g")
@@ -294,6 +346,33 @@ export default function D3LineChart({
         .attr("font-size", "12px")
         .attr("font-family", "var(--pe-font-body)")
         .text(projectionLabel);
+      legendOffset += 160;
+    }
+
+    // Reform legend
+    if (showReform && reformData.length > 0) {
+      legend
+        .append("line")
+        .attr("x1", legendOffset)
+        .attr("x2", legendOffset + 20)
+        .attr("y1", 0)
+        .attr("y2", 0)
+        .attr("stroke", "#38A169")
+        .attr("stroke-width", 3);
+      legend
+        .append("circle")
+        .attr("cx", legendOffset + 10)
+        .attr("cy", 0)
+        .attr("r", 4)
+        .attr("fill", "#38A169");
+      legend
+        .append("text")
+        .attr("x", legendOffset + 28)
+        .attr("y", 4)
+        .attr("fill", "#6B7280")
+        .attr("font-size", "12px")
+        .attr("font-family", "var(--pe-font-body)")
+        .text(reformLabel);
     }
 
     // Tooltip
@@ -318,13 +397,17 @@ export default function D3LineChart({
 
         const historical = d[historicalKey];
         const projection = d[projectionKey];
+        const reform = d[reformKey];
 
         let html = `<div class="tooltip-year">${formatYearRange(d[xKey])}</div>`;
         if (showHistorical && historical != null) {
           html += `<div class="tooltip-row"><span class="tooltip-dot historical"></span><span class="tooltip-label">Official:</span><span class="tooltip-value">${yFormat(historical)}</span></div>`;
         }
         if (showProjection && projection != null) {
-          html += `<div class="tooltip-row"><span class="tooltip-dot projection"></span><span class="tooltip-label">PolicyEngine:</span><span class="tooltip-value">${yFormat(projection)}</span></div>`;
+          html += `<div class="tooltip-row"><span class="tooltip-dot projection"></span><span class="tooltip-label">Baseline:</span><span class="tooltip-value">${yFormat(projection)}</span></div>`;
+        }
+        if (showReform && reform != null) {
+          html += `<div class="tooltip-row"><span class="tooltip-dot reform"></span><span class="tooltip-label">With reform:</span><span class="tooltip-value">${yFormat(reform)}</span></div>`;
         }
 
         tooltip.html(html).style("opacity", 1).style("left", `${event.offsetX + 12}px`).style("top", `${event.offsetY - 12}px`);
@@ -332,7 +415,7 @@ export default function D3LineChart({
       .on("mouseout", function () {
         tooltip.style("opacity", 0);
       });
-  }, [data, dimensions, xKey, historicalKey, projectionKey, yLabel, yFormat, yDomain, historicalLabel, projectionLabel, viewMode, showHistorical, showProjection]);
+  }, [data, dimensions, xKey, historicalKey, projectionKey, reformKey, yLabel, yFormat, yDomain, historicalLabel, projectionLabel, reformLabel, viewMode, showHistorical, showProjection, showReform]);
 
   return (
     <div ref={containerRef} className="d3-chart-container">

@@ -53,6 +53,10 @@
   background: #319795;
 }
 
+.tooltip-dot.reform {
+  background: #38A169;
+}
+
 .tooltip-label {
   color: rgba(255, 255, 255, 0.7);
 }
