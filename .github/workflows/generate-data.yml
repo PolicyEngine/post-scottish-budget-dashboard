@@ -1,19 +1,14 @@
 name: Generate Dashboard Data
 
+# Disabled automatic triggers - run data generation locally instead
+# To regenerate data locally:
+#   PYTHONPATH=src python -c "from scottish_budget_data import generate_all_data; generate_all_data()"
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/scottish_budget_data/**'
-      - 'data_inputs/**'
-      - '.github/workflows/generate-data.yml'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only
 
 jobs:
   generate:
     runs-on: ubuntu-latest
-    # Skip if commit was made by this action to prevent infinite loops
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'Auto-generate dashboard data')"
 
     steps:
       - name: Checkout
