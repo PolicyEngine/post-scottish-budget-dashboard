@@ -135,15 +135,6 @@ export default function LocalAreaSection() {
     })).sort((a, b) => b.avgGain - a.avgGain);
   }, [constituencyData]);
 
-  // Top and bottom constituencies
-  const topConstituencies = useMemo(() => {
-    return [...constituencyData].sort((a, b) => b.avgGain - a.avgGain).slice(0, 5);
-  }, [constituencyData]);
-
-  const bottomConstituencies = useMemo(() => {
-    return [...constituencyData].sort((a, b) => a.avgGain - b.avgGain).slice(0, 5);
-  }, [constituencyData]);
-
   if (loading) {
     return <div className="local-area-section"><p>Loading constituency data...</p></div>;
   }
@@ -189,8 +180,7 @@ export default function LocalAreaSection() {
       <div className="section-box">
         <h3 className="chart-title">Regional comparison</h3>
         <p className="chart-description">
-          Average household gain by Scottish region. Urban areas like Glasgow see larger gains due to
-          higher concentrations of households affected by the two-child limit.
+          Average household gain by Scottish region from the SCP baby boost policy.
         </p>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={350}>
@@ -204,55 +194,6 @@ export default function LocalAreaSection() {
               <Bar dataKey="avgGain" fill="#319795" name="Avg. gain" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Top and Bottom Constituencies */}
-      <div className="charts-row">
-        <div className="section-box">
-          <h3 className="chart-title">Highest impact constituencies</h3>
-          <p className="chart-description">
-            Constituencies with the largest average household gains from the two-child limit abolition.
-          </p>
-          <div className="constituency-list">
-            {topConstituencies.map((c, i) => (
-              <div
-                key={c.code}
-                className={`constituency-item ${selectedConstituency?.code === c.code ? 'selected' : ''}`}
-                onClick={() => handleConstituencySelect({ code: c.code, name: c.name })}
-              >
-                <span className="rank">{i + 1}</span>
-                <div className="constituency-info">
-                  <span className="name">{c.name}</span>
-                  <span className="region">{c.region}</span>
-                </div>
-                <span className="gain">£{c.avgGain}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-box">
-          <h3 className="chart-title">Lowest impact constituencies</h3>
-          <p className="chart-description">
-            Constituencies with the smallest average household gains from the two-child limit abolition.
-          </p>
-          <div className="constituency-list">
-            {bottomConstituencies.map((c, i) => (
-              <div
-                key={c.code}
-                className={`constituency-item ${selectedConstituency?.code === c.code ? 'selected' : ''}`}
-                onClick={() => handleConstituencySelect({ code: c.code, name: c.name })}
-              >
-                <span className="rank">{constituencyData.length - 4 + i}</span>
-                <div className="constituency-info">
-                  <span className="name">{c.name}</span>
-                  <span className="region">{c.region}</span>
-                </div>
-                <span className="gain">£{c.avgGain}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
