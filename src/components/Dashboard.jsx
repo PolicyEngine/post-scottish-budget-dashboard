@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import D3LineChart from "./D3LineChart";
 import DecileChart from "./DecileChart";
 import BudgetBarChart from "./BudgetBarChart";
+import PovertyImpactTable from "./PovertyImpactTable";
 import LocalAreaSection from "./LocalAreaSection";
 import "./Dashboard.css";
 
@@ -49,6 +50,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [livingStandardsData, setLivingStandardsData] = useState(null);
   const [povertyData, setPovertyData] = useState(null);
+  const [povertyMetrics, setPovertyMetrics] = useState([]);
   const [budgetaryData, setBudgetaryData] = useState(null);
   const [baselineData, setBaselineData] = useState(FALLBACK_BASELINE_DATA);
   const [povertyType, setPovertyType] = useState("absoluteBHC");
@@ -125,7 +127,17 @@ export default function Dashboard() {
           const csvText = await metricsRes.text();
           const data = parseCSV(csvText);
 
-          // Extract poverty metrics
+          // Filter to scp_baby_boost and transform for table
+          const scpMetrics = data
+            .filter(row => row.reform_id === "scp_baby_boost")
+            .map(row => ({
+              year: parseInt(row.year),
+              metric: row.metric,
+              value: parseFloat(row.value),
+            }));
+          setPovertyMetrics(scpMetrics);
+
+          // Extract poverty metrics for 2026
           const metrics2026 = data.filter(row =>
             row.year === "2026" && row.reform_id === "scp_baby_boost"
           );
@@ -371,7 +383,7 @@ export default function Dashboard() {
         <DecileChart
           data={livingStandardsData.byDecile}
           title="Impact by income decile"
-          description="The two-child limit policy primarily benefits lower-income households. This chart shows the percentage change in net income for each income decile."
+          description="The SCP baby boost primarily benefits lower-income households with babies under 1. This chart shows the percentage change in net income for each income decile."
         />
       )}
 
@@ -380,8 +392,16 @@ export default function Dashboard() {
       <p className="chart-description">
         This section shows how poverty rates are projected to change under the budget measures.
         The Scottish Government has set ambitious targets to reduce child poverty, and the budget
-        includes measures such as the two-child limit top-up payment.
+        includes the SCP baby boost to support families with young children.
       </p>
+
+      {/* Poverty Impact Table */}
+      {povertyMetrics.length > 0 && (
+        <PovertyImpactTable
+          data={povertyMetrics}
+          title="Poverty rate impact by year"
+        />
+      )}
 
       <div className="charts-row">
         <div className="section-box">
