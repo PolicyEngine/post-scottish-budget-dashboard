@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-generate-data = "scottish_budget_data.pipeline:generate_all_data"
+scottish-budget-data = "scottish_budget_data.cli:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]

@@ -1,0 +1,62 @@
+name: Generate Dashboard Data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/scottish_budget_data/**'
+      - 'data_inputs/**'
+      - '.github/workflows/generate-data.yml'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # Skip if commit was made by this action to prevent infinite loops
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'Auto-generate dashboard data')"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        env:
+          HUGGING_FACE_TOKEN: ${{ secrets.HUGGING_FACE_TOKEN }}
+        run: |
+          uv pip install --system policyengine-uk pandas numpy h5py
+
+      - name: Generate dashboard data
+        env:
+          HUGGING_FACE_TOKEN: ${{ secrets.HUGGING_FACE_TOKEN }}
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+          cd ${{ github.workspace }}
+          python -c "from scottish_budget_data import generate_all_data; generate_all_data()"
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet public/data/; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/
+          git commit -m "Auto-generate dashboard data [skip ci]"
+          git push
