@@ -26,14 +26,12 @@ jobs:
         with:
           version: "latest"
 
-      - name: Set up Python
-        run: uv python install 3.11
-
-      - name: Install dependencies
+      - name: Set up Python and install dependencies
         env:
           HUGGING_FACE_TOKEN: ${{ secrets.HUGGING_FACE_TOKEN }}
         run: |
-          uv pip install --system policyengine-uk pandas numpy h5py
+          uv venv
+          uv pip install policyengine-uk pandas numpy h5py
 
       - name: Generate dashboard data
         env:
@@ -41,6 +39,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/src
         run: |
           cd ${{ github.workspace }}
+          source .venv/bin/activate
           python -c "from scottish_budget_data import generate_all_data; generate_all_data()"
 
       - name: Check for changes
