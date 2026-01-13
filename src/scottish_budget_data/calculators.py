@@ -9,6 +9,18 @@ import numpy as np
 from policyengine_uk import Microsimulation
 
 
+def get_scotland_household_mask(sim: Microsimulation, year: int) -> np.ndarray:
+    """Get boolean mask for Scottish households."""
+    country = sim.calculate("country", year, map_to="household")
+    return np.array(country) == "SCOTLAND"
+
+
+def get_scotland_person_mask(sim: Microsimulation, year: int) -> np.ndarray:
+    """Get boolean mask for Scottish persons."""
+    country = sim.calculate("country", year, map_to="person")
+    return np.array(country) == "SCOTLAND"
+
+
 class BudgetaryImpactCalculator:
     """Calculate budgetary impact (cost) of reforms."""
 
@@ -22,13 +34,21 @@ class BudgetaryImpactCalculator:
         reform_id: str,
         reform_name: str,
     ) -> list[dict]:
-        """Calculate budgetary impact for all years."""
+        """Calculate budgetary impact for all years (Scotland only)."""
         results = []
 
         for year in self.years:
-            baseline_income = baseline.calculate("household_net_income", year)
-            reformed_income = reformed.calculate("household_net_income", year)
-            household_weight = baseline.calculate("household_weight", year)
+            # Filter to Scotland
+            is_scotland = get_scotland_household_mask(baseline, year)
+
+            baseline_income = np.array(baseline.calculate("household_net_income", year))
+            reformed_income = np.array(reformed.calculate("household_net_income", year))
+            household_weight = np.array(baseline.calculate("household_weight", year))
+
+            # Apply Scotland filter
+            baseline_income = baseline_income[is_scotland]
+            reformed_income = reformed_income[is_scotland]
+            household_weight = household_weight[is_scotland]
 
             # Cost is increase in household income (government spending)
             cost = ((reformed_income - baseline_income) * household_weight).sum()
@@ -37,7 +57,7 @@ class BudgetaryImpactCalculator:
                 "reform_id": reform_id,
                 "reform_name": reform_name,
                 "year": year,
-                "value": cost / 1e9,  # In billions
+                "value": cost / 1e6,  # In millions
             })
 
         return results
@@ -54,11 +74,14 @@ class DistributionalImpactCalculator:
         reform_name: str,
         year: int,
     ) -> tuple[list[dict], pd.DataFrame]:
-        """Calculate distributional impact for a single year."""
-        baseline_income = baseline.calculate("household_net_income", year)
-        reformed_income = reformed.calculate("household_net_income", year)
-        household_weight = baseline.calculate("household_weight", year)
-        income_decile = baseline.calculate("household_income_decile", year)
+        """Calculate distributional impact for a single year (Scotland only)."""
+        # Filter to Scotland
+        is_scotland = get_scotland_household_mask(baseline, year)
+
+        baseline_income = np.array(baseline.calculate("household_net_income", year))[is_scotland]
+        reformed_income = np.array(reformed.calculate("household_net_income", year))[is_scotland]
+        household_weight = np.array(baseline.calculate("household_weight", year))[is_scotland]
+        income_decile = np.array(baseline.calculate("household_income_decile", year))[is_scotland]
 
         df = pd.DataFrame({
             "baseline_income": baseline_income,
@@ -148,13 +171,16 @@ class MetricsCalculator:
         reform_name: str,
         year: int,
     ) -> list[dict]:
-        """Calculate poverty and other summary metrics."""
+        """Calculate poverty and other summary metrics (Scotland only)."""
         results = []
 
+        # Filter to Scotland
+        is_scotland = get_scotland_person_mask(baseline, year)
+
         # Overall poverty
-        baseline_poverty = baseline.calculate("in_poverty", year, map_to="person").values
-        reformed_poverty = reformed.calculate("in_poverty", year, map_to="person").values
-        person_weight = baseline.calculate("person_weight", year, map_to="person").values
+        baseline_poverty = baseline.calculate("in_poverty", year, map_to="person").values[is_scotland]
+        reformed_poverty = reformed.calculate("in_poverty", year, map_to="person").values[is_scotland]
+        person_weight = baseline.calculate("person_weight", year, map_to="person").values[is_scotland]
 
         baseline_rate = (baseline_poverty * person_weight).sum() / person_weight.sum() * 100
         reformed_rate = (reformed_poverty * person_weight).sum() / person_weight.sum() * 100
@@ -181,8 +207,8 @@ class MetricsCalculator:
             "value": reformed_rate - baseline_rate,
         })
 
-        # Child poverty
-        is_child = baseline.calculate("is_child", year, map_to="person").values
+        # Child poverty (already filtered to Scotland above)
+        is_child = baseline.calculate("is_child", year, map_to="person").values[is_scotland]
 
         child_baseline_rate = (baseline_poverty * person_weight * is_child).sum() / (person_weight * is_child).sum() * 100
         child_reformed_rate = (reformed_poverty * person_weight * is_child).sum() / (person_weight * is_child).sum() * 100

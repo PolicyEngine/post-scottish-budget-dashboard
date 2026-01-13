@@ -1,11 +1,11 @@
 reform_id,reform_name,year,value
-scp_baby_boost,SCP baby boost (£40/week),2026,79.87334143781689
-scp_baby_boost,SCP baby boost (£40/week),2027,74.86940868737018
-scp_baby_boost,SCP baby boost (£40/week),2028,78.55600419365018
-scp_baby_boost,SCP baby boost (£40/week),2029,79.24082746424169
-scp_baby_boost,SCP baby boost (£40/week),2030,83.4715128718002
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,642.767300610965
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,608.7494057595537
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,538.5780850086581
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,464.4927317612816
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,389.05805453075646
+scp_baby_boost,SCP baby boost (£40/week),2026,25.32321
+scp_baby_boost,SCP baby boost (£40/week),2027,23.160297
+scp_baby_boost,SCP baby boost (£40/week),2028,25.24561
+scp_baby_boost,SCP baby boost (£40/week),2029,25.26324
+scp_baby_boost,SCP baby boost (£40/week),2030,26.127497
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,62.696766
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,56.772045
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,49.892548
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,42.455177
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,34.56006
