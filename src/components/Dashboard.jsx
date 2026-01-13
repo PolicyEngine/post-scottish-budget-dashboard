@@ -383,7 +383,7 @@ export default function Dashboard() {
         <DecileChart
           data={livingStandardsData.byDecile}
           title="Impact by income decile"
-          description="The SCP baby boost primarily benefits lower-income households with babies under 1. This chart shows the percentage change in net income for each income decile."
+          description="The SCP baby boost is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
         />
       )}
 
