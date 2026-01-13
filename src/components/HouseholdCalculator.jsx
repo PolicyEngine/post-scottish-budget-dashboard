@@ -41,7 +41,6 @@ function HouseholdCalculator() {
     total: 0,
   });
   const [variationData, setVariationData] = useState([]);
-  const [chartLoading, setChartLoading] = useState(false);
   const chartRef = useRef(null);
   const chartContainerRef = useRef(null);
 
@@ -76,7 +75,6 @@ function HouseholdCalculator() {
   // Combined calculate function for both single calc and variation
   const calculateAll = useCallback(async () => {
     setLoading(true);
-    setChartLoading(true);
     setError(null);
 
     try {
@@ -124,7 +122,6 @@ function HouseholdCalculator() {
       setError(err.message);
     } finally {
       setLoading(false);
-      setChartLoading(false);
     }
   }, [inputs]);
 
@@ -446,9 +443,9 @@ function HouseholdCalculator() {
             type="button"
             onClick={calculateAll}
             className="calculate-btn"
-            disabled={loading || chartLoading}
+            disabled={loading}
           >
-            {loading || chartLoading ? "Calculating..." : "Calculate"}
+            {loading ? "Calculating..." : "Calculate"}
           </button>
         </div>
 
@@ -468,56 +465,56 @@ function HouseholdCalculator() {
             </div>
           )}
 
-          {/* Total impact card */}
-          <div
-            className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}
-          >
-            <div className="total-label">Your estimated annual gain</div>
-            <div className="total-value">{formatCurrency(impacts.total)}</div>
-            <div className="total-context">
-              {impacts.total > 0
-                ? "per year from Scottish Budget 2026-27"
-                : "No impact from these policies"}
+          {/* Total impact card - hide while loading */}
+          {!loading && (
+            <div
+              className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}
+            >
+              <div className="total-label">Your estimated annual gain</div>
+              <div className="total-value">{formatCurrency(impacts.total)}</div>
+              <div className="total-context">
+                {impacts.total > 0
+                  ? "per year from Scottish Budget 2026-27"
+                  : "No impact from these policies"}
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Breakdown by reform */}
-          <div className="impact-breakdown">
-            <h4>Breakdown by policy</h4>
-            {REFORMS.map((reform) => {
-              const value = impacts[reform.id] ?? 0;
-              return (
-                <div key={reform.id} className="reform-row">
-                  <div className="reform-info">
-                    <div className="reform-color" style={{ backgroundColor: reform.color }} />
-                    <div className="reform-details">
-                      <span className="reform-label">{reform.name}</span>
-                      <span className="reform-description">{reform.description}</span>
+          {/* Breakdown by reform - hide while loading */}
+          {!loading && (
+            <div className="impact-breakdown">
+              <h4>Breakdown by policy</h4>
+              {REFORMS.map((reform) => {
+                const value = impacts[reform.id] ?? 0;
+                return (
+                  <div key={reform.id} className="reform-row">
+                    <div className="reform-info">
+                      <div className="reform-color" style={{ backgroundColor: reform.color }} />
+                      <div className="reform-details">
+                        <span className="reform-label">{reform.name}</span>
+                        <span className="reform-description">{reform.description}</span>
+                      </div>
+                    </div>
+                    <div
+                      className={`reform-value ${value > 0 ? "positive" : value < 0 ? "negative" : ""}`}
+                    >
+                      {formatCurrency(value)}
                     </div>
                   </div>
-                  <div
-                    className={`reform-value ${value > 0 ? "positive" : value < 0 ? "negative" : ""}`}
-                  >
-                    {formatCurrency(value)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
-          {/* Earnings variation chart */}
-          <div className="earnings-chart-section">
-            <h4>Impact by earnings level</h4>
-            <p className="chart-subtitle">
-              How the reforms affect households at different income levels
-            </p>
-            <div ref={chartContainerRef} className="earnings-chart-container">
-              {chartLoading ? (
-                <div className="chart-loading">
-                  <div className="spinner"></div>
-                  <span>Calculating impacts across earnings...</span>
-                </div>
-              ) : variationData.length > 0 ? (
+          {/* Earnings variation chart - hide while loading */}
+          {!loading && (
+            <div className="earnings-chart-section">
+              <h4>Impact by earnings level</h4>
+              <p className="chart-subtitle">
+                How the reforms affect households at different income levels
+              </p>
+              <div ref={chartContainerRef} className="earnings-chart-container">
+                {variationData.length > 0 ? (
                 <svg ref={chartRef}></svg>
               ) : (
                 <div className="chart-placeholder">
@@ -526,8 +523,9 @@ function HouseholdCalculator() {
                   </span>
                 </div>
               )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

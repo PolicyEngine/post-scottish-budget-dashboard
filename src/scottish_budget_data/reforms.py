@@ -173,39 +173,3 @@ simulation_modifier=_income_tax_threshold_uplift_modifier,
     )
 
     return reforms
-
-
-# Policy metadata for dashboard
-POLICIES = [
-    {
-        "id": "scp_baby_boost",
-        "name": "SCP baby boost (£40/week)",
-        "description": "Scottish Child Payment boosted to £40/week for babies under 1",
-        "explanation": """
-            The Scottish Child Payment is boosted to £40/week for families with babies
-            under 1 year old, up from the standard rate of £27.15/week. This delivers
-            the strongest package of support for families with young children anywhere
-            in the UK, as announced by Finance Secretary Shona Robison on 13 January 2026.
-        """,
-    },
-    {
-        "id": "income_tax_threshold_uplift",
-        "name": "Income tax threshold uplift (7.4%)",
-        "description": "Scottish basic and intermediate rate thresholds increased by 7.4%",
-        "explanation": """
-            The Scottish basic and intermediate income tax rate thresholds are raised by 7.4%.
-            The basic rate (20%) threshold rises from £15,398 to £16,537, and the intermediate
-            rate (21%) threshold rises from £27,492 to £29,527. The higher rate (42%) remains
-            unchanged at £43,663. This means people pay the lower 19% starter rate on more of
-            their income.
-        """,
-    },
-]
-
-PRESETS = [
-    {
-        "id": "scottish-budget-2026",
-        "name": "Scottish Budget 2026",
-        "policies": ["scp_baby_boost", "income_tax_threshold_uplift"],
-    },
-]
