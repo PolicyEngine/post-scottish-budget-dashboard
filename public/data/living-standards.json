@@ -1,24 +1,24 @@
 {
-  "title": "How household income changes",
-  "description": "Average change in household income by decile under the Scottish Budget 2025-26.",
-  "metric": "income_change",
-  "unit": "£/year",
+  "title": "Impact on living standards",
+  "description": "How the two-child limit policy affects household income by income decile.",
+  "policy": "two_child_limit",
+  "year": 2026,
   "byDecile": [
-    { "decile": 1, "baseline": 12500, "reform": 13100, "change": 600, "percentChange": 4.8 },
-    { "decile": 2, "baseline": 18200, "reform": 18750, "change": 550, "percentChange": 3.0 },
-    { "decile": 3, "baseline": 23100, "reform": 23580, "change": 480, "percentChange": 2.1 },
-    { "decile": 4, "baseline": 28400, "reform": 28820, "change": 420, "percentChange": 1.5 },
-    { "decile": 5, "baseline": 34200, "reform": 34550, "change": 350, "percentChange": 1.0 },
-    { "decile": 6, "baseline": 41000, "reform": 41280, "change": 280, "percentChange": 0.7 },
-    { "decile": 7, "baseline": 49500, "reform": 49710, "change": 210, "percentChange": 0.4 },
-    { "decile": 8, "baseline": 60200, "reform": 60350, "change": 150, "percentChange": 0.2 },
-    { "decile": 9, "baseline": 76800, "reform": 76880, "change": 80, "percentChange": 0.1 },
-    { "decile": 10, "baseline": 125000, "reform": 124950, "change": -50, "percentChange": 0.0 }
+    { "decile": "1st", "relativeChange": 2.8, "absoluteChange": 350 },
+    { "decile": "2nd", "relativeChange": 2.1, "absoluteChange": 420 },
+    { "decile": "3rd", "relativeChange": 1.2, "absoluteChange": 310 },
+    { "decile": "4th", "relativeChange": 0.6, "absoluteChange": 180 },
+    { "decile": "5th", "relativeChange": 0.3, "absoluteChange": 110 },
+    { "decile": "6th", "relativeChange": 0.15, "absoluteChange": 65 },
+    { "decile": "7th", "relativeChange": 0.08, "absoluteChange": 40 },
+    { "decile": "8th", "relativeChange": 0.03, "absoluteChange": 20 },
+    { "decile": "9th", "relativeChange": 0.01, "absoluteChange": 10 },
+    { "decile": "10th", "relativeChange": 0.0, "absoluteChange": 0 }
   ],
   "summary": {
     "winnersPercent": 68,
-    "losersPercent": 5,
-    "noChangePercent": 27,
+    "losersPercent": 0,
+    "noChangePercent": 32,
     "averageGain": 340,
     "totalCost": 850000000
   }

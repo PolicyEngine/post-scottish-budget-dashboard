@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import D3LineChart from "./D3LineChart";
+import DecileChart from "./DecileChart";
 import LocalAreaSection from "./LocalAreaSection";
 import "./Dashboard.css";
 
@@ -233,6 +234,15 @@ export default function Dashboard() {
           />
         </div>
       </div>
+
+      {/* Decile Impact Chart */}
+      {livingStandardsData?.byDecile && (
+        <DecileChart
+          data={livingStandardsData.byDecile}
+          title="Impact by income decile"
+          description="The two-child limit policy primarily benefits lower-income households. This chart shows the percentage change in net income for each income decile."
+        />
+      )}
 
       {/* Poverty Section */}
       <h2 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)}>Poverty</h2>
