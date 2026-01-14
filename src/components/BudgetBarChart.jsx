@@ -1,16 +1,19 @@
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import "./BudgetBarChart.css";
+import { POLICY_COLORS, POLICY_NAMES, ALL_POLICY_NAMES } from "../utils/policyConfig";
 
 /**
- * Bar chart showing values by year.
+ * Bar chart showing values by year, with stacking support for multiple policies.
  */
 export default function BudgetBarChart({
   data,
@@ -19,6 +22,8 @@ export default function BudgetBarChart({
   yLabel = "Cost (£ millions)",
   yFormat,
   tooltipLabel = "Value",
+  stacked = false,
+  selectedPolicies = [],
 }) {
   if (!data || data.length === 0) {
     return (
@@ -33,11 +38,31 @@ export default function BudgetBarChart({
   const formatValue = yFormat || defaultFormat;
   const formatYearRange = (year) => `${year}–${(year + 1).toString().slice(-2)}`;
 
-  // Calculate y-axis domain
-  const maxValue = Math.max(...data.map((d) => Math.abs(d.value)));
-  const minValue = Math.min(...data.map((d) => d.value));
+  // Calculate y-axis domain based on stacked or single mode
+  let maxValue, minValue;
+  if (stacked) {
+    // For stacked, sum all policy values for max
+    maxValue = Math.max(...data.map((d) => {
+      let sum = 0;
+      ALL_POLICY_NAMES.forEach(name => {
+        if (d[name]) sum += Math.abs(d[name]);
+      });
+      return sum || Math.abs(d.netImpact || 0);
+    }));
+    minValue = 0;
+  } else {
+    maxValue = Math.max(...data.map((d) => Math.abs(d.value || 0)));
+    minValue = Math.min(...data.map((d) => d.value || 0));
+  }
   const yMin = minValue < 0 ? Math.floor(minValue * 1.1) : 0;
   const yMax = Math.ceil(maxValue * 1.2);
+
+  // Check which policies have data
+  const activePolicies = stacked
+    ? ALL_POLICY_NAMES.filter(name =>
+        data.some(d => Math.abs(d[name] || 0) > 0.001)
+      )
+    : [];
 
   return (
     <div className="budget-bar-chart">
@@ -45,9 +70,10 @@ export default function BudgetBarChart({
       {description && <p className="chart-description">{description}</p>}
 
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart
+        <ComposedChart
           data={data}
           margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+          stackOffset={stacked ? "sign" : undefined}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
           <XAxis
@@ -79,7 +105,7 @@ export default function BudgetBarChart({
             }}
           />
           <Tooltip
-            formatter={(value) => [formatValue(value), tooltipLabel]}
+            formatter={(value, name) => [formatValue(value), name]}
             labelFormatter={(label) => formatYearRange(label)}
             contentStyle={{
               background: "white",
@@ -88,13 +114,53 @@ export default function BudgetBarChart({
               padding: "8px 12px",
             }}
           />
-          <Bar
-            dataKey="value"
-            fill="#319795"
-            radius={[4, 4, 0, 0]}
-            name={tooltipLabel}
-          />
-        </BarChart>
+          {stacked && activePolicies.length > 1 && (
+            <Legend
+              verticalAlign="top"
+              height={36}
+              payload={[
+                ...activePolicies.map(name => ({
+                  value: name,
+                  type: "rect",
+                  color: POLICY_COLORS[name],
+                })),
+                { value: "Net impact", type: "line", color: "#000000" },
+              ]}
+            />
+          )}
+          {stacked ? (
+            <>
+              {ALL_POLICY_NAMES.map((policyName) => (
+                <Bar
+                  key={policyName}
+                  dataKey={policyName}
+                  fill={POLICY_COLORS[policyName]}
+                  name={policyName}
+                  stackId="stack"
+                  radius={[2, 2, 0, 0]}
+                  hide={!activePolicies.includes(policyName)}
+                />
+              ))}
+              {activePolicies.length > 1 && (
+                <Line
+                  type="monotone"
+                  dataKey="netImpact"
+                  stroke="#000000"
+                  strokeWidth={2}
+                  dot={{ fill: "#000000", r: 4 }}
+                  name="Net impact"
+                />
+              )}
+            </>
+          ) : (
+            <Bar
+              dataKey="value"
+              fill="#319795"
+              radius={[4, 4, 0, 0]}
+              name={tooltipLabel}
+            />
+          )}
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );

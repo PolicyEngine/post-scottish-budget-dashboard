@@ -4,6 +4,72 @@
   margin-top: var(--pe-space-lg);
 }
 
+/* Constituency controls bar */
+.constituency-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pe-space-lg);
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--pe-space-md);
+  padding: var(--pe-space-md);
+  background: var(--pe-gray-50);
+  border-radius: var(--pe-radius-md);
+  border: 1px solid var(--pe-gray-200);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-sm);
+}
+
+.control-label {
+  font-family: var(--pe-font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pe-gray-600);
+}
+
+/* Year toggle for constituency comparison */
+.year-toggle {
+  display: inline-flex;
+  background: var(--pe-gray-100);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.year-toggle button {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  font-family: var(--pe-font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--pe-gray-600);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.year-toggle button:hover {
+  color: var(--pe-gray-800);
+}
+
+.year-toggle button.active {
+  background: white;
+  color: var(--pe-teal-700);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart controls row */
+.chart-controls-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-md);
+  flex-wrap: wrap;
+}
+
 /* Constituency controls */
 .constituency-controls {
   display: flex;
@@ -79,9 +145,60 @@
 
 /* Constituency list */
 .constituency-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--pe-space-md) 0 0 0;
   display: flex;
   flex-direction: column;
-  gap: var(--pe-space-sm);
+  gap: var(--pe-space-xs);
+  counter-reset: constituency-counter;
+}
+
+.constituency-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--pe-space-sm) var(--pe-space-md);
+  background: var(--pe-surface);
+  border: 1px solid var(--pe-gray-200);
+  border-radius: var(--pe-radius-md);
+  transition: all var(--pe-transition-fast);
+  counter-increment: constituency-counter;
+}
+
+.constituency-list-item::before {
+  content: counter(constituency-counter) ".";
+  font-weight: 600;
+  color: var(--pe-gray-400);
+  min-width: 28px;
+  margin-right: var(--pe-space-sm);
+}
+
+.constituency-list-item:hover {
+  border-color: var(--pe-teal-300);
+  background: var(--pe-gray-50);
+}
+
+.constituency-list-name {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--pe-gray-800);
+}
+
+.constituency-list-value {
+  font-family: var(--pe-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: var(--pe-space-md);
+}
+
+.constituency-list-value.positive {
+  color: var(--pe-teal-600);
+}
+
+.constituency-list-value.negative {
+  color: #dc2626;
 }
 
 .constituency-item {
@@ -190,6 +307,56 @@
   .charts-row {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* Chart header with toggle */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pe-space-sm);
+  margin-bottom: var(--pe-space-xs);
+}
+
+.chart-header .chart-title {
+  margin: 0;
+}
+
+.chart-toggle {
+  display: flex;
+  background: var(--pe-gray-100);
+  border-radius: var(--pe-radius-md);
+  padding: 3px;
+}
+
+.toggle-btn {
+  padding: var(--pe-space-xs) var(--pe-space-md);
+  border: none;
+  background: transparent;
+  border-radius: var(--pe-radius-sm);
+  font-family: var(--pe-font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--pe-gray-600);
+  cursor: pointer;
+  transition: all var(--pe-transition-fast);
+}
+
+.toggle-btn:hover {
+  color: var(--pe-gray-900);
+}
+
+.toggle-btn.active {
+  background: var(--pe-surface);
+  color: var(--pe-teal-700);
+  box-shadow: var(--pe-shadow-sm);
+}
+
+/* Constituency chart container */
+.constituency-chart-container {
+  margin-top: var(--pe-space-md);
+  overflow-x: auto;
 }
 
 /* Responsive */

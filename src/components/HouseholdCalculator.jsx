@@ -305,7 +305,7 @@ function HouseholdCalculator() {
     const legendItems = [
       { label: "Total", color: CHART_COLORS.total },
       { label: "Income tax", color: CHART_COLORS.income_tax_threshold_uplift },
-      { label: "SCP baby boost", color: CHART_COLORS.scp_baby_boost },
+      { label: "SCP Premium", color: CHART_COLORS.scp_baby_boost },
     ];
 
     legendItems.forEach((item, i) => {
@@ -433,7 +433,7 @@ function HouseholdCalculator() {
             </div>
             <div style="display:flex;align-items:center;gap:6px">
               <span style="width:10px;height:10px;background:${CHART_COLORS.scp_baby_boost};border-radius:2px"></span>
-              <span style="color:#475569">SCP boost:</span>
+              <span style="color:#475569">SCP Premium:</span>
               <span style="font-weight:600;color:${closest.scp_baby_boost >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.scp_baby_boost)}£${Math.abs(closest.scp_baby_boost).toFixed(0)}</span>
             </div>
           `)
@@ -565,8 +565,8 @@ function HouseholdCalculator() {
             )}
             <span className="help-text">
               {babiesCount > 0
-                ? `${babiesCount} baby/babies under 1 eligible for SCP boost`
-                : "Add a baby (age 0) to see SCP baby boost impact"}
+                ? `${babiesCount} baby/babies under 1 eligible for SCP Premium`
+                : "Add a baby (age 0) to see SCP Premium impact"}
             </span>
           </div>
 
@@ -665,7 +665,7 @@ function HouseholdCalculator() {
       <div className="reforms-explanation">
         <h4>About the reforms</h4>
         <p>
-          <strong>SCP Baby Boost:</strong> The Scottish Child Payment increases to £40/week for
+          <strong>SCP Premium for under-ones:</strong> The Scottish Child Payment increases to £40/week for
           babies under 1 (up from £27.15/week), for families receiving Universal Credit or other
           qualifying benefits.
         </p>

@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import ScotlandMap from "./ScotlandMap";
 import "./LocalAreaSection.css";
 
@@ -63,11 +62,26 @@ function getRegion(constituencyName) {
   return "Scotland";
 }
 
-export default function LocalAreaSection() {
+const POLICY_DISPLAY_NAMES = {
+  combined: "both policies",
+  scp_baby_boost: "SCP Premium for under-ones",
+  income_tax_threshold_uplift: "income tax threshold uplift",
+};
+
+export default function LocalAreaSection({
+  selectedPolicy = "scp_baby_boost",
+  selectedYear = 2026,
+  onYearChange = null,
+  availableYears = [2026, 2027, 2028, 2029, 2030],
+}) {
+  const policyName = POLICY_DISPLAY_NAMES[selectedPolicy] || "the selected policy";
+  const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
+
   const [constituencyData, setConstituencyData] = useState([]);
   const [selectedConstituency, setSelectedConstituency] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState("All regions");
   const [loading, setLoading] = useState(true);
+  const [showTop, setShowTop] = useState(true); // Toggle for Top 10 vs Lowest 10
 
   // Load constituency data from CSV
   useEffect(() => {
@@ -78,9 +92,13 @@ export default function LocalAreaSection() {
           const csvText = await res.text();
           const data = parseCSV(csvText);
 
-          // Transform to expected format and add region (filter to 2026 data only)
+          // Transform to expected format and add region (filter by year and selected policy)
           const transformed = data
-            .filter(row => row.constituency_code?.startsWith("S") && row.year === "2026")
+            .filter(row =>
+              row.constituency_code?.startsWith("S") &&
+              row.year === String(selectedYear) &&
+              row.reform_id === selectedPolicy
+            )
             .map(row => ({
               code: row.constituency_code,
               name: row.constituency_name,
@@ -88,7 +106,7 @@ export default function LocalAreaSection() {
               relativeChange: parseFloat(row.relative_change) || 0,
               region: getRegion(row.constituency_name),
               // Estimate poverty reduction from relative change (placeholder)
-              povertyReduction: Math.max(0, (parseFloat(row.relative_change) || 0) * 1.5).toFixed(1),
+              povertyReduction: Math.max(0, (parseFloat(row.relative_change) || 0) * 1.5),
               households: 40000, // Placeholder
             }));
 
@@ -101,7 +119,7 @@ export default function LocalAreaSection() {
       }
     }
     loadData();
-  }, []);
+  }, [selectedPolicy, selectedYear]);
 
   // Convert constituency data for the map component
   const mapConstituencyData = useMemo(() => {
@@ -140,24 +158,35 @@ export default function LocalAreaSection() {
     return filtered.sort((a, b) => b.avgGain - a.avgGain);
   }, [constituencyData, selectedRegion]);
 
-  // Prepare chart data for regional comparison
-  const regionalData = useMemo(() => {
-    const regionStats = {};
-    constituencyData.forEach(c => {
-      if (!regionStats[c.region]) {
-        regionStats[c.region] = { region: c.region, totalGain: 0, count: 0 };
-      }
-      regionStats[c.region].totalGain += c.avgGain;
-      regionStats[c.region].count += 1;
-    });
-    return Object.values(regionStats).map(r => ({
-      region: r.region.replace("and ", "& "),
-      avgGain: parseFloat((r.totalGain / r.count).toFixed(2)),
-    })).sort((a, b) => b.avgGain - a.avgGain);
-  }, [constituencyData]);
+  // Prepare list data - Top 10 or Lowest 10 constituencies
+  const chartData = useMemo(() => {
+    const sorted = [...constituencyData].sort((a, b) => b.avgGain - a.avgGain);
+    if (showTop) {
+      return sorted.slice(0, 10);
+    } else {
+      return sorted.slice(-10).reverse();
+    }
+  }, [constituencyData, showTop]);
 
   if (loading) {
     return <div className="local-area-section"><p>Loading constituency data...</p></div>;
+  }
+
+  // Show message if no constituency data for this policy
+  if (constituencyData.length === 0) {
+    return (
+      <div className="local-area-section">
+        <div className="section-box">
+          <p className="chart-description">
+            Constituency-level data is not yet available for this policy reform.
+            {selectedPolicy === "income_tax_threshold_uplift" && (
+              <> The income tax threshold uplift affects taxpayers across Scotland relatively uniformly,
+              with minor variations based on local income distributions.</>
+            )}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -166,9 +195,12 @@ export default function LocalAreaSection() {
       <div className="section-box map-section">
         <ScotlandMap
           constituencyData={mapConstituencyData}
-          selectedYear={2026}
+          selectedYear={selectedYear}
+          onYearChange={onYearChange}
+          availableYears={availableYears}
           selectedConstituency={selectedConstituency ? { code: selectedConstituency.code, name: selectedConstituency.name } : null}
           onConstituencySelect={handleConstituencySelect}
+          policyName={policyName}
         />
       </div>
 
@@ -186,32 +218,64 @@ export default function LocalAreaSection() {
               </div>
               <div className="metric-card">
                 <span className="metric-label">Poverty rate reduction</span>
-                <span className="metric-value">{(selectedConstituency.relativeChange * 1.5).toFixed(3)}pp</span>
+                <span className="metric-value">{selectedConstituency.povertyReduction.toFixed(3)}pp</span>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Regional Comparison Chart */}
+      {/* Constituency Comparison - Top/Lowest 10 */}
       <div className="section-box">
-        <h3 className="chart-title">Regional comparison</h3>
+        <h3 className="chart-title">Constituency comparison</h3>
         <p className="chart-description">
-          Average household gain by Scottish region from the SCP baby boost policy.
+          {showTop ? "Highest" : "Lowest"} average household gain by constituency from the {policyName} policy in {formatYearRange(selectedYear)}.
         </p>
-        <div className="chart-container">
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={regionalData} layout="vertical" margin={{ top: 20, right: 30, left: 150, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis type="number" tickFormatter={(v) => `£${v.toFixed(2)}`} />
-              <YAxis type="category" dataKey="region" width={140} tick={{ fontSize: 12 }} />
-              <Tooltip
-                formatter={(value) => [`£${value.toFixed(2)}`, "Avg. gain"]}
-              />
-              <Bar dataKey="avgGain" fill="#319795" name="Avg. gain" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="constituency-controls-bar">
+          <div className="control-group">
+            <span className="control-label">Show:</span>
+            <div className="chart-toggle">
+              <button
+                className={`toggle-btn ${showTop ? "active" : ""}`}
+                onClick={() => setShowTop(true)}
+              >
+                Top 10
+              </button>
+              <button
+                className={`toggle-btn ${!showTop ? "active" : ""}`}
+                onClick={() => setShowTop(false)}
+              >
+                Lowest 10
+              </button>
+            </div>
+          </div>
+          {onYearChange && (
+            <div className="control-group">
+              <span className="control-label">Year:</span>
+              <div className="year-toggle">
+                {availableYears.map((year) => (
+                  <button
+                    key={year}
+                    className={selectedYear === year ? "active" : ""}
+                    onClick={() => onYearChange(year)}
+                  >
+                    {formatYearRange(year)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+        <ol className="constituency-list">
+          {chartData.map((c, index) => (
+            <li key={c.code} className="constituency-list-item">
+              <span className="constituency-list-name">{c.name}</span>
+              <span className={`constituency-list-value ${c.avgGain >= 0 ? "positive" : "negative"}`}>
+                £{c.avgGain.toFixed(2)}
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   );

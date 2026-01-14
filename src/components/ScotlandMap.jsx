@@ -6,11 +6,10 @@ import "./ScotlandMap.css";
 
 // Chart metadata for export
 const CHART_TITLE = "Scottish constituency-level impacts";
-const CHART_DESCRIPTION =
-  "This map shows the average annual household gain from the SCP baby boost across Scottish constituencies. Green shading indicates larger gains.";
+// Note: CHART_DESCRIPTION is now generated dynamically using policyName prop
 
 // Fixed color scale extent for average gain (in £) - consistent across all years
-const FIXED_COLOR_EXTENT = 15;
+const FIXED_COLOR_EXTENT = 35;
 
 // Format year for display (e.g., 2026 -> "2026-27")
 const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
@@ -21,8 +20,11 @@ const isScottishConstituency = (code) => code && code.startsWith("S");
 export default function ScotlandMap({
   constituencyData = [],
   selectedYear = 2026,
+  onYearChange = null,
+  availableYears = [2026, 2027, 2028, 2029, 2030],
   selectedConstituency: controlledConstituency = null,
   onConstituencySelect = null,
+  policyName = "SCP Premium for under-ones",
 }) {
   const svgRef = useRef(null);
   const [internalSelectedConstituency, setInternalSelectedConstituency] = useState(null);
@@ -53,19 +55,12 @@ export default function ScotlandMap({
     }
   };
 
-  // Load GeoJSON data
+  // Load GeoJSON data (Scotland-only file for faster loading)
   useEffect(() => {
-    fetch("/data/uk_constituencies_2024.geojson")
+    fetch("/data/scotland_constituencies_2024.geojson")
       .then((r) => r.json())
       .then((geojson) => {
-        // Filter to only Scottish constituencies
-        const scottishGeoData = {
-          ...geojson,
-          features: geojson.features.filter((f) =>
-            isScottishConstituency(f.properties.GSScode)
-          ),
-        };
-        setGeoData(scottishGeoData);
+        setGeoData(geojson);
         setLoading(false);
       })
       .catch((error) => {
@@ -422,7 +417,7 @@ export default function ScotlandMap({
 
     await exportMapAsSvg(svgRef.current, `scotland-map-${selectedYear}`, {
       title: `${CHART_TITLE}, ${formatYearRange(selectedYear)}`,
-      description: CHART_DESCRIPTION,
+      description: `This map shows the average annual household gain from the ${policyName} across Scottish constituencies. Green shading indicates larger gains.`,
       logo: CHART_LOGO,
       tooltipData,
     });
@@ -444,7 +439,7 @@ export default function ScotlandMap({
           <div>
             <h3 className="chart-title">Constituency impacts, {formatYearRange(selectedYear)}</h3>
             <p className="chart-description">
-              This map shows the average annual household gain from the SCP baby boost
+              This map shows the average annual household gain from the {policyName}
               across Scottish constituencies. Darker green indicates larger gains.
             </p>
           </div>
@@ -473,7 +468,7 @@ export default function ScotlandMap({
         </div>
       </div>
 
-      {/* Search and legend */}
+      {/* Search, year toggle, and legend */}
       <div className="map-top-bar">
         <div className="map-search-section">
           <div className="search-container">
@@ -505,6 +500,20 @@ export default function ScotlandMap({
             )}
           </div>
         </div>
+
+        {onYearChange && (
+          <div className="map-year-toggle">
+            {availableYears.map((year) => (
+              <button
+                key={year}
+                className={selectedYear === year ? "active" : ""}
+                onClick={() => onYearChange(year)}
+              >
+                {formatYearRange(year)}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="map-legend-horizontal">
           <div className="legend-horizontal-content">

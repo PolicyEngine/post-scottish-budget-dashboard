@@ -8,7 +8,7 @@ from typing import Callable, Optional
 import numpy as np
 
 
-# Constants for SCP baby boost
+# Constants for SCP Premium for under-ones
 WEEKS_IN_YEAR = 52
 SCP_STANDARD_RATE = 27.15  # £/week (current rate from Apr 2025)
 SCP_BABY_RATE = 40.00  # £/week for babies under 1 (from Scottish Budget 2026)
@@ -62,39 +62,61 @@ def _income_tax_threshold_uplift_modifier(sim):
     """Apply Scottish income tax threshold uplift (7.4%).
 
     From Scottish Budget 2026-27:
-    - Basic rate (20%) threshold: £15,398 → £16,537 (above PA: £3,966)
-    - Intermediate rate (21%) threshold: £27,492 → £29,527 (above PA: £16,956)
+    - Basic rate (20%) threshold: £15,398 → £16,537 (+£1,139 absolute)
+    - Intermediate rate (21%) threshold: £27,492 → £29,527 (+£2,035 absolute)
 
-    This is applied by directly modifying the parameter values in the simulation.
+    Policy assumption for future years (2027-2030):
+    The same absolute £ increase is maintained, meaning the gap between
+    Scottish and baseline UK thresholds remains constant. This represents
+    a "maintained policy" scenario showing consistent ~£63-68M/year cost.
+
+    Alternative scenarios NOT modeled:
+    - One-year only: Would show impact only in 2026-27, £0 thereafter
+    - Threshold freeze: Would show decreasing impact as UK thresholds rise
+    - Percentage-based: Would show growing cost with inflation
     """
     params = sim.tax_benefit_system.parameters
     scotland_rates = params.gov.hmrc.income_tax.rates.scotland.rates
 
+    # The announced increases for 2026-27 (absolute amounts above baseline)
+    # Basic: £15,398 → £16,537 = +£1,139
+    # Intermediate: £27,492 → £29,527 = +£2,035
+    # These translate to threshold-above-PA increases of:
+    BASIC_INCREASE = 1_069  # £3,966 - £2,897 (2026 baseline)
+    INTERMEDIATE_INCREASE = 1_665  # £16,956 - £15,291 (2026 baseline)
+
     # Update brackets for years 2026-2030
-    # Bracket 1 = basic rate (20%), Bracket 2 = intermediate rate (21%)
+    # Apply the same absolute increase to each year's baseline
     for year in [2026, 2027, 2028, 2029, 2030]:
-        # Set basic rate threshold (bracket 1) to £3,966 above PA
+        # Get baseline thresholds
+        baseline_basic = scotland_rates.brackets[1].threshold(f"{year}-01-01")
+        baseline_intermediate = scotland_rates.brackets[2].threshold(f"{year}-01-01")
+
+        # Apply the announced increases
+        new_basic = baseline_basic + BASIC_INCREASE
+        new_intermediate = baseline_intermediate + INTERMEDIATE_INCREASE
+
         scotland_rates.brackets[1].threshold.update(
             period=f"{year}-01-01",
-            value=3_966,
+            value=new_basic,
         )
-        # Set intermediate rate threshold (bracket 2) to £16,956 above PA
         scotland_rates.brackets[2].threshold.update(
             period=f"{year}-01-01",
-            value=16_956,
+            value=new_intermediate,
         )
 
     return sim
 
 
 def _scp_baby_boost_modifier(sim):
-    """Apply Scottish Child Payment baby boost for children under 1.
+    """Apply SCP Premium for under-ones (Scottish Child Payment increase for babies).
 
-    The Scottish Budget 2026-27 increased SCP to £40/week for babies under 1,
-    up from the standard £27.15/week. This modifier adds the extra payment
-    directly to the scottish_child_payment variable for eligible families.
+    The Scottish Budget 2026-27 introduced the SCP Premium for under-ones,
+    increasing SCP to £40/week for babies under 1, up from the standard £27.15/week.
+    This modifier adds the extra payment directly to the scottish_child_payment
+    variable for eligible families.
 
-    The boost applies to:
+    The premium applies to:
     - Households in Scotland (already receiving SCP)
     - With children under 1 year old
     - Receiving qualifying benefits (checked via existing SCP > 0)
@@ -107,21 +129,13 @@ def _scp_baby_boost_modifier(sim):
         # Get person-level age to count babies
         age = sim.calculate("age", year, map_to="person")
         is_baby = np.array(age) < 1
-        n_persons = len(age)
 
-        # Calculate persons per benunit (for axes simulations this maps correctly)
-        persons_per_benunit = n_persons // n_benunits
-
-        # Count babies per benefit unit using index-based mapping
-        # With axes, persons are ordered: [bu0_p0, bu0_p1, bu1_p0, bu1_p1, ...]
-        babies_per_benunit = np.zeros(n_benunits)
-        for person_idx, baby in enumerate(is_baby):
-            if baby:
-                benunit_idx = person_idx // persons_per_benunit
-                babies_per_benunit[benunit_idx] += 1
+        # Map babies to benefit units using PolicyEngine's mapping
+        # This sums is_baby (0 or 1) for each person, grouped by benunit
+        babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
 
         # Calculate baby boost (£12.85/week extra × 52 weeks per baby)
-        annual_boost = babies_per_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR
+        annual_boost = np.array(babies_per_benunit) * SCP_BABY_BOOST * WEEKS_IN_YEAR
 
         # Only apply boost to families already receiving SCP (i.e., in Scotland + qualifying)
         already_receives_scp = np.array(current_scp) > 0
@@ -134,6 +148,20 @@ def _scp_baby_boost_modifier(sim):
     return sim
 
 
+def _combined_scottish_budget_modifier(sim):
+    """Apply both SCP Premium for under-ones and income tax threshold uplift together.
+
+    This combined reform represents the full Scottish Budget 2026-27 package,
+    applying both policies simultaneously to capture any interaction effects.
+
+    Note: Income tax modifier must run first to modify parameters before any
+    calculations are performed. SCP modifier runs second to set input values.
+    """
+    sim = _income_tax_threshold_uplift_modifier(sim)
+    sim = _scp_baby_boost_modifier(sim)
+    return sim
+
+
 def get_scottish_budget_reforms() -> list[Reform]:
     """Get list of Scottish Budget 2026-27 reforms.
 
@@ -142,14 +170,27 @@ def get_scottish_budget_reforms() -> list[Reform]:
     """
     reforms = []
 
-    # SCP Baby Boost (£40/week for babies under 1)
+    # Combined reform (both policies together) - listed first
+    reforms.append(
+        Reform(
+            id="combined",
+            name="Both policies combined",
+            description=(
+                "Full Scottish Budget 2026-27 package: SCP Premium for under-ones (£40/week) "
+                "and income tax threshold uplift (7.4%) applied together."
+            ),
+            simulation_modifier=_combined_scottish_budget_modifier,
+        )
+    )
+
+    # SCP Premium for under-ones (£40/week for babies under 1)
     # This is the main reform from Scottish Budget 2026-27
     reforms.append(
         Reform(
             id="scp_baby_boost",
-            name="SCP baby boost (£40/week)",
+            name="SCP Premium for under-ones (£40/week)",
             description=(
-                "Scottish Child Payment boosted to £40/week for babies under 1 "
+                "New SCP Premium for under-ones: £40/week for babies under 1 "
                 "(up from £27.15/week). Announced in Scottish Budget 2026-27."
             ),
             simulation_modifier=_scp_baby_boost_modifier,
@@ -173,3 +214,52 @@ simulation_modifier=_income_tax_threshold_uplift_modifier,
     )
 
     return reforms
+
+
+# Policy metadata for dashboard
+POLICIES = [
+    {
+        "id": "combined",
+        "name": "Both policies combined",
+        "description": "Full Scottish Budget 2026-27 package",
+        "explanation": """
+            The complete Scottish Budget 2026-27 package combines both policy reforms:
+            the SCP Premium for under-ones (£40/week for babies under 1) and the income tax
+            threshold uplift (7.4% increase to basic and intermediate thresholds). Together,
+            these measures deliver targeted support to families with young children while
+            also providing tax relief to working Scots.
+        """,
+    },
+    {
+        "id": "scp_baby_boost",
+        "name": "SCP Premium for under-ones (£40/week)",
+        "description": "New SCP Premium for under-ones: £40/week for babies under 1",
+        "explanation": """
+            The new SCP Premium for under-ones increases the Scottish Child Payment to
+            £40/week for families with babies under 1 year old, up from the standard rate
+            of £27.15/week. This delivers the strongest package of support for families
+            with young children anywhere in the UK, as announced by Finance Secretary
+            Shona Robison on 13 January 2026.
+        """,
+    },
+    {
+        "id": "income_tax_threshold_uplift",
+        "name": "Income tax threshold uplift (7.4%)",
+        "description": "Scottish basic and intermediate rate thresholds increased by 7.4%",
+        "explanation": """
+            The Scottish basic and intermediate income tax rate thresholds are raised by 7.4%.
+            The basic rate (20%) threshold rises from £15,398 to £16,537, and the intermediate
+            rate (21%) threshold rises from £27,492 to £29,527. The higher rate (42%) remains
+            unchanged at £43,663. This means people pay the lower 19% starter rate on more of
+            their income.
+        """,
+    },
+]
+
+PRESETS = [
+    {
+        "id": "scottish-budget-2026",
+        "name": "Scottish Budget 2026",
+        "policies": ["scp_baby_boost", "income_tax_threshold_uplift"],
+    },
+]
