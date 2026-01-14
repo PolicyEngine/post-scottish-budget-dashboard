@@ -102,22 +102,23 @@ def _scp_baby_boost_modifier(sim):
     for year in [2026, 2027, 2028, 2029, 2030]:
         # Get current SCP values (already filters for Scotland + qualifying benefits)
         current_scp = sim.calculate("scottish_child_payment", year)
+        n_benunits = len(current_scp)
 
         # Get person-level age to count babies
         age = sim.calculate("age", year, map_to="person")
         is_baby = np.array(age) < 1
+        n_persons = len(age)
 
-        # Map babies to benefit units
-        person_benunit_id = sim.calculate("benunit_id", year, map_to="person")
-        benunit_id = sim.calculate("benunit_id", year, map_to="benunit")
+        # Calculate persons per benunit (for axes simulations this maps correctly)
+        persons_per_benunit = n_persons // n_benunits
 
-        # Count babies per benefit unit
-        babies_per_benunit = np.zeros(len(benunit_id))
-        bu_id_to_idx = {bu_id: idx for idx, bu_id in enumerate(benunit_id)}
-
-        for person_bu_id, baby in zip(person_benunit_id, is_baby):
-            if baby and person_bu_id in bu_id_to_idx:
-                babies_per_benunit[bu_id_to_idx[person_bu_id]] += 1
+        # Count babies per benefit unit using index-based mapping
+        # With axes, persons are ordered: [bu0_p0, bu0_p1, bu1_p0, bu1_p1, ...]
+        babies_per_benunit = np.zeros(n_benunits)
+        for person_idx, baby in enumerate(is_baby):
+            if baby:
+                benunit_idx = person_idx // persons_per_benunit
+                babies_per_benunit[benunit_idx] += 1
 
         # Calculate baby boost (£12.85/week extra × 52 weeks per baby)
         annual_boost = babies_per_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR
