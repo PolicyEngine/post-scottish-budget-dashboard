@@ -315,7 +315,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
         <a href="https://github.com/PolicyEngine/policyengine-uk-data" target="_blank" rel="noopener noreferrer">reweights</a>{" "}
         the Family Resources Survey to match Scottish demographics and calibrates to official statistics.
         See also: PolicyEngine's{" "}
-        <a href="https://policyengine.org/uk/scottish-budget-2026" target="_blank" rel="noopener noreferrer">pre-budget dashboard</a>{" "}
+        <a href="https://www.policyengine.org/uk/scottish-budget-2026-27" target="_blank" rel="noopener noreferrer">pre-budget dashboard</a>{" "}
         and our poverty{" "}
         <a href="https://policyengine.org/uk/research/uk-poverty-analysis" target="_blank" rel="noopener noreferrer">methodology</a>.
       </p>
