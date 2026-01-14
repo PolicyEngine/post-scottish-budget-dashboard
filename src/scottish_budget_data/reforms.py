@@ -62,11 +62,18 @@ def _income_tax_threshold_uplift_modifier(sim):
     """Apply Scottish income tax threshold uplift (7.4%).
 
     From Scottish Budget 2026-27:
-    - Basic rate (20%) threshold: £15,398 → £16,537 (above PA: £3,966)
-    - Intermediate rate (21%) threshold: £27,492 → £29,527 (above PA: £16,956)
+    - Basic rate (20%) threshold: £15,398 → £16,537 (+£1,139 absolute)
+    - Intermediate rate (21%) threshold: £27,492 → £29,527 (+£2,035 absolute)
 
-    These are the specific thresholds announced for 2026-27.
-    For future years, we apply the same absolute increase (not percentage).
+    Policy assumption for future years (2027-2030):
+    The same absolute £ increase is maintained, meaning the gap between
+    Scottish and baseline UK thresholds remains constant. This represents
+    a "maintained policy" scenario showing consistent ~£63-68M/year cost.
+
+    Alternative scenarios NOT modeled:
+    - One-year only: Would show impact only in 2026-27, £0 thereafter
+    - Threshold freeze: Would show decreasing impact as UK thresholds rise
+    - Percentage-based: Would show growing cost with inflation
     """
     params = sim.tax_benefit_system.parameters
     scotland_rates = params.gov.hmrc.income_tax.rates.scotland.rates
