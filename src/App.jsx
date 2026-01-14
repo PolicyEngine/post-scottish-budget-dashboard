@@ -10,7 +10,7 @@ const POLICIES = [
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedPolicies, setSelectedPolicies] = useState([]);
+  const [selectedPolicies, setSelectedPolicies] = useState(["scp_baby_boost", "income_tax_threshold_uplift"]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
