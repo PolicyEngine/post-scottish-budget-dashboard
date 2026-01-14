@@ -113,37 +113,67 @@ def _scp_baby_boost_modifier(sim):
 
     The Scottish Budget 2026-27 introduced the SCP Premium for under-ones,
     increasing SCP to £40/week for babies under 1, up from the standard £27.15/week.
-    This modifier adds the extra payment directly to the scottish_child_payment
-    variable for eligible families.
 
-    The premium applies to:
-    - Households in Scotland (already receiving SCP)
-    - With children under 1 year old
-    - Receiving qualifying benefits (checked via existing SCP > 0)
+    Scottish Child Payment eligibility (simplified):
+    - Family lives in Scotland
+    - Has children under 16
+    - Receives Universal Credit (approximation of qualifying benefit)
+
+    The baby boost premium applies an additional £12.85/week (£40 - £27.15) for
+    each child under 1 year old in eligible families.
+
+    Since scottish_child_payment is not yet in policyengine-uk, we calculate
+    eligibility using reported UC receipt and add the boost to private_transfer_income
+    for the head of household to flow through to HBAI income.
+
+    Note: This uses reported Universal Credit as proxy for eligibility since
+    calculating UC entitlement would create circular dependencies.
     """
     for year in [2026, 2027, 2028, 2029, 2030]:
-        # Get current SCP values (already filters for Scotland + qualifying benefits)
-        current_scp = sim.calculate("scottish_child_payment", year)
-        n_benunits = len(current_scp)
-
-        # Get person-level age to count babies
+        # Get person-level data (these are input variables, no circular deps)
         age = sim.calculate("age", year, map_to="person")
-        is_baby = np.array(age) < 1
+        region = sim.calculate("region", year, map_to="person")
 
-        # Map babies to benefit units using PolicyEngine's mapping
-        # This sums is_baby (0 or 1) for each person, grouped by benunit
-        babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
+        # Identify babies (under 1) in Scotland
+        is_baby = np.array(age) < 1
+        in_scotland = np.array(region) == "SCOTLAND"
+
+        # Get UC reported (input variable) to check for qualifying benefits
+        # This avoids circular dependencies with calculated UC
+        uc_reported = sim.calculate("universal_credit_reported", year, map_to="benunit")
+        receives_uc = np.array(uc_reported) > 0
+
+        # Map babies in Scotland to benefit units
+        babies_per_benunit = sim.map_result(
+            (is_baby & in_scotland).astype(float), "person", "benunit"
+        )
 
         # Calculate baby boost (£12.85/week extra × 52 weeks per baby)
-        annual_boost = np.array(babies_per_benunit) * SCP_BABY_BOOST * WEEKS_IN_YEAR
+        # Only for families receiving UC (proxy for SCP eligibility)
+        baby_boost_per_benunit = np.where(
+            receives_uc,
+            np.array(babies_per_benunit) * SCP_BABY_BOOST * WEEKS_IN_YEAR,
+            0
+        )
 
-        # Only apply boost to families already receiving SCP (i.e., in Scotland + qualifying)
-        already_receives_scp = np.array(current_scp) > 0
-        baby_boost = np.where(already_receives_scp, annual_boost, 0)
+        # Map baby boost from benunit to person (for head of benunit only)
+        # Use is_benunit_head to assign the boost to one person per benunit
+        is_head = sim.calculate("is_benunit_head", year, map_to="person")
+        baby_boost_per_person = sim.map_result(
+            baby_boost_per_benunit, "benunit", "person"
+        )
 
-        # Add boost to current SCP
-        new_scp = np.array(current_scp) + baby_boost
-        sim.set_input("scottish_child_payment", year, new_scp)
+        # Only apply to benunit heads to avoid double counting
+        baby_boost_final = np.where(
+            np.array(is_head),
+            np.array(baby_boost_per_person),
+            0
+        )
+
+        # Add to private_transfer_income (person-level input variable)
+        current_transfer = sim.calculate("private_transfer_income", year, map_to="person")
+        new_transfer = np.array(current_transfer) + baby_boost_final
+        sim.set_input("private_transfer_income", year, new_transfer)
 
     return sim
 
