@@ -169,7 +169,7 @@ export default function DecileChart({
             domain={[0, yMax]}
             tickFormatter={formatValue}
             tick={{ fontSize: 12, fill: "#666" }}
-            tickCount={6}
+            tickCount={5}
             label={{
               value: viewMode === "relative"
                 ? "Change in net income (%)"

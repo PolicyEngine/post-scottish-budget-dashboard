@@ -23,6 +23,8 @@ export default function BudgetBarChart({
   tooltipLabel = "Value",
   stacked = false,
   selectedPolicies = [],
+  yMaxValue = 100,
+  yTickCount = 6,
 }) {
   if (!data || data.length === 0) {
     return (
@@ -66,7 +68,7 @@ export default function BudgetBarChart({
   };
 
   const yMin = minValue < 0 ? -getNiceMax(Math.abs(minValue)) : 0;
-  const yMax = 100; // Fixed max for budget impact chart
+  const yMax = yMaxValue;
 
   // Check which policies have data
   const activePolicies = stacked
@@ -102,7 +104,7 @@ export default function BudgetBarChart({
             domain={[yMin, yMax]}
             tickFormatter={formatValue}
             tick={{ fontSize: 12, fill: "#666" }}
-            tickCount={6}
+            tickCount={yTickCount}
             label={{
               value: yLabel,
               angle: -90,
