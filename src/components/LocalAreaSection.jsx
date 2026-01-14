@@ -64,6 +64,7 @@ function getRegion(constituencyName) {
 }
 
 const POLICY_NAMES = {
+  combined: "both policies",
   scp_baby_boost: "SCP baby boost",
   income_tax_threshold_uplift: "income tax threshold uplift",
 };

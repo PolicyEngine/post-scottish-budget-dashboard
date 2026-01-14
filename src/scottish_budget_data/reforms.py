@@ -147,6 +147,20 @@ def _scp_baby_boost_modifier(sim):
     return sim
 
 
+def _combined_scottish_budget_modifier(sim):
+    """Apply both SCP baby boost and income tax threshold uplift together.
+
+    This combined reform represents the full Scottish Budget 2026-27 package,
+    applying both policies simultaneously to capture any interaction effects.
+
+    Note: Income tax modifier must run first to modify parameters before any
+    calculations are performed. SCP modifier runs second to set input values.
+    """
+    sim = _income_tax_threshold_uplift_modifier(sim)
+    sim = _scp_baby_boost_modifier(sim)
+    return sim
+
+
 def get_scottish_budget_reforms() -> list[Reform]:
     """Get list of Scottish Budget 2026-27 reforms.
 
@@ -154,6 +168,19 @@ def get_scottish_budget_reforms() -> list[Reform]:
         List of Reform objects for analysis.
     """
     reforms = []
+
+    # Combined reform (both policies together) - listed first
+    reforms.append(
+        Reform(
+            id="combined",
+            name="Both policies combined",
+            description=(
+                "Full Scottish Budget 2026-27 package: SCP baby boost (£40/week) "
+                "and income tax threshold uplift (7.4%) applied together."
+            ),
+            simulation_modifier=_combined_scottish_budget_modifier,
+        )
+    )
 
     # SCP Baby Boost (£40/week for babies under 1)
     # This is the main reform from Scottish Budget 2026-27
@@ -190,6 +217,18 @@ simulation_modifier=_income_tax_threshold_uplift_modifier,
 
 # Policy metadata for dashboard
 POLICIES = [
+    {
+        "id": "combined",
+        "name": "Both policies combined",
+        "description": "Full Scottish Budget 2026-27 package",
+        "explanation": """
+            The complete Scottish Budget 2026-27 package combines both policy reforms:
+            the SCP baby boost (£40/week for babies under 1) and the income tax threshold
+            uplift (7.4% increase to basic and intermediate thresholds). Together, these
+            measures deliver targeted support to families with young children while also
+            providing tax relief to working Scots.
+        """,
+    },
     {
         "id": "scp_baby_boost",
         "name": "SCP baby boost (£40/week)",

@@ -4,6 +4,7 @@ import HouseholdCalculator from "./components/HouseholdCalculator";
 import "./App.css";
 
 const POLICIES = [
+  { id: "combined", name: "Both policies combined" },
   { id: "scp_baby_boost", name: "SCP baby boost" },
   { id: "income_tax_threshold_uplift", name: "Income tax threshold uplift" },
 ];
