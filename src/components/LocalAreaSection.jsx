@@ -245,23 +245,38 @@ export default function LocalAreaSection({
       <div className="section-box">
         <div className="chart-header">
           <h3 className="chart-title">Constituency comparison</h3>
-          <div className="chart-toggle">
-            <button
-              className={`toggle-btn ${showTop ? "active" : ""}`}
-              onClick={() => setShowTop(true)}
-            >
-              Top 10
-            </button>
-            <button
-              className={`toggle-btn ${!showTop ? "active" : ""}`}
-              onClick={() => setShowTop(false)}
-            >
-              Lowest 10
-            </button>
+          <div className="chart-controls-row">
+            <div className="chart-toggle">
+              <button
+                className={`toggle-btn ${showTop ? "active" : ""}`}
+                onClick={() => setShowTop(true)}
+              >
+                Top 10
+              </button>
+              <button
+                className={`toggle-btn ${!showTop ? "active" : ""}`}
+                onClick={() => setShowTop(false)}
+              >
+                Lowest 10
+              </button>
+            </div>
+            {onYearChange && (
+              <div className="year-toggle">
+                {availableYears.map((year) => (
+                  <button
+                    key={year}
+                    className={selectedYear === year ? "active" : ""}
+                    onClick={() => onYearChange(year)}
+                  >
+                    {formatYearRange(year)}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <p className="chart-description">
-          {showTop ? "Highest" : "Lowest"} average household gain by constituency from the {policyName} policy.
+          {showTop ? "Highest" : "Lowest"} average household gain by constituency from the {policyName} policy in {formatYearRange(selectedYear)}.
         </p>
         <ol className="constituency-list">
           {chartData.map((c, index) => (
