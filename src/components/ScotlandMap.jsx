@@ -53,19 +53,12 @@ export default function ScotlandMap({
     }
   };
 
-  // Load GeoJSON data
+  // Load GeoJSON data (Scotland-only file for faster loading)
   useEffect(() => {
-    fetch("/data/uk_constituencies_2024.geojson")
+    fetch("/data/scotland_constituencies_2024.geojson")
       .then((r) => r.json())
       .then((geojson) => {
-        // Filter to only Scottish constituencies
-        const scottishGeoData = {
-          ...geojson,
-          features: geojson.features.filter((f) =>
-            isScottishConstituency(f.properties.GSScode)
-          ),
-        };
-        setGeoData(scottishGeoData);
+        setGeoData(geojson);
         setLoading(false);
       })
       .catch((error) => {
