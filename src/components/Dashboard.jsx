@@ -59,6 +59,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
   const [povertyMetrics, setPovertyMetrics] = useState([]);
   const [budgetaryData, setBudgetaryData] = useState(null);
   const [rawBudgetaryData, setRawBudgetaryData] = useState([]);
+  const [rawDistributionalData, setRawDistributionalData] = useState([]);
   const [activeSection, setActiveSection] = useState("introduction");
 
   // Refs for section elements
@@ -95,6 +96,9 @@ export default function Dashboard({ selectedPolicies = [] }) {
         if (distRes.ok) {
           const csvText = await distRes.text();
           const data = parseCSV(csvText);
+
+          // Store raw data for stacked charts
+          setRawDistributionalData(data);
 
           // Transform to decile format for chart (2026 data) - use effective policy, exclude "All" row
           const decileData = data
@@ -217,6 +221,59 @@ export default function Dashboard({ selectedPolicies = [] }) {
     });
   }, [isStacked, rawBudgetaryData, selectedPolicies]);
 
+  // Transform distributional data for stacked decile chart
+  const stackedDecileData = useMemo(() => {
+    if (!isStacked || rawDistributionalData.length === 0) return null;
+
+    const deciles = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"];
+    return deciles.map(decile => {
+      const dataPoint = { decile };
+      let netRelative = 0;
+      let netAbsolute = 0;
+
+      selectedPolicies.forEach(policyId => {
+        const policyName = POLICY_NAMES[policyId];
+        const row = rawDistributionalData.find(
+          r => r.reform_id === policyId && r.year === "2026" && r.decile === decile
+        );
+        const relValue = row ? parseFloat(row.value) || 0 : 0;
+        const absValue = row ? parseFloat(row.absolute_change) || 0 : 0;
+        dataPoint[`${policyName}_relative`] = relValue;
+        dataPoint[`${policyName}_absolute`] = absValue;
+        netRelative += relValue;
+        netAbsolute += absValue;
+      });
+
+      dataPoint.netRelative = netRelative;
+      dataPoint.netAbsolute = netAbsolute;
+      return dataPoint;
+    });
+  }, [isStacked, rawDistributionalData, selectedPolicies]);
+
+  // Transform average income change data for stacked chart
+  const stackedAvgIncomeData = useMemo(() => {
+    if (!isStacked || rawDistributionalData.length === 0) return null;
+
+    const years = [2026, 2027, 2028, 2029, 2030];
+    return years.map(year => {
+      const dataPoint = { year };
+      let netImpact = 0;
+
+      selectedPolicies.forEach(policyId => {
+        const policyName = POLICY_NAMES[policyId];
+        const row = rawDistributionalData.find(
+          r => r.reform_id === policyId && r.year === String(year) && r.decile === "All"
+        );
+        const value = row ? parseFloat(row.absolute_change) || 0 : 0;
+        dataPoint[policyName] = value;
+        netImpact += value;
+      });
+
+      dataPoint.netImpact = netImpact;
+      return dataPoint;
+    }).filter(d => Object.keys(d).length > 1); // Only include years with data
+  }, [isStacked, rawDistributionalData, selectedPolicies]);
+
   const policyInfo = POLICY_INFO[effectivePolicy] || POLICY_INFO.scp_baby_boost;
 
   if (loading) {
@@ -297,23 +354,34 @@ export default function Dashboard({ selectedPolicies = [] }) {
           {effectivePolicy === "scp_baby_boost" && " The change is small when averaged across all households because only families with babies under 1 receiving SCP benefit."}
           {effectivePolicy === "income_tax_threshold_uplift" && " Most Scottish taxpayers will see a benefit from the increased thresholds."}
         </p>
-        <BudgetBarChart
-          data={(() => {
-            const avgChange = livingStandardsData?.avgChangeByYear || {};
-            return [2026, 2027, 2028, 2029, 2030]
-              .filter(year => avgChange[year] !== undefined)
-              .map(year => ({ year, value: avgChange[year] }));
-          })()}
-          yLabel="Average income change (£)"
-          yFormat={(v) => `£${v.toFixed(2)}`}
-          tooltipLabel="Income change"
-        />
+        {isStacked && stackedAvgIncomeData ? (
+          <BudgetBarChart
+            data={stackedAvgIncomeData}
+            yLabel="Average income change (£)"
+            yFormat={(v) => `£${v.toFixed(2)}`}
+            tooltipLabel="Income change"
+            stacked={true}
+            selectedPolicies={selectedPolicies}
+          />
+        ) : (
+          <BudgetBarChart
+            data={(() => {
+              const avgChange = livingStandardsData?.avgChangeByYear || {};
+              return [2026, 2027, 2028, 2029, 2030]
+                .filter(year => avgChange[year] !== undefined)
+                .map(year => ({ year, value: avgChange[year] }));
+            })()}
+            yLabel="Average income change (£)"
+            yFormat={(v) => `£${v.toFixed(2)}`}
+            tooltipLabel="Income change"
+          />
+        )}
       </div>
 
       {/* Decile Impact Chart */}
-      {livingStandardsData?.byDecile && livingStandardsData.byDecile.length > 0 && (
+      {(isStacked && stackedDecileData) || (livingStandardsData?.byDecile && livingStandardsData.byDecile.length > 0) ? (
         <DecileChart
-          data={livingStandardsData.byDecile}
+          data={livingStandardsData?.byDecile || []}
           title="Impact by income decile"
           description={
             effectivePolicy === "scp_baby_boost"
@@ -322,8 +390,10 @@ export default function Dashboard({ selectedPolicies = [] }) {
               ? "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
               : "Combined impact of both policies across income deciles. The SCP baby boost targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
           }
+          stacked={isStacked}
+          stackedData={stackedDecileData}
         />
-      )}
+      ) : null}
 
       {/* Poverty Section */}
       <h2 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)}>Poverty</h2>
@@ -352,7 +422,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
         to see the estimated impact on households in that area.
       </p>
 
-      <LocalAreaSection selectedPolicy={effectivePolicy} />
+      <LocalAreaSection selectedPolicy={effectivePolicy} selectedPolicies={selectedPolicies} />
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { ComposedChart, BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import ScotlandMap from "./ScotlandMap";
 import "./LocalAreaSection.css";
+import { POLICY_COLORS, POLICY_NAMES as CONFIG_POLICY_NAMES, ALL_POLICY_NAMES } from "../utils/policyConfig";
 
 // Parse CSV text into array of objects (handles quoted values with commas)
 function parseCSV(csvText) {
@@ -63,15 +64,20 @@ function getRegion(constituencyName) {
   return "Scotland";
 }
 
-const POLICY_NAMES = {
+const POLICY_DISPLAY_NAMES = {
   combined: "both policies",
   scp_baby_boost: "SCP baby boost",
   income_tax_threshold_uplift: "income tax threshold uplift",
 };
 
-export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) {
-  const policyName = POLICY_NAMES[selectedPolicy] || "the selected policy";
+export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost", selectedPolicies = [] }) {
+  // Determine if we're in stacked mode
+  const isStacked = selectedPolicies.length === 2;
+  const effectivePolicy = isStacked ? "combined" : selectedPolicy;
+  const policyName = POLICY_DISPLAY_NAMES[effectivePolicy] || "the selected policy";
+
   const [constituencyData, setConstituencyData] = useState([]);
+  const [rawConstituencyData, setRawConstituencyData] = useState([]);
   const [selectedConstituency, setSelectedConstituency] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState("All regions");
   const [loading, setLoading] = useState(true);
@@ -86,12 +92,15 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
           const csvText = await res.text();
           const data = parseCSV(csvText);
 
+          // Store raw data for stacking
+          setRawConstituencyData(data);
+
           // Transform to expected format and add region (filter to 2026 data and selected policy)
           const transformed = data
             .filter(row =>
               row.constituency_code?.startsWith("S") &&
               row.year === "2026" &&
-              row.reform_id === selectedPolicy
+              row.reform_id === effectivePolicy
             )
             .map(row => ({
               code: row.constituency_code,
@@ -113,7 +122,7 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
       }
     }
     loadData();
-  }, [selectedPolicy]);
+  }, [effectivePolicy]);
 
   // Convert constituency data for the map component
   const mapConstituencyData = useMemo(() => {
@@ -161,6 +170,46 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
       return sorted.slice(-10).reverse();
     }
   }, [constituencyData, showTop]);
+
+  // Prepare stacked chart data for constituency comparison
+  const stackedChartData = useMemo(() => {
+    if (!isStacked || rawConstituencyData.length === 0) return null;
+
+    // Get unique constituency names from combined data
+    const combinedData = rawConstituencyData.filter(
+      row => row.year === "2026" && row.reform_id === "combined" && row.constituency_code?.startsWith("S")
+    );
+
+    // Sort by combined avgGain
+    const sortedCombined = combinedData
+      .map(row => ({
+        name: row.constituency_name,
+        code: row.constituency_code,
+        totalGain: parseFloat(row.average_gain) || 0,
+      }))
+      .sort((a, b) => b.totalGain - a.totalGain);
+
+    const topOrBottom = showTop ? sortedCombined.slice(0, 10) : sortedCombined.slice(-10).reverse();
+
+    // Build stacked data for each constituency
+    return topOrBottom.map(c => {
+      const dataPoint = { name: c.name, code: c.code };
+      let netGain = 0;
+
+      selectedPolicies.forEach(policyId => {
+        const policyName = CONFIG_POLICY_NAMES[policyId];
+        const row = rawConstituencyData.find(
+          r => r.constituency_code === c.code && r.year === "2026" && r.reform_id === policyId
+        );
+        const value = row ? parseFloat(row.average_gain) || 0 : 0;
+        dataPoint[policyName] = value;
+        netGain += value;
+      });
+
+      dataPoint.netGain = netGain;
+      return dataPoint;
+    });
+  }, [isStacked, rawConstituencyData, selectedPolicies, showTop]);
 
   if (loading) {
     return <div className="local-area-section"><p>Loading constituency data...</p></div>;
@@ -241,18 +290,51 @@ export default function LocalAreaSection({ selectedPolicy = "scp_baby_boost" }) 
         </p>
         <div className="constituency-chart-container">
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 80 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 10, angle: -45, textAnchor: "end" }}
-                height={80}
-                interval={0}
-              />
-              <YAxis tickFormatter={(v) => `£${v.toFixed(0)}`} />
-              <Tooltip formatter={(value) => [`£${value.toFixed(2)}`, "Avg. gain"]} />
-              <Bar dataKey="avgGain" fill={showTop ? "#319795" : "#e53e3e"} name="Avg. gain" radius={[4, 4, 0, 0]} />
-            </BarChart>
+            {isStacked && stackedChartData ? (
+              <ComposedChart data={stackedChartData} margin={{ top: 20, right: 20, left: 20, bottom: 80 }} stackOffset="sign">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 10, angle: -45, textAnchor: "end" }}
+                  height={80}
+                  interval={0}
+                />
+                <YAxis tickFormatter={(v) => `£${v.toFixed(0)}`} />
+                <Tooltip formatter={(value, name) => [`£${value.toFixed(2)}`, name]} />
+                <Legend verticalAlign="top" height={36} />
+                {ALL_POLICY_NAMES.map((policyName) => (
+                  <Bar
+                    key={policyName}
+                    dataKey={policyName}
+                    fill={POLICY_COLORS[policyName]}
+                    name={policyName}
+                    stackId="stack"
+                    radius={[2, 2, 0, 0]}
+                  />
+                ))}
+                <Line
+                  type="monotone"
+                  dataKey="netGain"
+                  stroke="#000000"
+                  strokeWidth={2}
+                  dot={{ fill: "#000000", r: 4 }}
+                  name="Net gain"
+                />
+              </ComposedChart>
+            ) : (
+              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 80 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 10, angle: -45, textAnchor: "end" }}
+                  height={80}
+                  interval={0}
+                />
+                <YAxis tickFormatter={(v) => `£${v.toFixed(0)}`} />
+                <Tooltip formatter={(value) => [`£${value.toFixed(2)}`, "Avg. gain"]} />
+                <Bar dataKey="avgGain" fill={showTop ? "#319795" : "#e53e3e"} name="Avg. gain" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            )}
           </ResponsiveContainer>
         </div>
       </div>
