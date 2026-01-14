@@ -80,7 +80,7 @@ export default function PovertyImpactTable({ data, title, policyName = "the sele
       </div>
 
       <p className="table-note">
-        Poverty rates shown as percentage of population. Change shown in percentage points (pp).
+        Poverty is measured using the Before Housing Costs (BHC) definition: a household is in poverty if its equivalised income is below 60% of UK median income. Change shown in percentage points (pp).
       </p>
     </div>
   );
