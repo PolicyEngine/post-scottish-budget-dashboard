@@ -10,6 +10,7 @@
   flex-wrap: wrap;
   gap: var(--pe-space-lg);
   align-items: center;
+  justify-content: center;
   margin-bottom: var(--pe-space-md);
   padding: var(--pe-space-md);
   background: var(--pe-gray-50);
