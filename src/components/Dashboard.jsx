@@ -85,7 +85,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
 
           // Transform to decile format for chart (2026 data) - single policy
           const decileData = data
-            .filter(row => row.year === "2026" && row.reform_id === selectedPolicy)
+            .filter(row => row.year === "2026" && row.reform_id === selectedPolicy && row.decile !== "All")
             .map(row => ({
               decile: row.decile,
               relativeChange: parseFloat(row.value) || 0,
@@ -105,38 +105,29 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
           });
           setStackedDecileData(stackedDecile);
 
-          // Calculate average income change per year for each reform
-          const incomeChangeByYearReform = {};
-          data.forEach(row => {
-            const year = parseInt(row.year);
-            const reformId = row.reform_id;
-            const key = `${year}_${reformId}`;
-            if (!incomeChangeByYearReform[key]) {
-              incomeChangeByYearReform[key] = { year, reformId, totalChange: 0, count: 0 };
-            }
-            incomeChangeByYearReform[key].totalChange += parseFloat(row.absolute_change) || 0;
-            incomeChangeByYearReform[key].count += 1;
-          });
-
-          // Create STACKED income change data by year
+          // Get average income change per year for each reform from the "All" row (true weighted average)
           const years = [2026, 2027, 2028, 2029, 2030];
           const stackedIncome = years.map(year => {
             const row = { year };
             ["scp_baby_boost", "income_tax_threshold_uplift"].forEach(reformId => {
-              const key = `${year}_${reformId}`;
-              const d = incomeChangeByYearReform[key];
-              row[reformId] = d && d.count > 0 ? d.totalChange / d.count : 0;
+              const match = data.find(d =>
+                d.year === String(year) &&
+                d.reform_id === reformId &&
+                d.decile === "All"
+              );
+              row[reformId] = match ? parseFloat(match.absolute_change) || 0 : 0;
             });
             return row;
           });
           setStackedIncomeChangeData(stackedIncome);
 
-          // Calculate average change per year (single policy - for backward compatibility)
+          // Get average income change per year from the "All" row (true weighted average) - single policy
           const avgChangeByYear = {};
-          Object.values(incomeChangeByYearReform)
-            .filter(d => d.reformId === selectedPolicy)
-            .forEach(d => {
-              avgChangeByYear[d.year] = d.count > 0 ? d.totalChange / d.count : 0;
+          data
+            .filter(row => row.reform_id === selectedPolicy && row.decile === "All")
+            .forEach(row => {
+              const year = parseInt(row.year);
+              avgChangeByYear[year] = parseFloat(row.absolute_change) || 0;
             });
 
           setLivingStandardsData({ byDecile: decileData, avgChangeByYear });

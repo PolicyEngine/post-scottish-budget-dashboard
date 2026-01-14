@@ -115,6 +115,21 @@ class DistributionalImpactCalculator:
                 "absolute_change": avg_change,
             })
 
+        # Add overall average (All deciles)
+        total_weight = df["household_weight"].sum()
+        overall_avg_change = (df["income_change"] * df["household_weight"]).sum() / total_weight
+        overall_avg_baseline = (df["baseline_income"] * df["household_weight"]).sum() / total_weight
+        overall_relative_change = (overall_avg_change / overall_avg_baseline) * 100 if overall_avg_baseline > 0 else 0
+
+        results.append({
+            "reform_id": reform_id,
+            "reform_name": reform_name,
+            "year": year,
+            "decile": "All",
+            "value": overall_relative_change,
+            "absolute_change": overall_avg_change,
+        })
+
         return results, df
 
 

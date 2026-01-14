@@ -51,6 +51,38 @@
   text-align: left;
 }
 
+/* Policy selector */
+.policy-selector {
+  display: flex;
+  gap: var(--pe-space-lg);
+  margin-top: var(--pe-space-md);
+}
+
+.policy-option {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-xs);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.policy-option input[type="radio"] {
+  accent-color: white;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.policy-option span {
+  opacity: 0.9;
+}
+
+.policy-option:has(input:checked) span {
+  opacity: 1;
+  font-weight: 600;
+}
+
 /* Tab Navigation */
 .tab-navigation {
   display: flex;

@@ -3,8 +3,14 @@ import Dashboard from "./components/Dashboard";
 import HouseholdCalculator from "./components/HouseholdCalculator";
 import "./App.css";
 
+const POLICIES = [
+  { id: "scp_baby_boost", name: "SCP baby boost" },
+  { id: "income_tax_threshold_uplift", name: "Income tax threshold uplift" },
+];
+
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [selectedPolicy, setSelectedPolicy] = useState("scp_baby_boost");
 
   // Initialize from URL
   useEffect(() => {
@@ -34,6 +40,20 @@ function App() {
       <header className="title-row">
         <div className="title-row-inner">
           <h1>Scottish Budget 2026</h1>
+          <div className="policy-selector">
+            {POLICIES.map((policy) => (
+              <label key={policy.id} className="policy-option">
+                <input
+                  type="radio"
+                  name="policy"
+                  value={policy.id}
+                  checked={selectedPolicy === policy.id}
+                  onChange={(e) => setSelectedPolicy(e.target.value)}
+                />
+                <span>{policy.name}</span>
+              </label>
+            ))}
+          </div>
         </div>
       </header>
       <main className="main-content">
@@ -82,7 +102,7 @@ function App() {
             <HouseholdCalculator />
           </div>
         ) : (
-          <Dashboard />
+          <Dashboard selectedPolicy={selectedPolicy} />
         )}
       </main>
     </div>
