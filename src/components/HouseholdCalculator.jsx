@@ -326,6 +326,138 @@ function HouseholdCalculator() {
         .attr("font-size", "11px")
         .text(item.label);
     });
+
+    // Hover interaction
+    const hoverLine = g.append("line")
+      .attr("stroke", "#94a3b8")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4,4")
+      .attr("y1", 0)
+      .attr("y2", height)
+      .style("opacity", 0);
+
+    const hoverCircleTotal = g.append("circle")
+      .attr("r", 5)
+      .attr("fill", CHART_COLORS.total)
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .style("opacity", 0);
+
+    const hoverCircleTax = g.append("circle")
+      .attr("r", 4)
+      .attr("fill", CHART_COLORS.income_tax_threshold_uplift)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1.5)
+      .style("opacity", 0);
+
+    const hoverCircleScp = g.append("circle")
+      .attr("r", 4)
+      .attr("fill", CHART_COLORS.scp_baby_boost)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1.5)
+      .style("opacity", 0);
+
+    // Ensure container has relative positioning for tooltip
+    d3.select(chartContainerRef.current).style("position", "relative");
+
+    // Tooltip
+    const tooltip = d3.select(chartContainerRef.current)
+      .append("div")
+      .attr("class", "chart-tooltip")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("border", "1px solid #e2e8f0")
+      .style("border-radius", "8px")
+      .style("padding", "10px 12px")
+      .style("font-size", "12px")
+      .style("box-shadow", "0 4px 12px rgba(0,0,0,0.1)")
+      .style("pointer-events", "none")
+      .style("opacity", 0)
+      .style("z-index", 10)
+      .style("transition", "opacity 0.15s ease");
+
+    // Overlay for mouse events
+    g.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "transparent")
+      .on("mousemove", function(event) {
+        const [mouseX] = d3.pointer(event);
+        const earnings = x.invert(mouseX);
+
+        // Find closest data point
+        const closest = variationData.reduce((prev, curr) =>
+          Math.abs(curr.earnings - earnings) < Math.abs(prev.earnings - earnings) ? curr : prev
+        );
+
+        // Update hover elements
+        hoverLine
+          .attr("x1", x(closest.earnings))
+          .attr("x2", x(closest.earnings))
+          .style("opacity", 1);
+
+        hoverCircleTotal
+          .attr("cx", x(closest.earnings))
+          .attr("cy", y(closest.total))
+          .style("opacity", 1);
+
+        hoverCircleTax
+          .attr("cx", x(closest.earnings))
+          .attr("cy", y(closest.income_tax_threshold_uplift))
+          .style("opacity", 1);
+
+        hoverCircleScp
+          .attr("cx", x(closest.earnings))
+          .attr("cy", y(closest.scp_baby_boost))
+          .style("opacity", 1);
+
+        // Update tooltip
+        const sign = (v) => v >= 0 ? "+" : "";
+        const tooltipX = x(closest.earnings) + margin.left;
+        const tooltipY = Math.min(y(closest.total), y(closest.income_tax_threshold_uplift), y(closest.scp_baby_boost));
+
+        tooltip
+          .html(`
+            <div style="font-weight:600;margin-bottom:6px;color:#1e293b">
+              £${closest.earnings.toLocaleString()} income
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span style="width:10px;height:10px;background:${CHART_COLORS.total};border-radius:2px"></span>
+              <span style="color:#475569">Total:</span>
+              <span style="font-weight:600;color:${closest.total >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.total)}£${Math.abs(closest.total).toFixed(0)}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span style="width:10px;height:10px;background:${CHART_COLORS.income_tax_threshold_uplift};border-radius:2px"></span>
+              <span style="color:#475569">Income tax:</span>
+              <span style="font-weight:600;color:${closest.income_tax_threshold_uplift >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.income_tax_threshold_uplift)}£${Math.abs(closest.income_tax_threshold_uplift).toFixed(0)}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="width:10px;height:10px;background:${CHART_COLORS.scp_baby_boost};border-radius:2px"></span>
+              <span style="color:#475569">SCP boost:</span>
+              <span style="font-weight:600;color:${closest.scp_baby_boost >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.scp_baby_boost)}£${Math.abs(closest.scp_baby_boost).toFixed(0)}</span>
+            </div>
+          `)
+          .style("opacity", 1);
+
+        // Position tooltip - flip if too close to right edge
+        if (tooltipX > width - 100) {
+          tooltip.style("left", `${tooltipX - 175}px`).style("top", `${tooltipY}px`);
+        } else {
+          tooltip.style("left", `${tooltipX + 15}px`).style("top", `${tooltipY}px`);
+        }
+      })
+      .on("mouseleave", function() {
+        hoverLine.style("opacity", 0);
+        hoverCircleTotal.style("opacity", 0);
+        hoverCircleTax.style("opacity", 0);
+        hoverCircleScp.style("opacity", 0);
+        tooltip.style("opacity", 0);
+      });
+
+    // Cleanup tooltip on unmount
+    return () => {
+      tooltip.remove();
+    };
   }, [variationData, inputs.employment_income]);
 
   // Format currency
