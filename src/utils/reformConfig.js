@@ -11,7 +11,7 @@ export const API_BASE_URL = "http://localhost:5001";
 export const REFORMS = [
   {
     id: "scp_baby_boost",
-    name: "SCP baby boost (£40/week)",
+    name: "SCP Premium for under-ones (£40/week)",
     description: "Extra £12.85/week for babies under 1",
     color: "#2C6496",
   },

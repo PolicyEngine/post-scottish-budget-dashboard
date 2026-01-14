@@ -15,7 +15,7 @@ export default function D3LineChart({
   yDomain,
   historicalLabel = "Official (historical)",
   projectionLabel = "Baseline (projection)",
-  reformLabel = "With SCP baby boost",
+  reformLabel = "With SCP Premium for under-ones",
   height = 320,
   viewMode = "both", // "outturn", "forecast", "both"
   showReform = false,

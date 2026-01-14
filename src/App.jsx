@@ -4,7 +4,7 @@ import HouseholdCalculator from "./components/HouseholdCalculator";
 import "./App.css";
 
 const POLICIES = [
-  { id: "scp_baby_boost", name: "SCP baby boost" },
+  { id: "scp_baby_boost", name: "SCP Premium for under-ones" },
   { id: "income_tax_threshold_uplift", name: "Income tax threshold uplift" },
 ];
 

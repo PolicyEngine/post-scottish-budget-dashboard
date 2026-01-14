@@ -22,7 +22,7 @@ export default function ScotlandMap({
   selectedYear = 2026,
   selectedConstituency: controlledConstituency = null,
   onConstituencySelect = null,
-  policyName = "SCP baby boost",
+  policyName = "SCP Premium for under-ones",
 }) {
   const svgRef = useRef(null);
   const [internalSelectedConstituency, setInternalSelectedConstituency] = useState(null);

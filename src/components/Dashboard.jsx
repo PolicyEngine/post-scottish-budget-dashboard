@@ -17,11 +17,11 @@ const SECTIONS = [
 // Policy descriptions
 const POLICY_INFO = {
   scp_baby_boost: {
-    name: "SCP baby boost",
+    name: "SCP Premium for under-ones",
     description: "Scottish Child Payment boosted to £40/week for babies under 1",
     explanation: (
       <li>
-        <strong>Scottish Child Payment baby boost</strong>: The Scottish Child Payment is boosted to £40/week
+        <strong>SCP Premium for under-ones</strong>: The Scottish Child Payment is boosted to £40/week
         for families with babies under 1 year old (up from £27.15/week), delivering the "strongest package
         of support for families with young children anywhere in the UK".
       </li>
@@ -385,10 +385,10 @@ export default function Dashboard({ selectedPolicies = [] }) {
           title="Impact by income decile"
           description={
             effectivePolicy === "scp_baby_boost"
-              ? "The SCP baby boost is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
+              ? "The SCP Premium for under-ones is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
               : effectivePolicy === "income_tax_threshold_uplift"
               ? "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
-              : "Combined impact of both policies across income deciles. The SCP baby boost targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
+              : "Combined impact of both policies across income deciles. The SCP Premium for under-ones targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
           }
           stacked={isStacked}
           stackedData={stackedDecileData}

@@ -27,7 +27,7 @@ class BudgetaryImpactCalculator:
     Methodology note:
     This calculates cost as the total change in household net income for
     Scottish households. This approach is appropriate for Scotland-specific
-    policies (like SCP baby boost and Scottish income tax changes) because:
+    policies (like SCP Premium for under-ones and Scottish income tax changes) because:
 
     1. These policies only affect Scottish households directly
     2. The change in household income equals the fiscal cost/revenue impact

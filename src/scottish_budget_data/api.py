@@ -75,7 +75,7 @@ def calculate():
         income_tax_net = float(income_tax_sim.calculate("household_net_income", YEAR)[0])
         income_tax_impact = income_tax_net - baseline_net
 
-        # SCP baby boost - apply modifier directly
+        # SCP Premium for under-ones - apply modifier directly
         scp_sim = Simulation(situation=situation)
         scp_sim.calculate("scottish_child_payment", YEAR)
         _scp_baby_boost_modifier(scp_sim)
@@ -162,7 +162,7 @@ def calculate_variation():
         income_tax_nets = income_tax_sim.calculate("household_net_income", YEAR)
         income_tax_impacts = income_tax_nets - baseline_nets
 
-        # SCP baby boost (vectorized) - apply modifier directly
+        # SCP Premium for under-ones (vectorized) - apply modifier directly
         scp_sim = Simulation(situation=situation)
         scp_sim.calculate("scottish_child_payment", YEAR)
         _scp_baby_boost_modifier(scp_sim)
