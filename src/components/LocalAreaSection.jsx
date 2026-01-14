@@ -193,19 +193,19 @@ export default function LocalAreaSection({
     <div className="local-area-section">
       {/* Year Selector */}
       {onYearChange && (
-        <div className="year-selector-container">
-          <label>Select year:</label>
-          <select
-            value={selectedYear}
-            onChange={(e) => onYearChange(parseInt(e.target.value))}
-            className="year-select"
-          >
+        <div className="year-toggle-container">
+          <span className="year-toggle-label">Select year:</span>
+          <div className="year-toggle">
             {availableYears.map((year) => (
-              <option key={year} value={year}>
+              <button
+                key={year}
+                className={selectedYear === year ? "active" : ""}
+                onClick={() => onYearChange(year)}
+              >
                 {formatYearRange(year)}
-              </option>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
       )}
 

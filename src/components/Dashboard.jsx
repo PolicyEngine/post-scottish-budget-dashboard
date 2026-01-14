@@ -9,8 +9,9 @@ import { POLICY_NAMES } from "../utils/policyConfig";
 // Section definitions for navigation
 const SECTIONS = [
   { id: "introduction", label: "Introduction" },
+  { id: "budgetary-impact", label: "Budgetary impact" },
   { id: "living-standards", label: "Living standards" },
-  { id: "poverty", label: "Poverty" },
+  { id: "poverty", label: "Poverty rate" },
   { id: "local-areas", label: "Local areas" },
 ];
 
@@ -332,7 +333,12 @@ export default function Dashboard({ selectedPolicies = [] }) {
         )}
       </ul>
 
-      {/* Budgetary Impact Bar Chart */}
+      {/* Budgetary Impact Section */}
+      <h2 className="section-title" id="budgetary-impact" ref={(el) => (sectionRefs.current["budgetary-impact"] = el)}>Budgetary impact</h2>
+      <p className="chart-description">
+        This section shows the estimated fiscal cost of the budget measures to the Scottish Government.
+      </p>
+
       {isStacked && stackedBudgetData ? (
         <BudgetBarChart
           data={stackedBudgetData}
@@ -411,7 +417,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       ) : null}
 
       {/* Poverty Section */}
-      <h2 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)}>Poverty</h2>
+      <h2 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)}>Poverty rate</h2>
       <p className="chart-description">
         This section shows how poverty rates are projected to change under the budget measures.
         The Scottish Government has set ambitious targets to reduce child poverty.

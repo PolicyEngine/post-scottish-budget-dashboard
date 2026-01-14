@@ -122,18 +122,16 @@ export default function DecileChart({
           </button>
         </div>
         {onYearChange && (
-          <div className="year-selector">
-            <label>Year:</label>
-            <select
-              value={selectedYear}
-              onChange={(e) => onYearChange(parseInt(e.target.value))}
-            >
-              {availableYears.map((year) => (
-                <option key={year} value={year}>
-                  {formatYearRange(year)}
-                </option>
-              ))}
-            </select>
+          <div className="year-toggle">
+            {availableYears.map((year) => (
+              <button
+                key={year}
+                className={selectedYear === year ? "active" : ""}
+                onClick={() => onYearChange(year)}
+              >
+                {formatYearRange(year)}
+              </button>
+            ))}
           </div>
         )}
       </div>
