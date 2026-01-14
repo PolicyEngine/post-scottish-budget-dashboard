@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import DecileChart from "./DecileChart";
 import BudgetBarChart from "./BudgetBarChart";
 import PovertyImpactTable from "./PovertyImpactTable";
 import LocalAreaSection from "./LocalAreaSection";
 import "./Dashboard.css";
+import { POLICY_NAMES } from "../utils/policyConfig";
 
 // Section definitions for navigation
 const SECTIONS = [
@@ -37,13 +38,27 @@ const POLICY_INFO = {
       </li>
     ),
   },
+  combined: {
+    name: "both policies",
+    description: "Full Scottish Budget 2026-27 package",
+    explanation: null, // Will be rendered dynamically
+  },
 };
 
-export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
+export default function Dashboard({ selectedPolicies = [] }) {
+  // Determine effective policy for data loading
+  const effectivePolicy = useMemo(() => {
+    if (selectedPolicies.length === 2) return "combined";
+    if (selectedPolicies.length === 1) return selectedPolicies[0];
+    return null;
+  }, [selectedPolicies]);
+
+  const isStacked = selectedPolicies.length === 2;
   const [loading, setLoading] = useState(true);
   const [livingStandardsData, setLivingStandardsData] = useState(null);
   const [povertyMetrics, setPovertyMetrics] = useState([]);
   const [budgetaryData, setBudgetaryData] = useState(null);
+  const [rawBudgetaryData, setRawBudgetaryData] = useState([]);
   const [activeSection, setActiveSection] = useState("introduction");
 
   // Refs for section elements
@@ -68,6 +83,8 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
   // Load data from CSV files
   useEffect(() => {
     async function loadData() {
+      if (!effectivePolicy) return;
+
       try {
         const [distRes, metricsRes, budgetRes] = await Promise.all([
           fetch("/data/distributional_impact.csv"),
@@ -79,9 +96,9 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
           const csvText = await distRes.text();
           const data = parseCSV(csvText);
 
-          // Transform to decile format for chart (2026 data) - single policy, exclude "All" row
+          // Transform to decile format for chart (2026 data) - use effective policy, exclude "All" row
           const decileData = data
-            .filter(row => row.year === "2026" && row.reform_id === selectedPolicy && row.decile !== "All")
+            .filter(row => row.year === "2026" && row.reform_id === effectivePolicy && row.decile !== "All")
             .map(row => ({
               decile: row.decile,
               relativeChange: parseFloat(row.value) || 0,
@@ -91,7 +108,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
           // Get average income change per year from the "All" row (true weighted average)
           const avgChangeByYear = {};
           data
-            .filter(row => row.reform_id === selectedPolicy && row.decile === "All")
+            .filter(row => row.reform_id === effectivePolicy && row.decile === "All")
             .forEach(row => {
               const year = parseInt(row.year);
               avgChangeByYear[year] = parseFloat(row.absolute_change) || 0;
@@ -104,9 +121,9 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
           const csvText = await metricsRes.text();
           const data = parseCSV(csvText);
 
-          // Filter to selected policy and transform for table
+          // Filter to effective policy and transform for table
           const policyMetrics = data
-            .filter(row => row.reform_id === selectedPolicy)
+            .filter(row => row.reform_id === effectivePolicy)
             .map(row => ({
               year: parseInt(row.year),
               metric: row.metric,
@@ -118,6 +135,9 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
         if (budgetRes.ok) {
           const csvText = await budgetRes.text();
           const data = parseCSV(csvText);
+
+          // Store raw data for stacked charts
+          setRawBudgetaryData(data);
 
           // Group by reform
           const byReform = {};
@@ -142,7 +162,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
       }
     }
     loadData();
-  }, [selectedPolicy]);
+  }, [effectivePolicy]);
 
   // Scroll to section handler
   const scrollToSection = useCallback((sectionId) => {
@@ -173,7 +193,31 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const policyInfo = POLICY_INFO[selectedPolicy] || POLICY_INFO.scp_baby_boost;
+  // Transform budgetary data for stacked charts
+  const stackedBudgetData = useMemo(() => {
+    if (!isStacked || rawBudgetaryData.length === 0) return null;
+
+    const years = [2026, 2027, 2028, 2029, 2030];
+    return years.map(year => {
+      const dataPoint = { year };
+      let netImpact = 0;
+
+      selectedPolicies.forEach(policyId => {
+        const policyName = POLICY_NAMES[policyId];
+        const row = rawBudgetaryData.find(
+          r => r.reform_id === policyId && parseInt(r.year) === year
+        );
+        const value = row ? parseFloat(row.value) || 0 : 0;
+        dataPoint[policyName] = value;
+        netImpact += value;
+      });
+
+      dataPoint.netImpact = netImpact;
+      return dataPoint;
+    });
+  }, [isStacked, rawBudgetaryData, selectedPolicies]);
+
+  const policyInfo = POLICY_INFO[effectivePolicy] || POLICY_INFO.scp_baby_boost;
 
   if (loading) {
     return (
@@ -199,17 +243,33 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
         Currently viewing:
       </p>
       <ul className="policy-list">
-        {policyInfo.explanation}
+        {isStacked ? (
+          <>
+            {POLICY_INFO.scp_baby_boost.explanation}
+            {POLICY_INFO.income_tax_threshold_uplift.explanation}
+          </>
+        ) : (
+          policyInfo.explanation
+        )}
       </ul>
 
       {/* Budgetary Impact Bar Chart */}
-      {budgetaryData && budgetaryData[selectedPolicy] && (
+      {isStacked && stackedBudgetData ? (
         <BudgetBarChart
-          data={Object.entries(budgetaryData[selectedPolicy].years)
+          data={stackedBudgetData}
+          title="Estimated budgetary impact"
+          description="Estimated annual cost of both policies combined. Each bar shows the contribution from each policy."
+          tooltipLabel="Cost"
+          stacked={true}
+          selectedPolicies={selectedPolicies}
+        />
+      ) : budgetaryData && budgetaryData[effectivePolicy] && (
+        <BudgetBarChart
+          data={Object.entries(budgetaryData[effectivePolicy].years)
             .map(([year, value]) => ({ year: parseInt(year), value }))
             .sort((a, b) => a.year - b.year)}
           title="Estimated budgetary impact"
-          description={`Estimated annual ${selectedPolicy === "income_tax_threshold_uplift" ? "cost (revenue foregone)" : "cost"} of the ${policyInfo.name} policy in Scotland.`}
+          description={`Estimated annual ${effectivePolicy === "income_tax_threshold_uplift" ? "cost (revenue foregone)" : "cost"} of the ${policyInfo.name} policy in Scotland.`}
           tooltipLabel="Cost"
         />
       )}
@@ -234,8 +294,8 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
         <h3 className="chart-title">Average income change from {policyInfo.name}</h3>
         <p className="chart-description">
           Average change in household net income due to the policy, across all Scottish households.
-          {selectedPolicy === "scp_baby_boost" && " The change is small when averaged across all households because only families with babies under 1 receiving SCP benefit."}
-          {selectedPolicy === "income_tax_threshold_uplift" && " Most Scottish taxpayers will see a benefit from the increased thresholds."}
+          {effectivePolicy === "scp_baby_boost" && " The change is small when averaged across all households because only families with babies under 1 receiving SCP benefit."}
+          {effectivePolicy === "income_tax_threshold_uplift" && " Most Scottish taxpayers will see a benefit from the increased thresholds."}
         </p>
         <BudgetBarChart
           data={(() => {
@@ -256,9 +316,11 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
           data={livingStandardsData.byDecile}
           title="Impact by income decile"
           description={
-            selectedPolicy === "scp_baby_boost"
+            effectivePolicy === "scp_baby_boost"
               ? "The SCP baby boost is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
-              : "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
+              : effectivePolicy === "income_tax_threshold_uplift"
+              ? "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
+              : "Combined impact of both policies across income deciles. The SCP baby boost targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
           }
         />
       )}
@@ -268,7 +330,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
       <p className="chart-description">
         This section shows how poverty rates are projected to change under the budget measures.
         The Scottish Government has set ambitious targets to reduce child poverty.
-        {selectedPolicy === "income_tax_threshold_uplift" && (
+        {effectivePolicy === "income_tax_threshold_uplift" && (
           <strong> Note: Income tax threshold increases have minimal direct impact on poverty rates
           because people in poverty typically pay little or no income tax.</strong>
         )}
@@ -290,7 +352,7 @@ export default function Dashboard({ selectedPolicy = "scp_baby_boost" }) {
         to see the estimated impact on households in that area.
       </p>
 
-      <LocalAreaSection selectedPolicy={selectedPolicy} />
+      <LocalAreaSection selectedPolicy={effectivePolicy} />
     </div>
   );
 }

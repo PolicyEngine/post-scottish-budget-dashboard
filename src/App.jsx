@@ -14,13 +14,6 @@ function App() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Determine which data to show based on selection
-  const getEffectivePolicy = () => {
-    if (selectedPolicies.length === 2) return "combined";
-    if (selectedPolicies.length === 1) return selectedPolicies[0];
-    return null;
-  };
-
   const togglePolicy = (policyId) => {
     setSelectedPolicies(prev =>
       prev.includes(policyId)
@@ -68,8 +61,6 @@ function App() {
     if (selectedPolicies.length === 2) return "2 policies selected";
     return POLICIES.find(p => p.id === selectedPolicies[0])?.name || "Select policies";
   };
-
-  const effectivePolicy = getEffectivePolicy();
 
   return (
     <div className="app">
@@ -166,8 +157,8 @@ function App() {
           <div className="personal-impact-container">
             <HouseholdCalculator />
           </div>
-        ) : effectivePolicy ? (
-          <Dashboard selectedPolicy={effectivePolicy} />
+        ) : selectedPolicies.length > 0 ? (
+          <Dashboard selectedPolicies={selectedPolicies} />
         ) : (
           <div className="select-policy-prompt">
             <p>Please select one or more policies from the dropdown above to view the analysis.</p>
