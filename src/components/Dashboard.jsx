@@ -12,7 +12,7 @@ const SECTIONS = [
   { id: "budgetary-impact", label: "Budgetary impact" },
   { id: "living-standards", label: "Living standards" },
   { id: "poverty", label: "Poverty rate" },
-  { id: "local-areas", label: "Local areas" },
+  { id: "local-areas", label: "Local areas analysis" },
 ];
 
 // Policy descriptions
@@ -438,7 +438,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       )}
 
       {/* Local Areas Section */}
-      <h2 className="section-title" id="local-areas" ref={(el) => (sectionRefs.current["local-areas"] = el)}>Local areas</h2>
+      <h2 className="section-title" id="local-areas" ref={(el) => (sectionRefs.current["local-areas"] = el)}>Local areas analysis</h2>
       <p className="chart-description">
         This section shows how the budget measures affect different areas of Scotland. Select a constituency
         to see the estimated impact on households in that area.

@@ -9,7 +9,7 @@ const CHART_TITLE = "Scottish constituency-level impacts";
 // Note: CHART_DESCRIPTION is now generated dynamically using policyName prop
 
 // Fixed color scale extent for average gain (in £) - consistent across all years
-const FIXED_COLOR_EXTENT = 15;
+const FIXED_COLOR_EXTENT = 35;
 
 // Format year for display (e.g., 2026 -> "2026-27")
 const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
@@ -20,6 +20,8 @@ const isScottishConstituency = (code) => code && code.startsWith("S");
 export default function ScotlandMap({
   constituencyData = [],
   selectedYear = 2026,
+  onYearChange = null,
+  availableYears = [2026, 2027, 2028, 2029, 2030],
   selectedConstituency: controlledConstituency = null,
   onConstituencySelect = null,
   policyName = "SCP Premium for under-ones",
@@ -466,7 +468,7 @@ export default function ScotlandMap({
         </div>
       </div>
 
-      {/* Search and legend */}
+      {/* Search, year toggle, and legend */}
       <div className="map-top-bar">
         <div className="map-search-section">
           <div className="search-container">
@@ -498,6 +500,20 @@ export default function ScotlandMap({
             )}
           </div>
         </div>
+
+        {onYearChange && (
+          <div className="map-year-toggle">
+            {availableYears.map((year) => (
+              <button
+                key={year}
+                className={selectedYear === year ? "active" : ""}
+                onClick={() => onYearChange(year)}
+              >
+                {formatYearRange(year)}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="map-legend-horizontal">
           <div className="legend-horizontal-content">

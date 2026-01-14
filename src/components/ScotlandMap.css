@@ -159,6 +159,36 @@
   color: var(--pe-gray-500);
 }
 
+/* Year toggle in map */
+.map-year-toggle {
+  display: inline-flex;
+  background: var(--pe-gray-100);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.map-year-toggle button {
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pe-gray-600);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.map-year-toggle button:hover {
+  color: var(--pe-gray-800);
+}
+
+.map-year-toggle button.active {
+  background: white;
+  color: var(--pe-teal-700);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 /* Horizontal legend */
 .map-legend-horizontal {
   display: flex;

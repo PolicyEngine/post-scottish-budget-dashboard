@@ -4,20 +4,33 @@
   margin-top: var(--pe-space-lg);
 }
 
-/* Year selector */
-.year-toggle-container {
+/* Constituency controls bar */
+.constituency-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pe-space-lg);
+  align-items: center;
+  margin-bottom: var(--pe-space-md);
+  padding: var(--pe-space-md);
+  background: var(--pe-gray-50);
+  border-radius: var(--pe-radius-md);
+  border: 1px solid var(--pe-gray-200);
+}
+
+.control-group {
   display: flex;
   align-items: center;
   gap: var(--pe-space-sm);
-  margin-bottom: var(--pe-space-md);
 }
 
-.year-toggle-label {
-  font-size: 0.9rem;
-  font-weight: 500;
+.control-label {
+  font-family: var(--pe-font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--pe-gray-600);
 }
 
+/* Year toggle for constituency comparison */
 .year-toggle {
   display: inline-flex;
   background: var(--pe-gray-100);
@@ -29,6 +42,7 @@
   padding: 6px 12px;
   border: none;
   background: transparent;
+  font-family: var(--pe-font-body);
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--pe-gray-600);
@@ -320,6 +334,7 @@
   border: none;
   background: transparent;
   border-radius: var(--pe-radius-sm);
+  font-family: var(--pe-font-body);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--pe-gray-600);

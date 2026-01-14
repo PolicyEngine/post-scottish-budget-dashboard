@@ -191,29 +191,13 @@ export default function LocalAreaSection({
 
   return (
     <div className="local-area-section">
-      {/* Year Selector */}
-      {onYearChange && (
-        <div className="year-toggle-container">
-          <span className="year-toggle-label">Select year:</span>
-          <div className="year-toggle">
-            {availableYears.map((year) => (
-              <button
-                key={year}
-                className={selectedYear === year ? "active" : ""}
-                onClick={() => onYearChange(year)}
-              >
-                {formatYearRange(year)}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Interactive Map */}
       <div className="section-box map-section">
         <ScotlandMap
           constituencyData={mapConstituencyData}
           selectedYear={selectedYear}
+          onYearChange={onYearChange}
+          availableYears={availableYears}
           selectedConstituency={selectedConstituency ? { code: selectedConstituency.code, name: selectedConstituency.name } : null}
           onConstituencySelect={handleConstituencySelect}
           policyName={policyName}
@@ -243,9 +227,13 @@ export default function LocalAreaSection({
 
       {/* Constituency Comparison - Top/Lowest 10 */}
       <div className="section-box">
-        <div className="chart-header">
-          <h3 className="chart-title">Constituency comparison</h3>
-          <div className="chart-controls-row">
+        <h3 className="chart-title">Constituency comparison</h3>
+        <p className="chart-description">
+          {showTop ? "Highest" : "Lowest"} average household gain by constituency from the {policyName} policy in {formatYearRange(selectedYear)}.
+        </p>
+        <div className="constituency-controls-bar">
+          <div className="control-group">
+            <span className="control-label">Show:</span>
             <div className="chart-toggle">
               <button
                 className={`toggle-btn ${showTop ? "active" : ""}`}
@@ -260,7 +248,10 @@ export default function LocalAreaSection({
                 Lowest 10
               </button>
             </div>
-            {onYearChange && (
+          </div>
+          {onYearChange && (
+            <div className="control-group">
+              <span className="control-label">Year:</span>
               <div className="year-toggle">
                 {availableYears.map((year) => (
                   <button
@@ -272,12 +263,9 @@ export default function LocalAreaSection({
                   </button>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-        <p className="chart-description">
-          {showTop ? "Highest" : "Lowest"} average household gain by constituency from the {policyName} policy in {formatYearRange(selectedYear)}.
-        </p>
         <ol className="constituency-list">
           {chartData.map((c, index) => (
             <li key={c.code} className="constituency-list-item">

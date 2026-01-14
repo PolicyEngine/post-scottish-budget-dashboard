@@ -18,11 +18,15 @@
   }
 }
 
-/* Header - full width coloured bar */
+/* Header - full width coloured bar, sticky */
 .title-row {
   background: var(--pe-teal-700);
-  padding: var(--pe-space-xl) var(--pe-space-xl);
+  padding: var(--pe-space-lg) var(--pe-space-xl);
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .title-row-inner {
