@@ -250,7 +250,7 @@ def _combined_modifier(sim):
     This modifier runs AFTER data load (applied_before_data_load=False).
     It directly applies the SCP structural reform and income tax changes.
     """
-    from policyengine_uk.reforms.scotland import (
+    from policyengine_uk.reforms.scotland.scottish_child_payment_reform import (
         create_scottish_child_payment_baby_bonus_reform,
     )
 
