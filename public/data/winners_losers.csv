@@ -1,46 +1,46 @@
 reform_id,reform_name,year,metric,value
-combined,Both policies combined,2026,winners_pct,74.84135
-combined,Both policies combined,2026,losers_pct,0.07521211
-combined,Both policies combined,2026,unchanged_pct,25.083443
-combined,Both policies combined,2027,winners_pct,75.660126
-combined,Both policies combined,2027,losers_pct,0.07521212
-combined,Both policies combined,2027,unchanged_pct,24.264662
-combined,Both policies combined,2028,winners_pct,75.714615
-combined,Both policies combined,2028,losers_pct,0.13843653
-combined,Both policies combined,2028,unchanged_pct,24.146952
-combined,Both policies combined,2029,winners_pct,75.828384
-combined,Both policies combined,2029,losers_pct,0.13836311
-combined,Both policies combined,2029,unchanged_pct,24.033253
-combined,Both policies combined,2030,winners_pct,75.91375
-combined,Both policies combined,2030,losers_pct,0.13836311
-combined,Both policies combined,2030,unchanged_pct,23.947887
-scp_baby_boost,SCP Premium for under-ones (£40/week),2026,winners_pct,0.7477126
-scp_baby_boost,SCP Premium for under-ones (£40/week),2026,losers_pct,0.0
-scp_baby_boost,SCP Premium for under-ones (£40/week),2026,unchanged_pct,99.25229
-scp_baby_boost,SCP Premium for under-ones (£40/week),2027,winners_pct,0.7477127
-scp_baby_boost,SCP Premium for under-ones (£40/week),2027,losers_pct,0.0
-scp_baby_boost,SCP Premium for under-ones (£40/week),2027,unchanged_pct,99.25229
-scp_baby_boost,SCP Premium for under-ones (£40/week),2028,winners_pct,0.74771273
-scp_baby_boost,SCP Premium for under-ones (£40/week),2028,losers_pct,0.0
-scp_baby_boost,SCP Premium for under-ones (£40/week),2028,unchanged_pct,99.25229
-scp_baby_boost,SCP Premium for under-ones (£40/week),2029,winners_pct,0.7477127
-scp_baby_boost,SCP Premium for under-ones (£40/week),2029,losers_pct,0.0
-scp_baby_boost,SCP Premium for under-ones (£40/week),2029,unchanged_pct,99.25229
-scp_baby_boost,SCP Premium for under-ones (£40/week),2030,winners_pct,0.7477127
-scp_baby_boost,SCP Premium for under-ones (£40/week),2030,losers_pct,0.0
-scp_baby_boost,SCP Premium for under-ones (£40/week),2030,unchanged_pct,99.25229
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,winners_pct,74.09372
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,losers_pct,0.07521211
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,unchanged_pct,25.831064
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,winners_pct,74.912506
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,losers_pct,0.07521212
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,unchanged_pct,25.012281
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,winners_pct,74.96699
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,losers_pct,0.13843653
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,unchanged_pct,24.894575
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,winners_pct,75.08076
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,losers_pct,0.13836311
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,unchanged_pct,24.78088
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,winners_pct,75.16614
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,losers_pct,0.13836311
-income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,unchanged_pct,24.695501
+combined,Both policies combined,2026,winners_pct,76.299706
+combined,Both policies combined,2026,losers_pct,0.0
+combined,Both policies combined,2026,unchanged_pct,23.700296
+combined,Both policies combined,2027,winners_pct,77.19692
+combined,Both policies combined,2027,losers_pct,0.0
+combined,Both policies combined,2027,unchanged_pct,22.803078
+combined,Both policies combined,2028,winners_pct,77.368095
+combined,Both policies combined,2028,losers_pct,3.488487e-05
+combined,Both policies combined,2028,unchanged_pct,22.631874
+combined,Both policies combined,2029,winners_pct,77.40475
+combined,Both policies combined,2029,losers_pct,0.0
+combined,Both policies combined,2029,unchanged_pct,22.595259
+combined,Both policies combined,2030,winners_pct,77.381226
+combined,Both policies combined,2030,losers_pct,0.0
+combined,Both policies combined,2030,unchanged_pct,22.618778
+scp_baby_boost,SCP baby boost (£40/week),2026,winners_pct,1.401789
+scp_baby_boost,SCP baby boost (£40/week),2026,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2026,unchanged_pct,98.59821
+scp_baby_boost,SCP baby boost (£40/week),2027,winners_pct,1.3016586
+scp_baby_boost,SCP baby boost (£40/week),2027,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2027,unchanged_pct,98.69834
+scp_baby_boost,SCP baby boost (£40/week),2028,winners_pct,1.4811103
+scp_baby_boost,SCP baby boost (£40/week),2028,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2028,unchanged_pct,98.51889
+scp_baby_boost,SCP baby boost (£40/week),2029,winners_pct,1.3700794
+scp_baby_boost,SCP baby boost (£40/week),2029,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2029,unchanged_pct,98.62992
+scp_baby_boost,SCP baby boost (£40/week),2030,winners_pct,1.2705575
+scp_baby_boost,SCP baby boost (£40/week),2030,losers_pct,0.0
+scp_baby_boost,SCP baby boost (£40/week),2030,unchanged_pct,98.72945
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,winners_pct,75.452225
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,losers_pct,0.0
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2026,unchanged_pct,24.547771
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,winners_pct,76.414734
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,losers_pct,0.0
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2027,unchanged_pct,23.585268
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,winners_pct,76.52087
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,losers_pct,3.488487e-05
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2028,unchanged_pct,23.479097
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,winners_pct,76.6664
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,losers_pct,0.0
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2029,unchanged_pct,23.333607
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,winners_pct,76.74455
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,losers_pct,0.0
+income_tax_threshold_uplift,Income tax threshold uplift (7.4%),2030,unchanged_pct,23.25545
