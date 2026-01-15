@@ -53,11 +53,12 @@ export default function StackedDecileChart({
   };
 
   // Transform data based on view mode
+  // Note: relative values are already in percentage format from the calculator
   const chartData = data.map((d) => {
     const row = { decile: d.decile };
     reforms.forEach((reform) => {
       if (viewMode === "relative") {
-        row[reform] = (d[`${reform}_relative`] || 0) * 100;
+        row[reform] = d[`${reform}_relative`] || 0;
       } else {
         row[reform] = d[`${reform}_absolute`] || 0;
       }

@@ -51,26 +51,27 @@ export default function DecileChart({
   };
 
   // Prepare chart data
+  // Note: relative values are already in percentage format from the calculator
   let chartData;
   if (stacked && stackedData) {
     chartData = stackedData.map((d) => {
       const point = { decile: d.decile };
       ALL_POLICY_NAMES.forEach(name => {
         if (viewMode === "relative") {
-          point[name] = (d[`${name}_relative`] || 0) * 100;
+          point[name] = d[`${name}_relative`] || 0;
         } else {
           point[name] = d[`${name}_absolute`] || 0;
         }
       });
       point.netChange = viewMode === "relative"
-        ? (d.netRelative || 0) * 100
+        ? (d.netRelative || 0)
         : (d.netAbsolute || 0);
       return point;
     });
   } else {
     chartData = data.map((d) => ({
       decile: d.decile,
-      value: viewMode === "relative" ? d.relativeChange * 100 : d.absoluteChange,
+      value: viewMode === "relative" ? d.relativeChange : d.absoluteChange,
     }));
   }
 
