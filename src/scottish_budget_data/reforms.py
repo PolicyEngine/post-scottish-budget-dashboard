@@ -244,6 +244,22 @@ def _income_tax_modifier(sim):
     return sim
 
 
+def _scp_baby_boost_modifier(sim):
+    """Apply SCP baby boost reform only.
+
+    This modifier directly applies the SCP structural reform from policyengine-uk.
+    """
+    from policyengine_uk.reforms.scotland.scottish_child_payment_reform import (
+        create_scottish_child_payment_baby_bonus_reform,
+    )
+
+    # Apply SCP baby bonus reform directly
+    scp_reform = create_scottish_child_payment_baby_bonus_reform()
+    sim.apply_reform(scp_reform)
+
+    return sim
+
+
 def _combined_modifier(sim):
     """Apply both SCP baby boost and income tax threshold uplift.
 
@@ -269,17 +285,13 @@ def get_scottish_budget_reforms() -> list[Reform]:
     """Get list of Scottish Budget 2026-27 reforms.
 
     Returns a list of Reform objects:
-    - SCP baby boost: Uses parameter_changes with applied_before_data_load=True
-      to trigger PE-UK's structural reform
+    - SCP baby boost: Uses simulation_modifier to directly apply PE-UK's structural reform
     - Income tax: Uses simulation_modifier to directly modify thresholds
-    - Combined: Uses parameter_changes (applied_before_data_load) + simulation_modifier
+    - Combined: Uses simulation_modifier for both reforms
 
     Returns:
         List of Reform objects for analysis.
     """
-    # Get parameter changes
-    scp_params = _scp_baby_boost_parameter_changes()
-
     reforms = []
 
     # Combined reform (both policies together) - listed first
@@ -298,8 +310,7 @@ def get_scottish_budget_reforms() -> list[Reform]:
     )
 
     # SCP Premium for under-ones (£40/week for babies under 1)
-    # Uses parameter_changes to enable in_effect, which triggers PE-UK's structural reform
-    # Must use applied_before_data_load=True so param is set BEFORE structural reforms run
+    # Uses simulation_modifier to directly apply the structural reform from policyengine-uk
     reforms.append(
         Reform(
             id="scp_baby_boost",
@@ -308,8 +319,7 @@ def get_scottish_budget_reforms() -> list[Reform]:
                 "New SCP Premium for under-ones: £40/week for babies under 1 "
                 "(up from £27.15/week). Announced in Scottish Budget 2026-27."
             ),
-            parameter_changes=scp_params,
-            applied_before_data_load=True,
+            simulation_modifier=_scp_baby_boost_modifier,
         )
     )
 
