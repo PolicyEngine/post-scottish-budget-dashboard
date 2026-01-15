@@ -1,6 +1,12 @@
 """Scottish Budget 2026-27 reform definitions.
 
 This module defines the policy reforms for the Scottish Budget analysis.
+
+Reforms are organised into:
+- Parametric reforms (using parameter_changes dict)
+- Structural reforms (using simulation_modifier for complex calculations)
+
+policyengine-uk is used with local installation via conda activate python313.
 """
 
 from dataclasses import dataclass, field
@@ -8,11 +14,25 @@ from typing import Callable, Optional
 import numpy as np
 
 
-# Constants for SCP Premium for under-ones
+# Constants for SCP Premium for under-ones (for reference only - now parametric)
 WEEKS_IN_YEAR = 52
 SCP_STANDARD_RATE = 27.15  # £/week (current rate from Apr 2025)
 SCP_BABY_RATE = 40.00  # £/week for babies under 1 (from Scottish Budget 2026)
 SCP_BABY_BOOST = SCP_BABY_RATE - SCP_STANDARD_RATE  # Extra £12.85/week
+
+
+def _scp_baby_boost_parameter_changes() -> dict:
+    """Get SCP baby boost parameter changes.
+
+    Enables the in_effect parameter which triggers PE-UK's structural
+    reform for SCP Premium for under-ones (£40/week for babies under 1).
+
+    Must be applied with `applied_before_data_load=True` so the parameter
+    is set BEFORE PE-UK's `create_structural_reforms_from_parameters` runs.
+    """
+    return {
+        "gov.contrib.scotland.scottish_child_payment.in_effect": _years_dict(True),
+    }
 
 # Constants for income tax threshold uplift
 # The announced increases for 2026-27 (absolute amounts above baseline)
@@ -26,6 +46,12 @@ INCOME_TAX_INTERMEDIATE_INCREASE = 1_665  # £16,956 - £15,291 (2026 baseline)
 DEFAULT_YEARS = [2026, 2027, 2028, 2029, 2030]
 
 
+def _years_dict(value, years: list[int] = None) -> dict[str, any]:
+    """Create a {year: value} dict for parameter changes."""
+    years = years or DEFAULT_YEARS
+    return {str(y): value for y in years}
+
+
 @dataclass
 class Reform:
     """A policy reform definition."""
@@ -37,6 +63,7 @@ class Reform:
     baseline_parameter_changes: Optional[dict] = None
     simulation_modifier: Optional[Callable] = None
     baseline_simulation_modifier: Optional[Callable] = None
+    applied_before_data_load: bool = False  # Set True for params that trigger structural reforms
 
     def to_scenario(self):
         """Convert to PolicyEngine Scenario."""
@@ -46,11 +73,18 @@ class Reform:
             return Scenario(
                 simulation_modifier=self.simulation_modifier,
                 parameter_changes=self.parameter_changes,
+                applied_before_data_load=self.applied_before_data_load,
             )
         elif self.simulation_modifier:
-            return Scenario(simulation_modifier=self.simulation_modifier)
+            return Scenario(
+                simulation_modifier=self.simulation_modifier,
+                applied_before_data_load=self.applied_before_data_load,
+            )
         elif self.parameter_changes:
-            return Scenario(parameter_changes=self.parameter_changes)
+            return Scenario(
+                parameter_changes=self.parameter_changes,
+                applied_before_data_load=self.applied_before_data_load,
+            )
         return None
 
     def to_baseline_scenario(self):
@@ -69,10 +103,57 @@ class Reform:
         return None
 
 
+def _calculate_income_tax_threshold_changes() -> dict:
+    """Calculate income tax threshold parameter changes programmatically.
+
+    Uses policyengine-uk to get baseline thresholds, then adds the announced
+    increases to create the reformed threshold values.
+
+    From Scottish Budget 2026-27:
+    - Basic rate (20%) threshold: +£1,069 above baseline
+    - Intermediate rate (21%) threshold: +£1,665 above baseline
+
+    Returns:
+        Dict mapping parameter paths to {year: value} dicts.
+    """
+    from policyengine_uk.system import system
+
+    params = system.parameters
+    scotland_rates = params.gov.hmrc.income_tax.rates.scotland.rates
+
+    basic_thresholds = {}
+    intermediate_thresholds = {}
+
+    for year in DEFAULT_YEARS:
+        baseline_basic = scotland_rates.brackets[1].threshold(f"{year}-01-01")
+        baseline_intermediate = scotland_rates.brackets[2].threshold(f"{year}-01-01")
+
+        basic_thresholds[str(year)] = round(baseline_basic + INCOME_TAX_BASIC_INCREASE)
+        intermediate_thresholds[str(year)] = round(baseline_intermediate + INCOME_TAX_INTERMEDIATE_INCREASE)
+
+    return {
+        "gov.hmrc.income_tax.rates.scotland.rates[1].threshold": basic_thresholds,
+        "gov.hmrc.income_tax.rates.scotland.rates[2].threshold": intermediate_thresholds,
+    }
+
+
+# Cache for lazy-loaded parameter changes
+_INCOME_TAX_PARAM_CHANGES_CACHE: dict | None = None
+
+
+def get_income_tax_threshold_changes() -> dict:
+    """Get income tax threshold parameter changes (lazy-loaded)."""
+    global _INCOME_TAX_PARAM_CHANGES_CACHE
+    if _INCOME_TAX_PARAM_CHANGES_CACHE is None:
+        _INCOME_TAX_PARAM_CHANGES_CACHE = _calculate_income_tax_threshold_changes()
+    return _INCOME_TAX_PARAM_CHANGES_CACHE
+
+
 def apply_income_tax_threshold_uplift_for_year(sim, year: int):
     """Apply Scottish income tax threshold uplift for a single year.
 
-    This is the core single-year function used by both microsim and personal calculator.
+    This is the core single-year function used by personal calculator.
+    For microsim, use parameter_changes instead (more efficient).
 
     From Scottish Budget 2026-27:
     - Basic rate (20%) threshold: £15,398 → £16,537 (+£1,139 absolute)
@@ -98,21 +179,6 @@ def apply_income_tax_threshold_uplift_for_year(sim, year: int):
         period=f"{year}-01-01",
         value=baseline_intermediate + INCOME_TAX_INTERMEDIATE_INCREASE,
     )
-
-
-def _income_tax_threshold_uplift_modifier(sim):
-    """Apply Scottish income tax threshold uplift (7.4%) for all years.
-
-    Microsim wrapper that applies the uplift for years 2026-2030.
-
-    Policy assumption for future years (2027-2030):
-    The same absolute £ increase is maintained, meaning the gap between
-    Scottish and baseline UK thresholds remains constant. This represents
-    a "maintained policy" scenario showing consistent ~£63-68M/year cost.
-    """
-    for year in DEFAULT_YEARS:
-        apply_income_tax_threshold_uplift_for_year(sim, year)
-    return sim
 
 
 def apply_scp_baby_boost_for_year(sim, year: int):
@@ -159,35 +225,66 @@ def _scp_baby_boost_modifier(sim):
     """Apply SCP Premium for under-ones for all years.
 
     Microsim wrapper that applies the baby boost for years 2026-2030.
+    This is a structural reform because it needs to:
+    1. Calculate current SCP values
+    2. Count babies per benefit unit
+    3. Apply boost only to eligible families
+
+    Cannot be done via parameter_changes alone.
     """
     for year in DEFAULT_YEARS:
         apply_scp_baby_boost_for_year(sim, year)
     return sim
 
 
-def _combined_scottish_budget_modifier(sim):
-    """Apply both SCP Premium for under-ones and income tax threshold uplift together.
+def _income_tax_modifier(sim):
+    """Apply income tax threshold uplift via simulation_modifier."""
+    for year in DEFAULT_YEARS:
+        apply_income_tax_threshold_uplift_for_year(sim, year)
+    return sim
 
-    This combined reform represents the full Scottish Budget 2026-27 package,
-    applying both policies simultaneously to capture any interaction effects.
 
-    Note: Income tax modifier must run first to modify parameters before any
-    calculations are performed. SCP modifier runs second to set input values.
+def _combined_modifier(sim):
+    """Apply both SCP baby boost and income tax threshold uplift.
+
+    This modifier runs AFTER data load (applied_before_data_load=False).
+    It directly applies the SCP structural reform and income tax changes.
     """
-    sim = _income_tax_threshold_uplift_modifier(sim)
-    sim = _scp_baby_boost_modifier(sim)
+    from policyengine_uk.reforms.scotland import (
+        create_scottish_child_payment_baby_bonus_reform,
+    )
+
+    # Apply SCP baby bonus reform directly
+    scp_reform = create_scottish_child_payment_baby_bonus_reform()
+    sim.apply_reform(scp_reform)
+
+    # Apply income tax threshold uplift
+    for year in DEFAULT_YEARS:
+        apply_income_tax_threshold_uplift_for_year(sim, year)
+
     return sim
 
 
 def get_scottish_budget_reforms() -> list[Reform]:
     """Get list of Scottish Budget 2026-27 reforms.
 
+    Returns a list of Reform objects:
+    - SCP baby boost: Uses parameter_changes with applied_before_data_load=True
+      to trigger PE-UK's structural reform
+    - Income tax: Uses simulation_modifier to directly modify thresholds
+    - Combined: Uses parameter_changes (applied_before_data_load) + simulation_modifier
+
     Returns:
         List of Reform objects for analysis.
     """
+    # Get parameter changes
+    scp_params = _scp_baby_boost_parameter_changes()
+
     reforms = []
 
     # Combined reform (both policies together) - listed first
+    # Uses simulation_modifier to apply BOTH reforms after data load
+    # (Directly applies SCP structural reform + income tax threshold changes)
     reforms.append(
         Reform(
             id="combined",
@@ -196,12 +293,13 @@ def get_scottish_budget_reforms() -> list[Reform]:
                 "Full Scottish Budget 2026-27 package: SCP Premium for under-ones (£40/week) "
                 "and income tax threshold uplift (7.4%) applied together."
             ),
-            simulation_modifier=_combined_scottish_budget_modifier,
+            simulation_modifier=_combined_modifier,
         )
     )
 
     # SCP Premium for under-ones (£40/week for babies under 1)
-    # This is the main reform from Scottish Budget 2026-27
+    # Uses parameter_changes to enable in_effect, which triggers PE-UK's structural reform
+    # Must use applied_before_data_load=True so param is set BEFORE structural reforms run
     reforms.append(
         Reform(
             id="scp_baby_boost",
@@ -210,14 +308,13 @@ def get_scottish_budget_reforms() -> list[Reform]:
                 "New SCP Premium for under-ones: £40/week for babies under 1 "
                 "(up from £27.15/week). Announced in Scottish Budget 2026-27."
             ),
-            simulation_modifier=_scp_baby_boost_modifier,
+            parameter_changes=scp_params,
+            applied_before_data_load=True,
         )
     )
 
     # Scottish income tax threshold uplift (7.4%)
-    # Raises basic and intermediate rate thresholds per Scottish Budget 2026-27
-    # Basic (20%): £15,398 → £16,537 absolute = £3,966 above PA
-    # Intermediate (21%): £27,492 → £29,527 absolute = £16,956 above PA
+    # Uses simulation_modifier to directly modify Scottish rate thresholds
     reforms.append(
         Reform(
             id="income_tax_threshold_uplift",
@@ -226,7 +323,7 @@ def get_scottish_budget_reforms() -> list[Reform]:
                 "Scottish basic and intermediate rate thresholds increased by 7.4%. "
                 "Basic rate starts at £16,537, intermediate at £29,527."
             ),
-simulation_modifier=_income_tax_threshold_uplift_modifier,
+            simulation_modifier=_income_tax_modifier,
         )
     )
 
