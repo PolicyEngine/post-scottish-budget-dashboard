@@ -2,7 +2,7 @@
 
 import modal
 
-app = modal.App("scottish-budget-api")
+app = modal.App("scottish-budget-2026-2027-api")
 
 # Create image with all dependencies (Python 3.13 required for policyengine-uk>=2.68)
 # v3: uses shared reform functions from reforms.py
