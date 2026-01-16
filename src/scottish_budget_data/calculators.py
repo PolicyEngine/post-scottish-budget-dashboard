@@ -283,6 +283,8 @@ class TwoChildLimitCalculator:
 
     Computes cost and number of children affected by abolishing the two-child limit.
     Used for comparison with Scottish Fiscal Commission estimates.
+
+    Based on methodology from PolicyEngine/scottish-budget-dashboard.
     """
 
     def __init__(self, years: list[int] = None):
@@ -290,47 +292,71 @@ class TwoChildLimitCalculator:
 
     def calculate(
         self,
-        baseline: Microsimulation,
-        reformed: Microsimulation,
+        sim_with_limit: Microsimulation,
+        sim_without_limit: Microsimulation,
     ) -> list[dict]:
         """Calculate two-child limit abolition impact for Scotland.
 
-        Returns cost in £ millions and number of children affected in thousands.
+        Args:
+            sim_with_limit: Simulation with two-child limit in place (child_count=2)
+            sim_without_limit: Simulation without limit (child_count=inf, current law)
+
+        Returns:
+            List of dicts with year, cost_millions, children_affected_thousands,
+            and SFC comparison figures.
         """
+        # SFC estimates for comparison (from Scottish Fiscal Commission)
+        SFC_DATA = {
+            2026: {"children": 43000, "cost": 155},
+            2027: {"children": 46000, "cost": 170},
+            2028: {"children": 48000, "cost": 182},
+            2029: {"children": 50000, "cost": 198},
+            2030: {"children": 52000, "cost": 205},
+        }
+
         results = []
 
         for year in self.years:
-            # Filter to Scotland
-            is_scotland_hh = get_scotland_household_mask(baseline, year)
-            is_scotland_person = get_scotland_person_mask(baseline, year)
+            # Get Scotland mask using region variable
+            region = sim_without_limit.calculate("region", year, map_to="household").values
+            scotland_mask = region == "SCOTLAND"
 
-            # Calculate cost (change in household income = benefit increase)
-            baseline_income = baseline.calculate("household_net_income", year)
-            reformed_income = reformed.calculate("household_net_income", year)
+            # Get weights
+            hh_weight = sim_without_limit.calculate("household_weight", year, map_to="household").values
 
-            baseline_scotland = baseline_income[is_scotland_hh]
-            reformed_scotland = reformed_income[is_scotland_hh]
+            # Get UC entitlement under both scenarios
+            uc_without_limit = sim_without_limit.calculate("universal_credit", year, map_to="household").values
+            uc_with_limit = sim_with_limit.calculate("universal_credit", year, map_to="household").values
 
-            cost = (reformed_scotland - baseline_scotland).sum()
+            # Calculate the gain from removing limit
+            uc_gain = uc_without_limit - uc_with_limit
 
-            # Count children affected (children in households that gain income)
-            # A child is affected if they're in a household with 3+ children
-            # that receives qualifying benefits
-            is_child = baseline.calculate("is_child", year, map_to="person").values[is_scotland_person]
-            person_weights = baseline.calculate("person_weight", year, map_to="person").values[is_scotland_person]
+            # Affected households are Scottish households with a gain
+            affected_mask = scotland_mask & (uc_gain > 0)
 
-            # Map household income gain to persons
-            hh_gain = np.array(reformed_income) - np.array(baseline_income)
-            person_gain = baseline.map_result(hh_gain, "household", "person")[is_scotland_person]
+            # Total cost (sum of gains)
+            total_cost = (uc_gain[affected_mask] * hh_weight[affected_mask]).sum()
+            total_cost_millions = total_cost / 1e6
 
-            # Children affected are those with household income gain > £1
-            children_affected_mask = (is_child > 0) & (person_gain > 1)
-            children_affected = np.sum(person_weights * children_affected_mask)
+            # Count affected benefit units
+            affected_benefit_units = hh_weight[affected_mask].sum()
+
+            # Count affected children (children beyond the first 2 in affected HHs)
+            benunit_children = sim_without_limit.calculate(
+                "benunit_count_children", year, map_to="household"
+            ).values
+            affected_children_per_hh = np.maximum(benunit_children - 2, 0)
+            total_affected_children = (
+                affected_children_per_hh[affected_mask] * hh_weight[affected_mask]
+            ).sum()
 
             results.append({
                 "year": year,
-                "cost_millions": cost / 1e6,
-                "children_affected_thousands": children_affected / 1e3,
+                "pe_affected_children": round(total_affected_children),
+                "pe_affected_benefit_units": round(affected_benefit_units),
+                "pe_cost_millions": round(total_cost_millions, 1),
+                "sfc_affected_children": SFC_DATA[year]["children"],
+                "sfc_cost_millions": SFC_DATA[year]["cost"],
             })
 
         return results

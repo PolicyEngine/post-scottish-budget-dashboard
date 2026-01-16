@@ -185,6 +185,12 @@ def generate_two_child_limit_validation(
     This creates data for comparing PolicyEngine estimates with
     Scottish Fiscal Commission projections on the two-child limit.
 
+    Comparison methodology:
+    - sim_without_limit: Current law (two-child limit removed from 2026+)
+    - sim_with_limit: Counterfactual with limit enforced (child_count=2)
+
+    The cost is calculated as the UC gain from removing the limit.
+
     Args:
         output_dir: Directory for output CSV file.
         dataset_path: Path to local enhanced_frs h5 file. If None, downloads from HF.
@@ -198,10 +204,12 @@ def generate_two_child_limit_validation(
 
     print("\nGenerating two-child limit validation data...")
 
-    # Get the two-child limit abolition reform
-    reform = get_two_child_limit_reform()
-    baseline_scenario = reform.to_baseline_scenario()  # Imposes two-child limit
-    reform_scenario = reform.to_scenario()  # Abolishes two-child limit
+    # Reform dict to impose the two-child limit (for baseline comparison)
+    two_child_limit_reform = {
+        "gov.dwp.universal_credit.elements.child.limit.child_count": {
+            "2026-01-01.2030-12-31": 2
+        },
+    }
 
     # Use local dataset if provided
     if dataset_path:
@@ -209,13 +217,15 @@ def generate_two_child_limit_validation(
     else:
         dataset_obj = None
 
-    # Create baseline (with limit) and reformed (without limit) simulations
-    baseline = Microsimulation(scenario=baseline_scenario, dataset=dataset_obj)
-    reformed = Microsimulation(scenario=reform_scenario, dataset=dataset_obj)
+    # Create simulations:
+    # - sim_without_limit: Current law (limit removed in PolicyEngine UK)
+    # - sim_with_limit: Counterfactual with limit enforced
+    sim_without_limit = Microsimulation(dataset=dataset_obj)
+    sim_with_limit = Microsimulation(dataset=dataset_obj, reform=two_child_limit_reform)
 
     # Calculate two-child limit impact
     tcl_calc = TwoChildLimitCalculator(years=years)
-    results = tcl_calc.calculate(baseline, reformed)
+    results = tcl_calc.calculate(sim_with_limit, sim_without_limit)
 
     # Convert to DataFrame
     df = pd.DataFrame(results)
@@ -224,6 +234,13 @@ def generate_two_child_limit_validation(
     save_csv(df, output_dir / "two_child_limit_validation.csv")
 
     print("Two-child limit validation data generated")
+    print(f"\n=== Summary ===")
+    r2026 = results[0]
+    r2029 = results[3]
+    print(f"2026-27: PE estimates {r2026['pe_affected_children']:,} children, £{r2026['pe_cost_millions']}m")
+    print(f"         SFC estimates {r2026['sfc_affected_children']:,} children, £{r2026['sfc_cost_millions']}m")
+    print(f"2029-30: PE estimates {r2029['pe_affected_children']:,} children, £{r2029['pe_cost_millions']}m")
+    print(f"         SFC estimates {r2029['sfc_affected_children']:,} children, £{r2029['sfc_cost_millions']}m")
 
     return df
 
