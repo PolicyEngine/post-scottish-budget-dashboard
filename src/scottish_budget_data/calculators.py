@@ -32,8 +32,8 @@ class BudgetaryImpactCalculator:
     2. The change in household income equals the fiscal cost/revenue impact
     3. Using gov_balance would require apportioning UK-wide aggregates
 
-    For SCP: cost = increased benefit payments to Scottish families
-    For income tax: cost = reduced tax revenue from Scottish taxpayers
+    IMPORTANT: Creates fresh simulations for each year to avoid PolicyEngine
+    caching issues that cause cross-year contamination.
     """
 
     def __init__(self, years: list[int] = None):
@@ -48,24 +48,31 @@ class BudgetaryImpactCalculator:
     ) -> list[dict]:
         """Calculate budgetary impact for all years (Scotland only).
 
+        Note: The baseline/reformed parameters are used to get the scenario
+        configuration, but fresh simulations are created per-year to avoid
+        caching issues.
+
         Returns cost in £ millions. Positive = cost to government (income gain for households).
         """
+        from .reforms import calculate_scp_baby_boost_cost
+
         results = []
 
         for year in self.years:
-            # Filter to Scotland
-            is_scotland = get_scotland_household_mask(baseline, year)
-
-            # Keep as MicroSeries (don't convert to numpy) so .sum() uses built-in weights
-            baseline_income = baseline.calculate("household_net_income", year)
-            reformed_income = reformed.calculate("household_net_income", year)
-
-            # Apply Scotland filter (preserves MicroSeries with weights)
-            baseline_income_scotland = baseline_income[is_scotland]
-            reformed_income_scotland = reformed_income[is_scotland]
-
-            # Use built-in weighted sum (weights handled automatically by MicroSeries)
-            cost = (reformed_income_scotland - baseline_income_scotland).sum()
+            if reform_id == "scp_baby_boost":
+                # SCP baby boost: direct calculation (no simulation modification needed)
+                cost = self._calculate_scp_cost_for_year(year)
+            elif reform_id == "combined":
+                # Combined = SCP baby boost + income tax threshold uplift
+                scp_cost = self._calculate_scp_cost_for_year(year)
+                tax_cost = self._calculate_income_tax_cost_for_year(year)
+                cost = scp_cost + tax_cost
+            elif reform_id == "income_tax_threshold_uplift":
+                # Income tax: fresh simulations per year
+                cost = self._calculate_income_tax_cost_for_year(year)
+            else:
+                # Generic reform: fresh simulations per year
+                cost = self._calculate_generic_cost_for_year(reformed, year)
 
             results.append({
                 "reform_id": reform_id,
@@ -75,6 +82,50 @@ class BudgetaryImpactCalculator:
             })
 
         return results
+
+    def _calculate_scp_cost_for_year(self, year: int) -> float:
+        """Calculate SCP baby boost cost for a single year."""
+        from .reforms import calculate_scp_baby_boost_cost
+
+        # Fresh simulation for this year
+        sim = Microsimulation()
+        return calculate_scp_baby_boost_cost(sim, year)
+
+    def _calculate_income_tax_cost_for_year(self, year: int) -> float:
+        """Calculate income tax threshold uplift cost for a single year."""
+        from policyengine_uk import Microsimulation
+        from policyengine_uk.utils.scenario import Scenario
+        from .reforms import _income_tax_modifier
+
+        # Fresh simulations for this year
+        baseline = Microsimulation()
+        reformed = Microsimulation(
+            scenario=Scenario(simulation_modifier=_income_tax_modifier)
+        )
+
+        is_scotland = get_scotland_household_mask(baseline, year)
+
+        baseline_income = baseline.calculate("household_net_income", year)
+        reformed_income = reformed.calculate("household_net_income", year)
+
+        return (reformed_income[is_scotland] - baseline_income[is_scotland]).sum()
+
+    def _calculate_generic_cost_for_year(
+        self, reformed_template: Microsimulation, year: int
+    ) -> float:
+        """Calculate cost for a generic reform using fresh simulations."""
+        # Fresh baseline
+        baseline = Microsimulation()
+
+        # Fresh reformed with same scenario as template
+        reformed = Microsimulation(scenario=reformed_template.scenario)
+
+        is_scotland = get_scotland_household_mask(baseline, year)
+
+        baseline_income = baseline.calculate("household_net_income", year)
+        reformed_income = reformed.calculate("household_net_income", year)
+
+        return (reformed_income[is_scotland] - baseline_income[is_scotland]).sum()
 
 
 class DistributionalImpactCalculator:

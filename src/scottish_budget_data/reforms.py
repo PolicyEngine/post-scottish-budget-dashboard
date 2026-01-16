@@ -13,6 +13,7 @@ calculator APIs (modal_app.py, api.py).
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 import numpy as np
+from policyengine_core.model_api import *
 
 
 # Constants for SCP Premium for under-ones
@@ -20,6 +21,47 @@ WEEKS_IN_YEAR = 52
 SCP_STANDARD_RATE = 27.15  # £/week (current rate from Apr 2025)
 SCP_BABY_RATE = 40.00  # £/week for babies under 1 (from Scottish Budget 2026)
 SCP_BABY_BOOST = SCP_BABY_RATE - SCP_STANDARD_RATE  # Extra £12.85/week
+
+
+def create_scp_baby_boost_reform(tax_benefit_system):
+    """Create a reform that adds the SCP baby boost for under-ones.
+
+    This uses PolicyEngine's proper reform mechanism to modify the
+    scottish_child_payment formula, avoiding issues with set_input caching.
+    """
+    from policyengine_uk.variables.gov.social_security_scotland.scottish_child_payment import (
+        scottish_child_payment as original_scp,
+    )
+
+    class scottish_child_payment(original_scp):
+        def formula(benunit, period, parameters):
+            # Get the original SCP calculation
+            original_amount = original_scp.formula(benunit, period, parameters)
+
+            # Check if in Scotland and receiving SCP
+            in_scotland = (
+                benunit.household("country", period).decode_to_str() == "SCOTLAND"
+            )
+            receives_scp = original_amount > 0
+
+            # Count babies (under 1 year old) in the benefit unit
+            age = benunit.members("age", period)
+            is_baby = age < 1
+            babies_in_benunit = benunit.sum(is_baby)
+
+            # Calculate baby boost: £12.85/week extra per baby × 52 weeks
+            baby_boost_annual = babies_in_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR
+
+            # Only add boost for Scottish families already receiving SCP
+            boost = where(in_scotland & receives_scp, baby_boost_annual, 0)
+
+            return original_amount + boost
+
+    class reform(Reform):
+        def apply(self):
+            self.update_variable(scottish_child_payment)
+
+    return reform
 
 
 # Constants for income tax threshold uplift
@@ -117,11 +159,8 @@ def apply_income_tax_threshold_uplift_for_year(sim, year: int) -> None:
 def apply_scp_baby_boost_for_year(sim, year: int) -> None:
     """Apply SCP Premium for under-ones for a single year.
 
-    Used by personal calculator APIs. For microsim, use _scp_baby_boost_modifier
-    which applies policyengine-uk's structural reform directly.
-
-    The Scottish Budget 2026-27 introduced the SCP Premium for under-ones,
-    increasing SCP to £40/week for babies under 1, up from the standard £27.15/week.
+    NOTE: This uses set_input which has caching issues in multi-year scenarios.
+    For microsimulation, use calculate_scp_baby_boost_cost() instead.
 
     Args:
         sim: PolicyEngine simulation object
@@ -135,19 +174,55 @@ def apply_scp_baby_boost_for_year(sim, year: int) -> None:
     is_baby = np.array(age) < 1
 
     # Map babies to benefit units using PolicyEngine's mapping
-    # This sums is_baby (0 or 1) for each person, grouped by benunit
     babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
 
     # Calculate baby boost (£12.85/week extra × 52 weeks per baby)
     annual_boost = np.array(babies_per_benunit) * SCP_BABY_BOOST * WEEKS_IN_YEAR
 
-    # Only apply boost to families already receiving SCP (i.e., in Scotland + qualifying)
+    # Only apply boost to families already receiving SCP
     already_receives_scp = np.array(current_scp) > 0
     baby_boost = np.where(already_receives_scp, annual_boost, 0)
 
     # Add boost to current SCP
     new_scp = np.array(current_scp) + baby_boost
     sim.set_input("scottish_child_payment", year, new_scp)
+
+
+def calculate_scp_baby_boost_cost(sim, year: int) -> float:
+    """Calculate the cost of SCP baby boost for a given year (Scotland only).
+
+    This calculates the boost directly without using set_input, avoiding
+    caching issues that occur in multi-year simulations.
+
+    Args:
+        sim: PolicyEngine Microsimulation object
+        year: Year to calculate for
+
+    Returns:
+        Total cost in £ (positive = cost to government)
+    """
+    # Filter to Scotland
+    region = sim.calculate("region", year, map_to="household").values
+    scotland_mask = region == "SCOTLAND"
+    hh_weight = sim.calculate("household_weight", year).values
+
+    # Get SCP-receiving benefit units
+    scp = sim.calculate("scottish_child_payment", year, map_to="benunit").values
+    receives_scp = scp > 0
+
+    # Count babies (under 1) in each benefit unit
+    age = sim.calculate("age", year, map_to="person").values
+    is_baby = age < 1
+    babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
+
+    # Calculate annual boost: only for SCP recipients
+    baby_boost_annual = np.where(receives_scp, babies_per_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR, 0)
+
+    # Map to household level and sum for Scotland
+    baby_boost_hh = sim.map_result(baby_boost_annual, "benunit", "household")
+    total_cost = (baby_boost_hh * hh_weight)[scotland_mask].sum()
+
+    return total_cost
 
 
 def _income_tax_modifier(sim):
