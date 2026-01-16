@@ -9,7 +9,7 @@ import pandas as pd
 import h5py
 
 from policyengine_uk import Microsimulation
-from policyengine_uk.data import UKSingleYearDataset, UKMultiYearDataset
+from policyengine_uk.data import UKSingleYearDataset
 
 from .calculators import (
     BudgetaryImpactCalculator,

@@ -21,19 +21,6 @@ SCP_BABY_RATE = 40.00  # £/week for babies under 1 (from Scottish Budget 2026)
 SCP_BABY_BOOST = SCP_BABY_RATE - SCP_STANDARD_RATE  # Extra £12.85/week
 
 
-def _scp_baby_boost_parameter_changes() -> dict:
-    """Get SCP baby boost parameter changes.
-
-    Enables the in_effect parameter which triggers PE-UK's structural
-    reform for SCP Premium for under-ones (£40/week for babies under 1).
-
-    Must be applied with `applied_before_data_load=True` so the parameter
-    is set BEFORE PE-UK's `create_structural_reforms_from_parameters` runs.
-    """
-    return {
-        "gov.contrib.scotland.scottish_child_payment.in_effect": _years_dict(True),
-    }
-
 # Constants for income tax threshold uplift
 # The announced increases for 2026-27 (absolute amounts above baseline)
 # Basic: £15,398 → £16,537 = +£1,139
@@ -219,22 +206,6 @@ def apply_scp_baby_boost_for_year(sim, year: int):
     # Add boost to current SCP
     new_scp = np.array(current_scp) + baby_boost
     sim.set_input("scottish_child_payment", year, new_scp)
-
-
-def _scp_baby_boost_modifier(sim):
-    """Apply SCP Premium for under-ones for all years.
-
-    Microsim wrapper that applies the baby boost for years 2026-2030.
-    This is a structural reform because it needs to:
-    1. Calculate current SCP values
-    2. Count babies per benefit unit
-    3. Apply boost only to eligible families
-
-    Cannot be done via parameter_changes alone.
-    """
-    for year in DEFAULT_YEARS:
-        apply_scp_baby_boost_for_year(sim, year)
-    return sim
 
 
 def _income_tax_modifier(sim):
