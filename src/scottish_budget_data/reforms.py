@@ -2,66 +2,12 @@
 
 This module defines the policy reforms for the Scottish Budget analysis.
 
-All reforms use the simulation_modifier approach which applies structural
-reforms directly via policyengine-uk's reform system. This provides better
-integration with the tax-benefit system than parameter_changes alone.
-
-The module also exports single-year helper functions for use in personal
-calculator APIs (modal_app.py, api.py).
+Reforms use parameter_changes and simulation_modifier to apply policy changes
+via policyengine-uk's built-in reform system.
 """
 
 from dataclasses import dataclass, field
 from typing import Callable, Optional
-import numpy as np
-from policyengine_core.model_api import *
-
-
-# Constants for SCP Premium for under-ones
-WEEKS_IN_YEAR = 52
-SCP_STANDARD_RATE = 27.15  # £/week (current rate from Apr 2025)
-SCP_BABY_RATE = 40.00  # £/week for babies under 1 (from Scottish Budget 2026)
-SCP_BABY_BOOST = SCP_BABY_RATE - SCP_STANDARD_RATE  # Extra £12.85/week
-
-
-def create_scp_baby_boost_reform(tax_benefit_system):
-    """Create a reform that adds the SCP baby boost for under-ones.
-
-    This uses PolicyEngine's proper reform mechanism to modify the
-    scottish_child_payment formula, avoiding issues with set_input caching.
-    """
-    from policyengine_uk.variables.gov.social_security_scotland.scottish_child_payment import (
-        scottish_child_payment as original_scp,
-    )
-
-    class scottish_child_payment(original_scp):
-        def formula(benunit, period, parameters):
-            # Get the original SCP calculation
-            original_amount = original_scp.formula(benunit, period, parameters)
-
-            # Check if in Scotland and receiving SCP
-            in_scotland = (
-                benunit.household("country", period).decode_to_str() == "SCOTLAND"
-            )
-            receives_scp = original_amount > 0
-
-            # Count babies (under 1 year old) in the benefit unit
-            age = benunit.members("age", period)
-            is_baby = age < 1
-            babies_in_benunit = benunit.sum(is_baby)
-
-            # Calculate baby boost: £12.85/week extra per baby × 52 weeks
-            baby_boost_annual = babies_in_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR
-
-            # Only add boost for Scottish families already receiving SCP
-            boost = where(in_scotland & receives_scp, baby_boost_annual, 0)
-
-            return original_amount + boost
-
-    class reform(Reform):
-        def apply(self):
-            self.update_variable(scottish_child_payment)
-
-    return reform
 
 
 # Constants for income tax threshold uplift
@@ -156,75 +102,6 @@ def apply_income_tax_threshold_uplift_for_year(sim, year: int) -> None:
     )
 
 
-def apply_scp_baby_boost_for_year(sim, year: int) -> None:
-    """Apply SCP Premium for under-ones for a single year.
-
-    NOTE: This uses set_input which has caching issues in multi-year scenarios.
-    For microsimulation, use calculate_scp_baby_boost_cost() instead.
-
-    Args:
-        sim: PolicyEngine simulation object
-        year: The year to apply the boost for
-    """
-    # Get current SCP values (already filters for Scotland + qualifying benefits)
-    current_scp = sim.calculate("scottish_child_payment", year)
-
-    # Get person-level age to count babies
-    age = sim.calculate("age", year, map_to="person")
-    is_baby = np.array(age) < 1
-
-    # Map babies to benefit units using PolicyEngine's mapping
-    babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
-
-    # Calculate baby boost (£12.85/week extra × 52 weeks per baby)
-    annual_boost = np.array(babies_per_benunit) * SCP_BABY_BOOST * WEEKS_IN_YEAR
-
-    # Only apply boost to families already receiving SCP
-    already_receives_scp = np.array(current_scp) > 0
-    baby_boost = np.where(already_receives_scp, annual_boost, 0)
-
-    # Add boost to current SCP
-    new_scp = np.array(current_scp) + baby_boost
-    sim.set_input("scottish_child_payment", year, new_scp)
-
-
-def calculate_scp_baby_boost_cost(sim, year: int) -> float:
-    """Calculate the cost of SCP baby boost for a given year (Scotland only).
-
-    This calculates the boost directly without using set_input, avoiding
-    caching issues that occur in multi-year simulations.
-
-    Args:
-        sim: PolicyEngine Microsimulation object
-        year: Year to calculate for
-
-    Returns:
-        Total cost in £ (positive = cost to government)
-    """
-    # Filter to Scotland
-    region = sim.calculate("region", year, map_to="household").values
-    scotland_mask = region == "SCOTLAND"
-    hh_weight = sim.calculate("household_weight", year).values
-
-    # Get SCP-receiving benefit units
-    scp = sim.calculate("scottish_child_payment", year, map_to="benunit").values
-    receives_scp = scp > 0
-
-    # Count babies (under 1) in each benefit unit
-    age = sim.calculate("age", year, map_to="person").values
-    is_baby = age < 1
-    babies_per_benunit = sim.map_result(is_baby.astype(float), "person", "benunit")
-
-    # Calculate annual boost: only for SCP recipients
-    baby_boost_annual = np.where(receives_scp, babies_per_benunit * SCP_BABY_BOOST * WEEKS_IN_YEAR, 0)
-
-    # Map to household level and sum for Scotland
-    baby_boost_hh = sim.map_result(baby_boost_annual, "benunit", "household")
-    total_cost = (baby_boost_hh * hh_weight)[scotland_mask].sum()
-
-    return total_cost
-
-
 def _income_tax_modifier(sim):
     """Apply income tax threshold uplift via simulation_modifier."""
     for year in DEFAULT_YEARS:
@@ -233,13 +110,17 @@ def _income_tax_modifier(sim):
 
 
 def _scp_baby_boost_modifier(sim):
-    """Apply SCP baby boost reform only.
+    """Enable the SCP baby bonus reform from policyengine-uk.
 
-    Uses apply_scp_baby_boost_for_year to add the baby premium
-    (£40/week vs £27.15/week standard) for children under 1.
+    Sets gov.contrib.scotland.scottish_child_payment.in_effect to True,
+    which activates the built-in baby bonus (£12.85/week extra for under 1s).
     """
+    params = sim.tax_benefit_system.parameters
+    scp_reform = params.gov.contrib.scotland.scottish_child_payment
+
     for year in DEFAULT_YEARS:
-        apply_scp_baby_boost_for_year(sim, year)
+        scp_reform.in_effect.update(period=f"{year}-01-01", value=True)
+
     return sim
 
 
@@ -252,42 +133,6 @@ def _combined_modifier(sim):
     """
     _income_tax_modifier(sim)  # Set params first (no calculations)
     _scp_baby_boost_modifier(sim)  # Then calculate with new params
-    return sim
-
-
-def _abolish_two_child_limit_modifier(sim):
-    """Abolish the two-child limit on UC/Child Tax Credit child elements.
-
-    The two-child limit restricts benefit entitlement for the third+ child
-    in Universal Credit and Child Tax Credit. Abolishing it would increase
-    benefits for families with 3+ children.
-
-    Note: In PolicyEngine UK, the two-child limit is already abolished
-    from 2026 onwards in baseline. This modifier explicitly sets child_count
-    to infinity for all years to measure the full impact.
-    """
-    import numpy as np
-    params = sim.tax_benefit_system.parameters
-
-    # Abolish UC two-child limit by setting child_count to infinity
-    uc_limit = params.gov.dwp.universal_credit.elements.child.limit
-    for year in DEFAULT_YEARS:
-        uc_limit.child_count.update(period=f"{year}-01-01", value=np.inf)
-
-    return sim
-
-
-def _impose_two_child_limit_modifier(sim):
-    """Impose the two-child limit (for baseline comparison).
-
-    Sets child_count to 2 for all years to model the pre-abolition scenario.
-    """
-    params = sim.tax_benefit_system.parameters
-
-    uc_limit = params.gov.dwp.universal_credit.elements.child.limit
-    for year in DEFAULT_YEARS:
-        uc_limit.child_count.update(period=f"{year}-01-01", value=2)
-
     return sim
 
 
@@ -348,33 +193,6 @@ def get_scottish_budget_reforms() -> list[Reform]:
     )
 
     return reforms
-
-
-def get_two_child_limit_reform() -> Reform:
-    """Get the two-child limit abolition reform for validation analysis.
-
-    This is used to compare PolicyEngine estimates with Scottish Fiscal Commission
-    projections, not part of the Scottish Budget 2026-27 itself.
-
-    Comparison:
-    - Baseline: Two-child limit imposed (child_count = 2)
-    - Reform: Two-child limit abolished (child_count = inf)
-
-    This measures the cost of abolishing the two-child limit.
-
-    Returns:
-        Reform object for abolishing the two-child limit.
-    """
-    return Reform(
-        id="abolish_two_child_limit",
-        name="Abolish two-child limit",
-        description=(
-            "Remove the two-child limit on UC/CTC child elements. "
-            "For validation comparison with Scottish Fiscal Commission estimates."
-        ),
-        baseline_simulation_modifier=_impose_two_child_limit_modifier,
-        simulation_modifier=_abolish_two_child_limit_modifier,
-    )
 
 
 # Policy metadata for dashboard

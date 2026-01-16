@@ -50,22 +50,12 @@ def test_reform_class_has_required_fields():
     assert reform.simulation_modifier is None
 
 
-def test_constants_are_reasonable():
-    """Test that SCP and income tax constants have reasonable values."""
+def test_income_tax_constants_are_reasonable():
+    """Test that income tax constants have reasonable values."""
     from scottish_budget_data.reforms import (
-        SCP_STANDARD_RATE,
-        SCP_BABY_RATE,
-        SCP_BABY_BOOST,
-        WEEKS_IN_YEAR,
         INCOME_TAX_BASIC_INCREASE,
         INCOME_TAX_INTERMEDIATE_INCREASE,
     )
-
-    # SCP rates in £/week
-    assert 20 < SCP_STANDARD_RATE < 50  # ~£27.15
-    assert 30 < SCP_BABY_RATE < 60  # ~£40
-    assert SCP_BABY_BOOST == SCP_BABY_RATE - SCP_STANDARD_RATE
-    assert WEEKS_IN_YEAR == 52
 
     # Income tax threshold increases in £
     assert 500 < INCOME_TAX_BASIC_INCREASE < 2000  # ~£1,069
