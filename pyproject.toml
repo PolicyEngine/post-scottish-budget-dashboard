@@ -1,5 +1,5 @@
 [project]
-name = "scottish-budget-dashboard"
+name = "scottish-budget-2026-2027"
 version = "0.1.0"
 description = "Scottish Budget 2026-27 impact dashboard"
 readme = "README.md"
@@ -11,6 +11,12 @@ dependencies = [
     "h5py>=3.8.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
 [project.scripts]
 scottish-budget-data = "scottish_budget_data.cli:main"
 
@@ -20,3 +26,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
