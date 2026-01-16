@@ -5,6 +5,7 @@ Each calculator generates a specific type of output data.
 
 import numpy as np
 import pandas as pd
+from microdf import MicroSeries
 from policyengine_uk import Microsimulation
 
 from .reforms import (
@@ -147,9 +148,9 @@ class DistributionalImpactCalculator:
             if len(decile_data) == 0:
                 continue
 
-            total_weight = decile_data["household_weight"].sum()
-            avg_change = (decile_data["income_change"] * decile_data["household_weight"]).sum() / total_weight
-            avg_baseline = (decile_data["baseline_income"] * decile_data["household_weight"]).sum() / total_weight
+            weights = decile_data["household_weight"].values
+            avg_change = MicroSeries(decile_data["income_change"].values, weights=weights).mean()
+            avg_baseline = MicroSeries(decile_data["baseline_income"].values, weights=weights).mean()
             relative_change = (avg_change / avg_baseline) * 100 if avg_baseline > 0 else 0
 
             results.append({
@@ -162,9 +163,9 @@ class DistributionalImpactCalculator:
             })
 
         # Add overall average (All deciles)
-        total_weight = df["household_weight"].sum()
-        overall_avg_change = (df["income_change"] * df["household_weight"]).sum() / total_weight
-        overall_avg_baseline = (df["baseline_income"] * df["household_weight"]).sum() / total_weight
+        overall_weights = df["household_weight"].values
+        overall_avg_change = MicroSeries(df["income_change"].values, weights=overall_weights).mean()
+        overall_avg_baseline = MicroSeries(df["baseline_income"].values, weights=overall_weights).mean()
         overall_relative_change = (overall_avg_change / overall_avg_baseline) * 100 if overall_avg_baseline > 0 else 0
 
         results.append({
@@ -190,10 +191,16 @@ class WinnersLosersCalculator:
         year: int,
     ) -> list[dict]:
         """Calculate winners/losers from decile DataFrame."""
-        total_weight = decile_df["household_weight"].sum()
+        # Create MicroSeries with household weights for proper weighted sums
+        weights = decile_df["household_weight"].values
+        ones = np.ones(len(decile_df))
+        total_weight = MicroSeries(ones, weights=weights).sum()
 
-        winners = decile_df[decile_df["income_change"] > 1]["household_weight"].sum()
-        losers = decile_df[decile_df["income_change"] < -1]["household_weight"].sum()
+        winner_mask = decile_df["income_change"] > 1
+        loser_mask = decile_df["income_change"] < -1
+
+        winners = MicroSeries(ones[winner_mask], weights=weights[winner_mask]).sum()
+        losers = MicroSeries(ones[loser_mask], weights=weights[loser_mask]).sum()
         unchanged = total_weight - winners - losers
 
         return [
@@ -233,8 +240,6 @@ class MetricsCalculator:
         year: int,
     ) -> list[dict]:
         """Calculate poverty and other summary metrics (Scotland only)."""
-        from microdf import MicroSeries
-
         is_scotland = get_scotland_person_mask(baseline, year)
         person_weight = baseline.calculate("person_weight", year, map_to="person").values[is_scotland]
         is_child = baseline.calculate("is_child", year, map_to="person").values[is_scotland]
@@ -339,16 +344,17 @@ class TwoChildLimitCalculator:
             uc_gain = uc_without_limit - uc_with_limit
 
             affected_mask = scotland_mask & (uc_gain > 0)
-            total_cost = (uc_gain[affected_mask] * hh_weight[affected_mask]).sum()
+            affected_weights = hh_weight[affected_mask]
+            total_cost = MicroSeries(uc_gain[affected_mask], weights=affected_weights).sum()
             total_cost_millions = total_cost / 1e6
-            affected_benefit_units = hh_weight[affected_mask].sum()
+            affected_benefit_units = MicroSeries(np.ones(affected_weights.shape), weights=affected_weights).sum()
 
             benunit_children = sim_without_limit.calculate(
                 "benunit_count_children", year, map_to="household"
             ).values
             affected_children_per_hh = np.maximum(benunit_children - 2, 0)
-            total_affected_children = (
-                affected_children_per_hh[affected_mask] * hh_weight[affected_mask]
+            total_affected_children = MicroSeries(
+                affected_children_per_hh[affected_mask], weights=affected_weights
             ).sum()
 
             results.append({
@@ -376,8 +382,6 @@ class ConstituencyCalculator:
         constituency_df: pd.DataFrame,
     ) -> list[dict]:
         """Calculate average impact for each constituency."""
-        from microdf import MicroSeries
-
         baseline_income = baseline.calculate(
             "household_net_income", period=year, map_to="household"
         ).values
