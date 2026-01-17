@@ -113,9 +113,7 @@ def generate_all_data(
         reform.apply_fn(reformed)
 
         # Calculate budgetary impact
-        budgetary = budgetary_calc.calculate(
-            baseline, reformed, reform.id, reform.name
-        )
+        budgetary = budgetary_calc.calculate(reform.id, reform.name)
         all_budgetary.extend(budgetary)
 
         # Calculate per-year metrics
@@ -124,7 +122,7 @@ def generate_all_data(
 
             # Distributional
             distributional, decile_df = distributional_calc.calculate(
-                baseline, reformed, reform.id, reform.name, year
+                reform.id, reform.name, year
             )
             all_distributional.extend(distributional)
 

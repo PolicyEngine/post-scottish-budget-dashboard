@@ -52,13 +52,7 @@ class BudgetaryImpactCalculator:
     def __init__(self, years: list[int] = None):
         self.years = years or [2026, 2027, 2028, 2029, 2030]
 
-    def calculate(
-        self,
-        baseline: Microsimulation,
-        reformed: Microsimulation,
-        reform_id: str,
-        reform_name: str,
-    ) -> list[dict]:
+    def calculate(self, reform_id: str, reform_name: str) -> list[dict]:
         """Calculate budgetary impact for all years (Scotland only).
 
         Uses fresh simulations per year with proper Reform classes.
@@ -68,18 +62,16 @@ class BudgetaryImpactCalculator:
         results = []
 
         for year in self.years:
-            # Fresh baseline and reformed simulations for this year
-            fresh_baseline = Microsimulation()
-            fresh_reformed = Microsimulation()
+            baseline = Microsimulation()
+            reformed = Microsimulation()
 
-            # Apply the reform function
             if reform_id in REFORM_APPLY_FNS:
-                REFORM_APPLY_FNS[reform_id](fresh_reformed)
+                REFORM_APPLY_FNS[reform_id](reformed)
 
-            is_scotland = get_scotland_household_mask(fresh_baseline, year)
+            is_scotland = get_scotland_household_mask(baseline, year)
 
-            baseline_income = fresh_baseline.calculate("household_net_income", year)
-            reformed_income = fresh_reformed.calculate("household_net_income", year)
+            baseline_income = baseline.calculate("household_net_income", year)
+            reformed_income = reformed.calculate("household_net_income", year)
 
             cost = (reformed_income[is_scotland] - baseline_income[is_scotland]).sum()
 
@@ -87,7 +79,7 @@ class BudgetaryImpactCalculator:
                 "reform_id": reform_id,
                 "reform_name": reform_name,
                 "year": year,
-                "value": cost / 1e6,  # In millions
+                "value": cost / 1e6,
             })
 
         return results
@@ -101,8 +93,6 @@ class DistributionalImpactCalculator:
 
     def calculate(
         self,
-        baseline: Microsimulation,
-        reformed: Microsimulation,
         reform_id: str,
         reform_name: str,
         year: int,
@@ -111,21 +101,18 @@ class DistributionalImpactCalculator:
 
         Uses fresh simulations with proper Reform classes.
         """
-        # Fresh baseline and reformed simulations
-        fresh_baseline = Microsimulation()
-        fresh_reformed = Microsimulation()
+        baseline = Microsimulation()
+        reformed = Microsimulation()
 
-        # Apply the reform function
         if reform_id in REFORM_APPLY_FNS:
-            REFORM_APPLY_FNS[reform_id](fresh_reformed)
+            REFORM_APPLY_FNS[reform_id](reformed)
 
-        # Filter to Scotland
-        is_scotland = get_scotland_household_mask(fresh_baseline, year)
+        is_scotland = get_scotland_household_mask(baseline, year)
 
-        baseline_income = np.array(fresh_baseline.calculate("household_net_income", year))[is_scotland]
-        reformed_income = np.array(fresh_reformed.calculate("household_net_income", year))[is_scotland]
-        household_weight = np.array(fresh_baseline.calculate("household_weight", year))[is_scotland]
-        income_decile = np.array(fresh_baseline.calculate("household_income_decile", year))[is_scotland]
+        baseline_income = np.array(baseline.calculate("household_net_income", year))[is_scotland]
+        reformed_income = np.array(reformed.calculate("household_net_income", year))[is_scotland]
+        household_weight = np.array(baseline.calculate("household_weight", year))[is_scotland]
+        income_decile = np.array(baseline.calculate("household_income_decile", year))[is_scotland]
 
         df = pd.DataFrame({
             "baseline_income": baseline_income,
