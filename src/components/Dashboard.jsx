@@ -17,14 +17,25 @@ const SECTIONS = [
 
 // Policy descriptions (active voice, clear impacts)
 const POLICY_INFO = {
+  scp_inflation: {
+    name: "SCP inflation adjustment",
+    description: "Scottish Child Payment uprated from £27.15 to £28.20/week",
+    explanation: (
+      <li>
+        <strong>SCP inflation adjustment</strong>: The Budget uprates the Scottish Child Payment
+        from £27.15 to £28.20 per week (+3.9% for inflation). This benefits all families receiving
+        SCP, providing approximately £55 extra per child per year.
+      </li>
+    ),
+  },
   scp_baby_boost: {
     name: "SCP Premium for under-ones",
     description: "Scottish Child Payment raised to £40/week for babies under 1",
     explanation: (
       <li>
-        <strong>SCP Premium for under-ones</strong>: The Budget raises the Scottish Child Payment from
-        £27.15 to £40 per week for each child under one year old. This applies to families already
-        receiving SCP (a means-tested benefit for low-income households).
+        <strong>SCP Premium for under-ones</strong>: The Budget raises the Scottish Child Payment
+        to £40 per week for each child under one year old. This is £11.80/week extra on top of the
+        inflation-adjusted rate of £28.20/week.
       </li>
     ),
   },
@@ -40,7 +51,7 @@ const POLICY_INFO = {
     ),
   },
   combined: {
-    name: "both policies",
+    name: "all policies",
     description: "Full Scottish Budget 2026-27 package",
     explanation: null, // Will be rendered dynamically
   },
@@ -313,6 +324,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       <ul className="policy-list">
         {isStacked ? (
           <>
+            {POLICY_INFO.scp_inflation.explanation}
             {POLICY_INFO.scp_baby_boost.explanation}
             {POLICY_INFO.income_tax_threshold_uplift.explanation}
           </>
