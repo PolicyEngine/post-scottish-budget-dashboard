@@ -175,3 +175,27 @@ def test_all_data_files_exist():
     for filename in expected_files:
         filepath = DATA_DIR / filename
         assert filepath.exists(), f"Missing data file: {filename}"
+
+
+def test_budgetary_data_2026_stacked_chart_format(budgetary_impact):
+    """Test that 2026 data has correct values for stacked chart.
+
+    Frontend expects:
+    - SCP inflation: >0 in 2026
+    - SCP baby boost: 0 in 2026
+    - Income tax: >0 in 2026
+    """
+    data_2026 = budgetary_impact[budgetary_impact["year"] == 2026]
+
+    scp_inflation = data_2026[data_2026["reform_id"] == "scp_inflation"]["value"].iloc[0]
+    scp_baby_boost = data_2026[data_2026["reform_id"] == "scp_baby_boost"]["value"].iloc[0]
+    income_tax = data_2026[data_2026["reform_id"] == "income_tax_threshold_uplift"]["value"].iloc[0]
+
+    assert scp_inflation > 10, f"SCP inflation should be >£10M in 2026, got {scp_inflation:.1f}"
+    assert scp_baby_boost == 0, f"SCP baby boost should be £0 in 2026, got {scp_baby_boost:.1f}"
+    assert income_tax > 50, f"Income tax should be >£50M in 2026, got {income_tax:.1f}"
+
+    # Verify total matches combined
+    combined = data_2026[data_2026["reform_id"] == "combined"]["value"].iloc[0]
+    individual_sum = scp_inflation + scp_baby_boost + income_tax
+    assert abs(combined - individual_sum) < 1, f"Combined {combined:.1f} != sum {individual_sum:.1f}"
