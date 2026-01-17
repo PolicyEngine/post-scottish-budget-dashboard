@@ -107,9 +107,10 @@ def generate_all_data(
     for reform in reforms:
         print(f"\nProcessing: {reform.name}")
 
-        # Create simulations using Reform classes
+        # Create simulations and apply reform
         baseline = Microsimulation(dataset=dataset_obj)
-        reformed = Microsimulation(reform=reform.reform_class, dataset=dataset_obj)
+        reformed = Microsimulation(dataset=dataset_obj)
+        reform.apply_fn(reformed)
 
         # Calculate budgetary impact
         budgetary = budgetary_calc.calculate(

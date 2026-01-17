@@ -9,16 +9,16 @@ from microdf import MicroSeries
 from policyengine_uk import Microsimulation
 
 from .reforms import (
-    CombinedReform,
-    IncomeTaxThresholdUpliftReform,
-    SCPBabyBoostReform,
+    apply_combined_reform,
+    apply_income_tax_threshold_reform,
+    apply_scp_baby_boost_reform,
 )
 
-# Map reform IDs to their Reform classes
-REFORM_CLASSES = {
-    "scp_baby_boost": SCPBabyBoostReform,
-    "income_tax_threshold_uplift": IncomeTaxThresholdUpliftReform,
-    "combined": CombinedReform,
+# Map reform IDs to their apply functions
+REFORM_APPLY_FNS = {
+    "scp_baby_boost": apply_scp_baby_boost_reform,
+    "income_tax_threshold_uplift": apply_income_tax_threshold_reform,
+    "combined": apply_combined_reform,
 }
 
 
@@ -70,12 +70,11 @@ class BudgetaryImpactCalculator:
         for year in self.years:
             # Fresh baseline and reformed simulations for this year
             fresh_baseline = Microsimulation()
+            fresh_reformed = Microsimulation()
 
-            if reform_id in REFORM_CLASSES:
-                fresh_reformed = Microsimulation(reform=REFORM_CLASSES[reform_id])
-            else:
-                # Generic reform - use the reform from the template
-                fresh_reformed = Microsimulation(reform=reformed.reform)
+            # Apply the reform function
+            if reform_id in REFORM_APPLY_FNS:
+                REFORM_APPLY_FNS[reform_id](fresh_reformed)
 
             is_scotland = get_scotland_household_mask(fresh_baseline, year)
 
@@ -112,15 +111,13 @@ class DistributionalImpactCalculator:
 
         Uses fresh simulations with proper Reform classes.
         """
-        # Fresh baseline simulation
+        # Fresh baseline and reformed simulations
         fresh_baseline = Microsimulation()
+        fresh_reformed = Microsimulation()
 
-        # Fresh reformed simulation with proper Reform class
-        if reform_id in REFORM_CLASSES:
-            fresh_reformed = Microsimulation(reform=REFORM_CLASSES[reform_id])
-        else:
-            # Generic reform - use the reform from the template
-            fresh_reformed = Microsimulation(reform=reformed.reform)
+        # Apply the reform function
+        if reform_id in REFORM_APPLY_FNS:
+            REFORM_APPLY_FNS[reform_id](fresh_reformed)
 
         # Filter to Scotland
         is_scotland = get_scotland_household_mask(fresh_baseline, year)

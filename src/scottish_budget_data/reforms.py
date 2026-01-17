@@ -1,12 +1,13 @@
 """Scottish Budget 2026-27 reform definitions.
 
 This module defines the policy reforms for the Scottish Budget analysis.
-Uses PolicyEngine's standard reform patterns with modify_parameters.
+Uses function-based parameter modification for compatibility with Microsimulation.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, Type, Union
-from policyengine_core.reforms import Reform as PEReform
+from dataclasses import dataclass
+from typing import Callable, Optional
+
+from policyengine_uk import Microsimulation
 
 
 # Scottish Budget 2026-27 income tax thresholds (absolute values)
@@ -21,82 +22,66 @@ from policyengine_core.reforms import Reform as PEReform
 INCOME_TAX_BASIC_THRESHOLD = 3_967  # £16,537 total - £12,570 PA
 INCOME_TAX_INTERMEDIATE_THRESHOLD = 16_956  # £29,526 total - £12,570 PA
 
+# SCP Premium for under-ones: £40/week (total, not on top of standard)
+# Source: Scottish Budget 2026-27
+SCP_PREMIUM_UNDER_ONE_AMOUNT = 40
+
 # Default years for microsim analysis
 DEFAULT_YEARS = [2026, 2027, 2028, 2029, 2030]
 
 
 # =============================================================================
-# PolicyEngine Reform Classes
+# Reform Application Functions
 # =============================================================================
 
 
-class IncomeTaxThresholdUpliftReform(PEReform):
-    """Reform that sets Scottish income tax thresholds to Budget 2026-27 values.
+def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
+    """Apply income tax threshold uplift to a simulation.
 
-    From Scottish Income Tax 2026-27 Technical Factsheet (Table 1):
-    - Basic rate (20%): £16,538 - £29,526 (starts at £16,537 total)
-    - Intermediate rate (21%): £29,527 - £43,662 (starts at £29,526 total)
+    Sets Scottish income tax thresholds to Budget 2026-27 values:
+    - Basic rate (20%): starts at £16,537 (£3,967 above PA)
+    - Intermediate rate (21%): starts at £29,526 (£16,956 above PA)
 
-    Source: https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
+    Source: Scottish Income Tax 2026-27 Technical Factsheet, Table 1
+    https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
     """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
 
-    def apply(self):
-        self.modify_parameters(modifier_function=self.modify_thresholds)
-
-    @staticmethod
-    def modify_thresholds(parameters):
-        scotland_rates = parameters.gov.hmrc.income_tax.rates.scotland.rates
-
-        for year in DEFAULT_YEARS:
-            period = f"{year}-01-01"
-
-            # Set thresholds to Scottish Budget 2026-27 values
-            # (as amounts above personal allowance, per PolicyEngine format)
-            scotland_rates.brackets[1].threshold.update(
-                period=period,
-                value=INCOME_TAX_BASIC_THRESHOLD,
-            )
-            scotland_rates.brackets[2].threshold.update(
-                period=period,
-                value=INCOME_TAX_INTERMEDIATE_THRESHOLD,
-            )
-
-        return parameters
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scotland_rates.brackets[1].threshold.update(
+            period=period, value=INCOME_TAX_BASIC_THRESHOLD
+        )
+        scotland_rates.brackets[2].threshold.update(
+            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLD
+        )
 
 
-class SCPBabyBoostReform(PEReform):
-    """Reform that enables the SCP baby bonus from policyengine-uk.
+def apply_scp_baby_boost_reform(sim: Microsimulation) -> None:
+    """Apply SCP baby boost reform to a simulation.
 
-    Sets gov.contrib.scotland.scottish_child_payment.in_effect to True,
-    which activates £40/week for children under 1 (vs £27.15 standard).
+    Enables the SCP baby bonus via the contrib parameters.
+    This gives £40/week total for under-1s (vs £27.15 standard).
+
+    Note: Uses contrib parameters for policyengine-uk < 2.70.0.
+    Once the main parameters are available, this should switch to using
+    gov.social_security_scotland.scottish_child_payment.premium_under_one_amount.
+
+    Source: Scottish Budget 2026-27
+    https://www.gov.scot/publications/scottish-budget-2026-2027/
     """
+    scp_reform = sim.tax_benefit_system.parameters.gov.contrib.scotland.scottish_child_payment
 
-    def apply(self):
-        self.modify_parameters(modifier_function=self.enable_baby_boost)
-
-    @staticmethod
-    def enable_baby_boost(parameters):
-        scp_reform = parameters.gov.contrib.scotland.scottish_child_payment
-
-        for year in DEFAULT_YEARS:
-            scp_reform.in_effect.update(period=f"{year}-01-01", value=True)
-
-        return parameters
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        # Enable the baby bonus
+        scp_reform.in_effect.update(period=period, value=True)
 
 
-class CombinedReform(PEReform):
-    """Combined reform applying both SCP baby boost and income tax threshold uplift."""
-
-    def apply(self):
-        self.modify_parameters(modifier_function=self.modify_all)
-
-    @staticmethod
-    def modify_all(parameters):
-        # Apply SCP baby boost
-        parameters = SCPBabyBoostReform.enable_baby_boost(parameters)
-        # Apply income tax threshold uplift
-        parameters = IncomeTaxThresholdUpliftReform.modify_thresholds(parameters)
-        return parameters
+def apply_combined_reform(sim: Microsimulation) -> None:
+    """Apply both reforms to a simulation."""
+    apply_income_tax_threshold_reform(sim)
+    apply_scp_baby_boost_reform(sim)
 
 
 # =============================================================================
@@ -111,11 +96,7 @@ class ReformDefinition:
     id: str
     name: str
     description: str
-    reform_class: Type[PEReform]
-
-    def create_reform(self) -> PEReform:
-        """Create an instance of the reform class."""
-        return self.reform_class
+    apply_fn: Callable[[Microsimulation], None]
 
 
 def get_scottish_budget_reforms() -> list[ReformDefinition]:
@@ -132,7 +113,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "Full Scottish Budget 2026-27 package: SCP Premium for under-ones (£40/week) "
                 "and income tax threshold uplift (7.4%) applied together."
             ),
-            reform_class=CombinedReform,
+            apply_fn=apply_combined_reform,
         ),
         ReformDefinition(
             id="scp_baby_boost",
@@ -141,7 +122,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "New SCP Premium for under-ones: £40/week for babies under 1 "
                 "(up from £27.15/week). Announced in Scottish Budget 2026-27."
             ),
-            reform_class=SCPBabyBoostReform,
+            apply_fn=apply_scp_baby_boost_reform,
         ),
         ReformDefinition(
             id="income_tax_threshold_uplift",
@@ -150,7 +131,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "Scottish basic and intermediate rate thresholds increased by 7.4%. "
                 "Basic rate starts at £16,537, intermediate at £29,527."
             ),
-            reform_class=IncomeTaxThresholdUpliftReform,
+            apply_fn=apply_income_tax_threshold_reform,
         ),
     ]
 

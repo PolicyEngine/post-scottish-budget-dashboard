@@ -22,36 +22,38 @@ def test_reform_ids():
     assert reform_ids == expected_ids
 
 
-def test_all_reforms_have_reform_class():
-    """Test that all reforms use proper PolicyEngine Reform classes."""
+def test_all_reforms_have_apply_fn():
+    """Test that all reforms have an apply function."""
     from scottish_budget_data.reforms import get_scottish_budget_reforms
-    from policyengine_core.reforms import Reform as PEReform
 
     reforms = get_scottish_budget_reforms()
     for reform in reforms:
-        assert reform.reform_class is not None, (
-            f"Reform {reform.id} should have a reform_class"
+        assert reform.apply_fn is not None, (
+            f"Reform {reform.id} should have an apply_fn"
         )
-        assert issubclass(reform.reform_class, PEReform), (
-            f"Reform {reform.id} should use a PolicyEngine Reform class"
+        assert callable(reform.apply_fn), (
+            f"Reform {reform.id} apply_fn should be callable"
         )
 
 
 def test_reform_definition_has_required_fields():
     """Test that ReformDefinition dataclass has all required fields."""
-    from scottish_budget_data.reforms import ReformDefinition, SCPBabyBoostReform
+    from scottish_budget_data.reforms import ReformDefinition
+
+    def dummy_apply(sim):
+        pass
 
     reform = ReformDefinition(
         id="test",
         name="Test Reform",
         description="A test reform",
-        reform_class=SCPBabyBoostReform,
+        apply_fn=dummy_apply,
     )
 
     assert reform.id == "test"
     assert reform.name == "Test Reform"
     assert reform.description == "A test reform"
-    assert reform.reform_class == SCPBabyBoostReform
+    assert reform.apply_fn == dummy_apply
 
 
 def test_income_tax_thresholds_match_budget():
@@ -75,3 +77,11 @@ def test_income_tax_thresholds_match_budget():
 
     assert INCOME_TAX_INTERMEDIATE_THRESHOLD == 16_956
     assert INCOME_TAX_INTERMEDIATE_THRESHOLD + PERSONAL_ALLOWANCE == 29_526
+
+
+def test_scp_premium_amount():
+    """Test that SCP premium amount matches Scottish Budget 2026-27."""
+    from scottish_budget_data.reforms import SCP_PREMIUM_UNDER_ONE_AMOUNT
+
+    # £40/week for children under 1
+    assert SCP_PREMIUM_UNDER_ONE_AMOUNT == 40
