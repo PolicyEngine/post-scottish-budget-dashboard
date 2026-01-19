@@ -210,6 +210,10 @@
   background: linear-gradient(to right, #D97706, #e5e7eb, #14b8a6);
 }
 
+.legend-gradient-horizontal.legend-gradient-sequential {
+  background: linear-gradient(to right, #E0F2F1, #0D9488);
+}
+
 .legend-labels-horizontal {
   display: flex;
   justify-content: space-between;

@@ -9,7 +9,7 @@ const CHART_TITLE = "Scottish local authority-level impacts";
 // Note: CHART_DESCRIPTION is now generated dynamically using policyName prop
 
 // Fixed color scale extent for average gain (in £) - consistent across all years
-const FIXED_COLOR_EXTENT = 35;
+const FIXED_COLOR_MAX = 35;
 
 // Format year for display (e.g., 2026 -> "2026-27")
 const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
@@ -191,22 +191,15 @@ export default function ScotlandMap({
 
     const path = d3.geoPath().projection(projection);
 
-    // Color scale - diverging with white at 0, amber for losses, teal for gains
+    // Color scale - sequential from light to dark teal (£0 to max gain)
     // Uses average_gain (absolute £ values)
     const getValue = (d) => d.average_gain || 0;
 
     const colorScale = d3
-      .scaleDiverging()
-      .domain([-FIXED_COLOR_EXTENT, 0, FIXED_COLOR_EXTENT])
-      .interpolator((t) => {
-        if (t < 0.5) {
-          const ratio = t * 2;
-          return d3.interpolateRgb("#D97706", "#E5E7EB")(ratio);
-        } else {
-          const ratio = (t - 0.5) * 2;
-          return d3.interpolateRgb("#E5E7EB", "#14B8A6")(ratio);
-        }
-      });
+      .scaleLinear()
+      .domain([0, FIXED_COLOR_MAX])
+      .range(["#E0F2F1", "#0D9488"])
+      .clamp(true);
 
     // Draw constituencies
     const paths = g
@@ -514,11 +507,10 @@ export default function ScotlandMap({
 
         <div className="map-legend-horizontal">
           <div className="legend-horizontal-content">
-            <div className="legend-gradient-horizontal" />
+            <div className="legend-gradient-horizontal legend-gradient-sequential" />
             <div className="legend-labels-horizontal">
-              <span>-£{FIXED_COLOR_EXTENT}</span>
-              <span className="legend-zero">£0</span>
-              <span>+£{FIXED_COLOR_EXTENT}</span>
+              <span>£0</span>
+              <span>£{FIXED_COLOR_MAX}</span>
             </div>
           </div>
         </div>
