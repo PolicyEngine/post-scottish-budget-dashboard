@@ -3,12 +3,12 @@
 import pytest
 
 
-def test_get_scottish_budget_reforms_returns_four_reforms():
-    """Test that get_scottish_budget_reforms returns exactly 4 reforms."""
+def test_get_scottish_budget_reforms_returns_nine_reforms():
+    """Test that get_scottish_budget_reforms returns exactly 9 reforms."""
     from scottish_budget_data.reforms import get_scottish_budget_reforms
 
     reforms = get_scottish_budget_reforms()
-    assert len(reforms) == 4
+    assert len(reforms) == 9
 
 
 def test_reform_ids():
@@ -18,7 +18,17 @@ def test_reform_ids():
     reforms = get_scottish_budget_reforms()
     reform_ids = {r.id for r in reforms}
 
-    expected_ids = {"combined", "scp_inflation", "scp_baby_boost", "income_tax_threshold_uplift"}
+    expected_ids = {
+        "combined",
+        "scp_inflation",
+        "scp_baby_boost",
+        "income_tax_threshold_uplift",
+        "income_tax_basic_uplift",
+        "income_tax_intermediate_uplift",
+        "higher_rate_freeze",
+        "advanced_rate_freeze",
+        "top_rate_freeze",
+    }
     assert reform_ids == expected_ids
 
 

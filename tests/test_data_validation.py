@@ -39,9 +39,19 @@ def test_budgetary_impact_has_required_columns(budgetary_impact):
 
 
 def test_budgetary_impact_has_all_reforms(budgetary_impact):
-    """Test that budgetary impact includes all four reforms."""
+    """Test that budgetary impact includes all nine reforms."""
     reform_ids = set(budgetary_impact["reform_id"].unique())
-    expected = {"combined", "scp_inflation", "scp_baby_boost", "income_tax_threshold_uplift"}
+    expected = {
+        "combined",
+        "scp_inflation",
+        "scp_baby_boost",
+        "income_tax_threshold_uplift",
+        "income_tax_basic_uplift",
+        "income_tax_intermediate_uplift",
+        "higher_rate_freeze",
+        "advanced_rate_freeze",
+        "top_rate_freeze",
+    }
     assert reform_ids == expected
 
 
@@ -52,10 +62,11 @@ def test_budgetary_impact_has_all_years(budgetary_impact):
     assert years == expected
 
 
-def test_scp_inflation_positive_all_years(budgetary_impact):
-    """Test SCP inflation adjustment is positive for ALL years 2026-2030.
+def test_scp_inflation_cost_all_years(budgetary_impact):
+    """Test SCP inflation adjustment is a cost (negative) for ALL years 2026-2030.
 
     The SCP inflation adjustment (£27.15 → £28.20/week) applies from 2026.
+    Sign convention: negative = cost to government.
     """
     for year in [2026, 2027, 2028, 2029, 2030]:
         scp_inflation = budgetary_impact[
@@ -63,7 +74,7 @@ def test_scp_inflation_positive_all_years(budgetary_impact):
             & (budgetary_impact["year"] == year)
         ]["value"].iloc[0]
 
-        assert scp_inflation > 10, f"SCP inflation in {year} should be >£10M, got £{scp_inflation:.1f}M"
+        assert scp_inflation < -10, f"SCP inflation in {year} should be <-£10M (cost), got £{scp_inflation:.1f}M"
 
 
 def test_scp_baby_boost_zero_in_2026(budgetary_impact):
@@ -80,35 +91,39 @@ def test_scp_baby_boost_zero_in_2026(budgetary_impact):
 
 
 def test_scp_baby_boost_cost_in_expected_range_2027(budgetary_impact):
-    """Test SCP baby boost cost is in expected range (£10-25M for 2027).
+    """Test SCP baby boost cost is in expected range (-£25M to -£8M for 2027).
 
     Based on validation analysis:
     - UC proxy: ~24,099 eligible babies → £16.1M at 100% take-up
     - SCP take-up (~88%): ~21,258 eligible → £14.2M (our estimate)
     - Government estimate (57% take-up): 12,000 → £8M
+
+    Sign convention: negative = cost to government.
     """
     scp_2027 = budgetary_impact[
         (budgetary_impact["reform_id"] == "scp_baby_boost")
         & (budgetary_impact["year"] == 2027)
     ]["value"].iloc[0]
 
-    # Should be between government low estimate and UC proxy upper bound
-    assert 8 < scp_2027 < 25, f"SCP baby boost cost £{scp_2027:.1f}M outside expected range"
+    # Should be between government low estimate and UC proxy upper bound (negative values)
+    assert -25 < scp_2027 < -8, f"SCP baby boost cost £{scp_2027:.1f}M outside expected range"
 
 
 def test_income_tax_uplift_cost_in_expected_range(budgetary_impact):
-    """Test income tax uplift cost is in expected range (£50-70M for 2026).
+    """Test income tax uplift cost is in expected range (-£70M to -£50M for 2026).
 
     Based on validation analysis:
     - IFS estimate: £52M
     - Our estimate: £61.7M (+19%)
+
+    Sign convention: negative = cost to government.
     """
     tax_2026 = budgetary_impact[
         (budgetary_impact["reform_id"] == "income_tax_threshold_uplift")
         & (budgetary_impact["year"] == 2026)
     ]["value"].iloc[0]
 
-    assert 50 < tax_2026 < 70, f"Income tax uplift cost £{tax_2026:.1f}M outside expected range"
+    assert -70 < tax_2026 < -50, f"Income tax uplift cost £{tax_2026:.1f}M outside expected range"
 
 
 def test_combined_is_sum_of_individual_reforms(budgetary_impact):
@@ -180,10 +195,11 @@ def test_all_data_files_exist():
 def test_budgetary_data_2026_stacked_chart_format(budgetary_impact):
     """Test that 2026 data has correct values for stacked chart.
 
+    Sign convention: negative = cost to government.
     Frontend expects:
-    - SCP inflation: >0 in 2026
+    - SCP inflation: <0 (cost) in 2026
     - SCP baby boost: 0 in 2026
-    - Income tax: >0 in 2026
+    - Income tax: <0 (cost) in 2026
     """
     data_2026 = budgetary_impact[budgetary_impact["year"] == 2026]
 
@@ -191,9 +207,9 @@ def test_budgetary_data_2026_stacked_chart_format(budgetary_impact):
     scp_baby_boost = data_2026[data_2026["reform_id"] == "scp_baby_boost"]["value"].iloc[0]
     income_tax = data_2026[data_2026["reform_id"] == "income_tax_threshold_uplift"]["value"].iloc[0]
 
-    assert scp_inflation > 10, f"SCP inflation should be >£10M in 2026, got {scp_inflation:.1f}"
+    assert scp_inflation < -10, f"SCP inflation should be <-£10M in 2026, got {scp_inflation:.1f}"
     assert scp_baby_boost == 0, f"SCP baby boost should be £0 in 2026, got {scp_baby_boost:.1f}"
-    assert income_tax > 50, f"Income tax should be >£50M in 2026, got {income_tax:.1f}"
+    assert income_tax < -50, f"Income tax should be <-£50M in 2026, got {income_tax:.1f}"
 
     # Verify total matches combined
     combined = data_2026[data_2026["reform_id"] == "combined"]["value"].iloc[0]
