@@ -70,6 +70,10 @@ class BudgetaryImpactCalculator:
             if reform_id in REFORM_APPLY_FNS:
                 REFORM_APPLY_FNS[reform_id](reformed)
 
+            # For combined: disable baby boost in baseline to measure full impact
+            if reform_id == "combined":
+                apply_scp_baby_boost_reform(baseline)
+
             is_scotland = get_scotland_household_mask(baseline, year)
 
             baseline_income = baseline.calculate("household_net_income", year)
@@ -112,6 +116,10 @@ class DistributionalImpactCalculator:
 
         if reform_id in REFORM_APPLY_FNS:
             REFORM_APPLY_FNS[reform_id](reformed)
+
+        # For combined: disable baby boost in baseline to measure full impact
+        if reform_id == "combined":
+            apply_scp_baby_boost_reform(baseline)
 
         # Baby boost: swap baseline/reformed (apply function DISABLES it)
         if reform_id == "scp_baby_boost":
