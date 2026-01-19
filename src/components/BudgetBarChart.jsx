@@ -141,10 +141,9 @@ export default function BudgetBarChart({
             tick={{ fontSize: 12, fill: "#666" }}
             ticks={(() => {
               const range = yMax - yMin;
-              let interval = 100;
-              if (range > 500) interval = 200;
-              if (range > 1000) interval = 250;
-              if (range > 2000) interval = 500;
+              let interval = 200;
+              if (range > 2000) interval = 400;
+              if (range > 4000) interval = 500;
               const ticks = [];
               for (let i = yMin; i <= yMax + 0.001; i += interval) {
                 ticks.push(Math.round(i));
