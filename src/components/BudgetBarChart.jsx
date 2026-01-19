@@ -68,7 +68,7 @@ export default function BudgetBarChart({
     });
     // Make symmetric around zero
     const absMax = Math.max(Math.abs(minSum), Math.abs(maxSum));
-    const rounded = Math.ceil(absMax / 100) * 100 + 50;
+    const rounded = Math.ceil(absMax / 100) * 100;
     yMin = -rounded;
     yMax = yMaxValue || rounded;
   } else {
@@ -78,12 +78,12 @@ export default function BudgetBarChart({
     // Make symmetric around zero if there are negative values
     if (minVal < 0) {
       const absMax = Math.max(Math.abs(minVal), Math.abs(maxVal));
-      const rounded = Math.ceil(absMax / 10) * 10 + 10;
+      const rounded = Math.ceil(absMax / 10) * 10;
       yMin = -rounded;
       yMax = yMaxValue || rounded;
     } else {
       yMin = 0;
-      yMax = yMaxValue || Math.ceil(maxVal / 10) * 10 + 10;
+      yMax = yMaxValue || Math.ceil(maxVal / 10) * 10;
     }
   }
 

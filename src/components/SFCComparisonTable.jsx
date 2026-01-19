@@ -141,11 +141,11 @@ function SFCComparisonTable() {
     <div className="sfc-comparison-section">
       <h2>PolicyEngine vs SFC comparison</h2>
       <p className="comparison-description">
-        This table compares PolicyEngine's microsimulation estimates with the
-        Scottish Fiscal Commission's official costings from Table A.1 of the
-        January 2026 Economic and Fiscal Forecasts. Values show annual budgetary
-        impact in millions of pounds. Positive values indicate revenue for the
-        Government; negative values indicate costs.
+        This table compares PolicyEngine's static microsimulation estimates with
+        the Scottish Fiscal Commission's official costings from the December 2024
+        Economic and Fiscal Forecasts. Values show annual budgetary impact in
+        millions of pounds. Positive values indicate revenue for the Government;
+        negative values indicate costs.
       </p>
 
       {hasBothTypes && (
@@ -236,22 +236,29 @@ function SFCComparisonTable() {
 
       <p className="comparison-note">
         <strong>Note:</strong> PolicyEngine produces static microsimulation
-        estimates that do not include behavioural responses. The SFC provides
-        both static and post-behavioural costings.{" "}
+        estimates that do not include behavioural responses.{" "}
         {showBehavioural
-          ? "Post-behavioural costings include effects like tax avoidance, reduced consumption, and price pass-through."
-          : "Static costings assume no change in taxpayer behaviour."}{" "}
+          ? "Post-behavioural costings include effects like tax avoidance, reduced consumption, and migration. SFC assumes behavioural responses reduce yields by ~8% for higher-rate freezes, ~25% for advanced-rate, and ~85% for top-rate."
+          : "Static costings assume no change in taxpayer behaviour. Static values shown here are derived from post-behavioural figures using SFC's published behavioural adjustment rates."}{" "}
         Each provision is costed independently against baseline (not stacked).
         SFC reports combined basic + intermediate thresholds; we show estimates
         separately. See{" "}
         <a
-          href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/"
+          href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-december-2024/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          SFC January 2026 Forecasts
+          SFC December 2024 Forecasts
         </a>{" "}
-        for full methodology.
+        and{" "}
+        <a
+          href="https://ifs.org.uk/publications/assessing-scottish-tax-strategy-and-policy"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          IFS analysis
+        </a>{" "}
+        for methodology.
       </p>
     </div>
   );
