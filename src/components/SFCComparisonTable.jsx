@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./SFCComparisonTable.css";
 
-function SFCComparisonTable({ selectedPolicies }) {
+function SFCComparisonTable() {
   const [comparisonData, setComparisonData] = useState(null);
   const [showBehavioural, setShowBehavioural] = useState(true);
 
@@ -65,13 +65,11 @@ function SFCComparisonTable({ selectedPolicies }) {
       .catch((err) => console.error("Error loading comparison data:", err));
   }, []);
 
-  if (!comparisonData || selectedPolicies.length === 0) return null;
+  if (!comparisonData) return null;
 
-  // Filter to selected policies and those that have SFC data
+  // Filter to policies that have SFC data (regardless of dashboard selection)
   const filteredData = comparisonData.filter(
-    (row) =>
-      selectedPolicies.includes(row.reform_id) &&
-      (row.sfc_static !== null || row.sfc_behavioural !== null),
+    (row) => row.sfc_static !== null || row.sfc_behavioural !== null,
   );
 
   if (filteredData.length === 0) return null;
@@ -80,6 +78,16 @@ function SFCComparisonTable({ selectedPolicies }) {
   const hasBothTypes = filteredData.some(
     (row) => row.sfc_static !== null && row.sfc_behavioural !== null,
   );
+
+  // Define the order of policies to match SFC Table A.1
+  const policyOrder = [
+    "income_tax_basic_uplift",
+    "income_tax_intermediate_uplift",
+    "higher_rate_freeze",
+    "advanced_rate_freeze",
+    "top_rate_freeze",
+    "scp_baby_boost",
+  ];
 
   // Group by policy
   const policiesMap = {};
@@ -98,7 +106,11 @@ function SFCComparisonTable({ selectedPolicies }) {
   });
 
   const years = [2026, 2027, 2028, 2029, 2030];
-  const policies = Object.entries(policiesMap);
+
+  // Sort policies according to the defined order
+  const policies = policyOrder
+    .filter((id) => policiesMap[id])
+    .map((id) => [id, policiesMap[id]]);
 
   const formatValue = (value) => {
     if (value === null || value === undefined || isNaN(value)) return "—";
@@ -130,11 +142,10 @@ function SFCComparisonTable({ selectedPolicies }) {
       <h2>PolicyEngine vs SFC comparison</h2>
       <p className="comparison-description">
         This table compares PolicyEngine's microsimulation estimates with the
-        Scottish Fiscal Commission's official costings from the January 2026
-        Economic and Fiscal Forecasts. Values show annual budgetary impact in
-        millions of pounds. Negative values indicate costs to the Government
-        (higher spending or lower revenue); positive values indicate savings or
-        higher revenue.
+        Scottish Fiscal Commission's official costings from Table A.1 of the
+        January 2026 Economic and Fiscal Forecasts. Values show annual budgetary
+        impact in millions of pounds. Positive values indicate revenue for the
+        Government; negative values indicate costs.
       </p>
 
       {hasBothTypes && (
@@ -230,7 +241,9 @@ function SFCComparisonTable({ selectedPolicies }) {
         {showBehavioural
           ? "Post-behavioural costings include effects like tax avoidance, reduced consumption, and price pass-through."
           : "Static costings assume no change in taxpayer behaviour."}{" "}
-        See{" "}
+        Each provision is costed independently against baseline (not stacked).
+        SFC reports combined basic + intermediate thresholds; we show estimates
+        separately. See{" "}
         <a
           href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/"
           target="_blank"

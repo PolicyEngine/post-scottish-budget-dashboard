@@ -22,6 +22,13 @@ from policyengine_uk import Microsimulation
 INCOME_TAX_BASIC_THRESHOLD = 3_967  # £16,537 total - £12,570 PA
 INCOME_TAX_INTERMEDIATE_THRESHOLD = 16_956  # £29,526 total - £12,570 PA
 
+# Frozen threshold values for higher/advanced/top rates (2027-28 onwards)
+# Source: SFC costings - freeze at 2026-27 levels for 2027-28 and 2028-29
+# Note: 2026 freeze is already in baseline per Budget 2025-26
+INCOME_TAX_HIGHER_THRESHOLD = 31_092  # £43,662 total - £12,570 PA
+INCOME_TAX_ADVANCED_THRESHOLD = 49_860  # £62,430 total - £12,570 PA
+INCOME_TAX_TOP_THRESHOLD = 112_570  # £125,140 total - £12,570 PA
+
 # SCP rates
 # Source: Scottish Budget 2026-27
 # https://www.gov.scot/news/a-budget-to-tackle-child-poverty/
@@ -77,6 +84,103 @@ def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
         scotland_rates.brackets[2].threshold.update(
             period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLD
         )
+
+
+def apply_basic_rate_uplift_reform(sim: Microsimulation) -> None:
+    """Apply basic rate threshold uplift only.
+
+    Increases Scottish basic rate (20%) threshold by 7.4% from 2026 onwards.
+    Basic rate starts at £16,537 (£3,967 above PA).
+
+    Source: SFC costings breakdown - "Basic rate threshold +7.4%"
+    """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
+
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scotland_rates.brackets[1].threshold.update(
+            period=period, value=INCOME_TAX_BASIC_THRESHOLD
+        )
+
+
+def apply_intermediate_rate_uplift_reform(sim: Microsimulation) -> None:
+    """Apply intermediate rate threshold uplift only.
+
+    Increases Scottish intermediate rate (21%) threshold by 7.4% from 2026 onwards.
+    Intermediate rate starts at £29,526 (£16,956 above PA).
+
+    Source: SFC costings breakdown - "Intermediate rate threshold +7.4%"
+    """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
+
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scotland_rates.brackets[2].threshold.update(
+            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLD
+        )
+
+
+def apply_higher_rate_freeze_reform(sim: Microsimulation) -> None:
+    """Apply higher rate threshold freeze for 2027-28 and 2028-29.
+
+    Freezes Scottish higher rate (42%) threshold at £31,092 (above PA).
+    Total threshold: £43,662.
+
+    Note: 2026 freeze is already in baseline per Budget 2025-26.
+    This only applies to 2027+ to measure the incremental cost.
+
+    Source: SFC costings breakdown - "Higher rate freeze"
+    """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
+
+    for year in DEFAULT_YEARS:
+        if year >= 2027:
+            period = f"{year}-01-01"
+            scotland_rates.brackets[3].threshold.update(
+                period=period, value=INCOME_TAX_HIGHER_THRESHOLD
+            )
+
+
+def apply_advanced_rate_freeze_reform(sim: Microsimulation) -> None:
+    """Apply advanced rate threshold freeze for 2027-28 and 2028-29.
+
+    Freezes Scottish advanced rate (45%) threshold at £49,860 (above PA).
+    Total threshold: £62,430.
+
+    Note: 2026 freeze is already in baseline per Budget 2025-26.
+    This only applies to 2027+ to measure the incremental cost.
+
+    Source: SFC costings breakdown - "Advanced rate freeze"
+    """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
+
+    for year in DEFAULT_YEARS:
+        if year >= 2027:
+            period = f"{year}-01-01"
+            scotland_rates.brackets[4].threshold.update(
+                period=period, value=INCOME_TAX_ADVANCED_THRESHOLD
+            )
+
+
+def apply_top_rate_freeze_reform(sim: Microsimulation) -> None:
+    """Apply top rate threshold freeze for 2027-28 and 2028-29.
+
+    Freezes Scottish top rate (48%) threshold at £112,570 (above PA).
+    Total threshold: £125,140.
+
+    Note: 2026 freeze is already in baseline per Budget 2025-26.
+    This only applies to 2027+ to measure the incremental cost.
+
+    Source: SFC costings breakdown - "Top rate freeze"
+    """
+    scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
+
+    for year in DEFAULT_YEARS:
+        if year >= 2027:
+            period = f"{year}-01-01"
+            scotland_rates.brackets[5].threshold.update(
+                period=period, value=INCOME_TAX_TOP_THRESHOLD
+            )
 
 
 def apply_scp_baby_boost_reform(sim: Microsimulation) -> None:
@@ -200,6 +304,81 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "rate (21%) threshold rises from £27,492 to £29,527. The higher rate (42%) remains "
                 "unchanged at £43,663. This means people pay the lower 19% starter rate on more of "
                 "their income."
+            ),
+        ),
+        ReformDefinition(
+            id="income_tax_basic_uplift",
+            name="Basic rate threshold +7.4%",
+            description=(
+                "Scottish basic rate (20%) threshold increased by 7.4% from 2026. "
+                "Basic rate starts at £16,537 (£3,967 above personal allowance)."
+            ),
+            apply_fn=apply_basic_rate_uplift_reform,
+            explanation=(
+                "The Scottish basic rate (20%) threshold is raised by 7.4% from 2026 onwards. "
+                "The threshold rises from £15,398 to £16,537 total taxable income (£3,967 above "
+                "the personal allowance of £12,570). This means people pay the lower 19% starter "
+                "rate on more of their income before moving to the 20% basic rate."
+            ),
+        ),
+        ReformDefinition(
+            id="income_tax_intermediate_uplift",
+            name="Intermediate rate threshold +7.4%",
+            description=(
+                "Scottish intermediate rate (21%) threshold increased by 7.4% from 2026. "
+                "Intermediate rate starts at £29,527 (£16,956 above personal allowance)."
+            ),
+            apply_fn=apply_intermediate_rate_uplift_reform,
+            explanation=(
+                "The Scottish intermediate rate (21%) threshold is raised by 7.4% from 2026 onwards. "
+                "The threshold rises from £27,492 to £29,527 total taxable income (£16,956 above "
+                "the personal allowance). This means people pay the lower 20% basic rate on more of "
+                "their income before moving to the 21% intermediate rate."
+            ),
+        ),
+        ReformDefinition(
+            id="higher_rate_freeze",
+            name="Higher rate threshold freeze",
+            description=(
+                "Scottish higher rate (42%) threshold frozen at £43,662 for 2027-28 and 2028-29. "
+                "2026 freeze is already in baseline per Budget 2025-26."
+            ),
+            apply_fn=apply_higher_rate_freeze_reform,
+            explanation=(
+                "The Scottish higher rate (42%) threshold is frozen at £43,662 (£31,092 above "
+                "the personal allowance) for 2027-28 and 2028-29. Note that the 2026 freeze is "
+                "already in the baseline per Budget 2025-26, so this reform only captures the "
+                "incremental revenue from extending the freeze into future years."
+            ),
+        ),
+        ReformDefinition(
+            id="advanced_rate_freeze",
+            name="Advanced rate threshold freeze",
+            description=(
+                "Scottish advanced rate (45%) threshold frozen at £62,430 for 2027-28 and 2028-29. "
+                "2026 freeze is already in baseline per Budget 2025-26."
+            ),
+            apply_fn=apply_advanced_rate_freeze_reform,
+            explanation=(
+                "The Scottish advanced rate (45%) threshold is frozen at £62,430 (£49,860 above "
+                "the personal allowance) for 2027-28 and 2028-29. Note that the 2026 freeze is "
+                "already in the baseline per Budget 2025-26, so this reform only captures the "
+                "incremental revenue from extending the freeze into future years."
+            ),
+        ),
+        ReformDefinition(
+            id="top_rate_freeze",
+            name="Top rate threshold freeze",
+            description=(
+                "Scottish top rate (48%) threshold frozen at £125,140 for 2027-28 and 2028-29. "
+                "2026 freeze is already in baseline per Budget 2025-26."
+            ),
+            apply_fn=apply_top_rate_freeze_reform,
+            explanation=(
+                "The Scottish top rate (48%) threshold is frozen at £125,140 (£112,570 above "
+                "the personal allowance) for 2027-28 and 2028-29. Note that the 2026 freeze is "
+                "already in the baseline per Budget 2025-26, so this reform only captures the "
+                "incremental revenue from extending the freeze into future years."
             ),
         ),
     ]
