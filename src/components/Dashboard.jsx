@@ -3,6 +3,7 @@ import DecileChart from "./DecileChart";
 import BudgetBarChart from "./BudgetBarChart";
 import PovertyImpactTable from "./PovertyImpactTable";
 import LocalAreaSection from "./LocalAreaSection";
+import SFCComparisonTable from "./SFCComparisonTable";
 import "./Dashboard.css";
 import { POLICY_NAMES } from "../utils/policyConfig";
 
@@ -368,6 +369,9 @@ export default function Dashboard({ selectedPolicies = [] }) {
           tooltipLabel="Cost"
         />
       )}
+
+      {/* SFC Comparison Table */}
+      <SFCComparisonTable selectedPolicies={selectedPolicies} />
 
       {/* Living Standards Section */}
       <h2 className="section-title" id="living-standards" ref={(el) => (sectionRefs.current["living-standards"] = el)}>Living standards</h2>
