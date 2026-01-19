@@ -53,6 +53,22 @@ DEFAULT_YEARS = [2026, 2027, 2028, 2029, 2030]
 # =============================================================================
 
 
+def apply_scp_inflation_baseline(sim: Microsimulation) -> None:
+    """Apply baseline SCP rate (£27.15/week) - before inflation adjustment.
+
+    This represents what would have happened WITHOUT the 2026-27 budget:
+    SCP frozen at the 2025-26 rate of £27.15/week.
+
+    Source: Scottish Budget 2026-27
+    https://www.gov.scot/news/a-budget-to-tackle-child-poverty/
+    """
+    scp_amount = sim.tax_benefit_system.parameters.gov.social_security_scotland.scottish_child_payment.amount
+
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scp_amount.update(period=period, value=SCP_BASELINE_RATE)  # £27.15/week
+
+
 def apply_scp_inflation_reform(sim: Microsimulation) -> None:
     """Apply SCP inflation adjustment to a simulation.
 
@@ -69,7 +85,7 @@ def apply_scp_inflation_reform(sim: Microsimulation) -> None:
 
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
-        scp_amount.update(period=period, value=SCP_INFLATION_RATE)  # £/week
+        scp_amount.update(period=period, value=SCP_INFLATION_RATE)  # £28.20/week
 
 
 def apply_income_tax_baseline(sim: Microsimulation) -> None:
@@ -117,6 +133,23 @@ def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
         )
 
 
+def apply_scp_baby_boost_baseline(sim: Microsimulation) -> None:
+    """Apply baseline (no baby boost) to a simulation.
+
+    This represents what would have happened WITHOUT the 2026-27 budget:
+    no SCP Premium for under-ones.
+
+    Source: Scottish Budget 2026-27
+    https://www.gov.scot/publications/scottish-budget-2026-2027/
+    """
+    scp_reform = sim.tax_benefit_system.parameters.gov.contrib.scotland.scottish_child_payment
+
+    # Disable baby boost for all years (pre-budget baseline)
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scp_reform.in_effect.update(period=period, value=False)
+
+
 def apply_scp_baby_boost_reform(sim: Microsimulation) -> None:
     """Apply SCP baby boost reform to a simulation.
 
@@ -140,6 +173,19 @@ def apply_scp_baby_boost_reform(sim: Microsimulation) -> None:
             period = f"{year}-01-01"
             # Enable the baby bonus
             scp_reform.in_effect.update(period=period, value=True)
+
+
+def apply_combined_baseline(sim: Microsimulation) -> None:
+    """Apply all baseline adjustments for Scottish Budget 2026-27.
+
+    Sets all parameters to pre-budget values:
+    - SCP at £27.15/week (no inflation adjustment)
+    - Income tax thresholds at 2025-26 levels
+    - Baby boost disabled
+    """
+    apply_scp_inflation_baseline(sim)  # SCP at £27.15/week
+    apply_income_tax_baseline(sim)  # 2025-26 thresholds
+    apply_scp_baby_boost_baseline(sim)  # Baby boost disabled
 
 
 def apply_combined_reform(sim: Microsimulation) -> None:
@@ -185,7 +231,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "SCP Premium for under-ones (£40/week), and income tax threshold uplift (7.4%)."
             ),
             apply_fn=apply_combined_reform,
-            baseline_apply_fn=apply_income_tax_baseline,
+            baseline_apply_fn=apply_combined_baseline,
             explanation=(
                 "The complete Scottish Budget 2026-27 package combines all three policy reforms: "
                 "the SCP inflation adjustment (£28.20/week), the SCP Premium for under-ones "
@@ -203,6 +249,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "(+£1.05/week). Effective April 2026."
             ),
             apply_fn=apply_scp_inflation_reform,
+            baseline_apply_fn=apply_scp_inflation_baseline,
             explanation=(
                 "The Scottish Child Payment is uprated with inflation from £27.15/week to "
                 "£28.20/week (+£1.05/week, or +3.9%). This inflation adjustment takes effect "
@@ -218,6 +265,7 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
                 "(£11.80/week extra on top of the inflation-adjusted £28.20/week rate)."
             ),
             apply_fn=apply_scp_baby_boost_reform,
+            baseline_apply_fn=apply_scp_baby_boost_baseline,
             explanation=(
                 "The new SCP Premium for under-ones increases the Scottish Child Payment to "
                 "£40/week total for families with babies under 1 year old. This is £11.80/week "

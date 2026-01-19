@@ -9,10 +9,13 @@ from microdf import MicroSeries
 from policyengine_uk import Microsimulation
 
 from .reforms import (
+    apply_combined_baseline,
     apply_combined_reform,
     apply_income_tax_baseline,
     apply_income_tax_threshold_reform,
+    apply_scp_baby_boost_baseline,
     apply_scp_baby_boost_reform,
+    apply_scp_inflation_baseline,
     apply_scp_inflation_reform,
 )
 
@@ -25,10 +28,12 @@ REFORM_APPLY_FNS = {
 }
 
 # Map reform IDs to baseline apply functions (for counterfactual comparison)
-# Only needed when PolicyEngine defaults don't match the true counterfactual
+# Sets pre-budget values so we can measure the impact of the reform
 BASELINE_APPLY_FNS = {
+    "scp_inflation": apply_scp_inflation_baseline,
+    "scp_baby_boost": apply_scp_baby_boost_baseline,
     "income_tax_threshold_uplift": apply_income_tax_baseline,
-    "combined": apply_income_tax_baseline,  # Combined also needs baseline adjustment
+    "combined": apply_combined_baseline,
 }
 
 
