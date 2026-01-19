@@ -185,8 +185,7 @@ export default function ScotlandMap({
       (height - 2 * padding) / dataHeight,
     );
 
-    // Compress width only (85% of normal width)
-    const scaleX = scale * 0.85;
+    const scaleX = scale * 0.6;
     const scaleY = scale;
 
     // Calculate centering offsets
