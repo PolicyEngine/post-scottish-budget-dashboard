@@ -124,8 +124,8 @@ export default function ScotlandMap({
     setTooltipPosition({ x: centerX, y: centerY });
 
     // Smooth zoom to local authority
-    const scale = Math.min(4, 0.9 / Math.max(bbox.width / 550, bbox.height / 550));
-    const translate = [550 / 2 - scale * centerX, 700 / 2 - scale * centerY];
+    const scale = Math.min(4, 0.9 / Math.max(bbox.width / 700, bbox.height / 700));
+    const translate = [700 / 2 - scale * centerX, 900 / 2 - scale * centerY];
 
     if (window.scotlandMapZoomBehavior) {
       const { svg: svgZoom, zoom } = window.scotlandMapZoomBehavior;
@@ -146,8 +146,8 @@ export default function ScotlandMap({
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 550;
-    const height = 700;
+    const width = 700;
+    const height = 900;
 
     const g = svg.append("g");
 
@@ -185,7 +185,7 @@ export default function ScotlandMap({
       (height - 2 * padding) / dataHeight,
     );
 
-    const scaleX = scale * 0.45;
+    const scaleX = scale * 0.6;
     const scaleY = scale;
 
     // Calculate centering offsets
@@ -401,8 +401,8 @@ export default function ScotlandMap({
 
     const dx = bbox.width;
     const dy = bbox.height;
-    const scale = Math.min(4, 0.9 / Math.max(dx / 550, dy / 700));
-    const translate = [550 / 2 - scale * centerX, 700 / 2 - scale * centerY];
+    const scale = Math.min(4, 0.9 / Math.max(dx / 700, dy / 900));
+    const translate = [700 / 2 - scale * centerX, 900 / 2 - scale * centerY];
 
     if (window.scotlandMapZoomBehavior) {
       const { svg: svgZoom, zoom } = window.scotlandMapZoomBehavior;
@@ -535,9 +535,9 @@ export default function ScotlandMap({
         <div className="map-canvas">
           <svg
             ref={svgRef}
-            width="550"
-            height="700"
-            viewBox="0 0 550 700"
+            width="700"
+            height="900"
+            viewBox="0 0 700 900"
             preserveAspectRatio="xMidYMid meet"
             onClick={() => {
               setTooltipData(null);
