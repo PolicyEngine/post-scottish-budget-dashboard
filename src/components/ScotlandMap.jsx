@@ -8,8 +8,7 @@ import "./ScotlandMap.css";
 const CHART_TITLE = "Scottish local authority-level impacts";
 // Note: CHART_DESCRIPTION is now generated dynamically using policyName prop
 
-// Fixed color scale extent for average gain (in £) - consistent across all years
-const FIXED_COLOR_MAX = 35;
+// Color scale will be computed dynamically from data
 
 // Format year for display (e.g., 2026 -> "2026-27")
 const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
@@ -71,6 +70,15 @@ export default function ScotlandMap({
     return new Map(
       constituencyData.map((d) => [d.constituency_code, d])
     );
+  }, [constituencyData]);
+
+  // Compute color scale extent from data (min/max of average_gain)
+  const colorExtent = useMemo(() => {
+    if (constituencyData.length === 0) return { min: 0, max: 35 };
+    const gains = constituencyData.map((d) => d.average_gain || 0);
+    const min = Math.floor(Math.min(...gains));
+    const max = Math.ceil(Math.max(...gains));
+    return { min, max };
   }, [constituencyData]);
 
   // Highlight and zoom to controlled constituency when it changes
@@ -191,13 +199,13 @@ export default function ScotlandMap({
 
     const path = d3.geoPath().projection(projection);
 
-    // Color scale - sequential from light to dark teal (£0 to max gain)
+    // Color scale - sequential from light to dark teal (min to max gain)
     // Uses average_gain (absolute £ values)
     const getValue = (d) => d.average_gain || 0;
 
     const colorScale = d3
       .scaleLinear()
-      .domain([0, FIXED_COLOR_MAX])
+      .domain([colorExtent.min, colorExtent.max])
       .range(["#E0F2F1", "#0D9488"])
       .clamp(true);
 
@@ -308,7 +316,7 @@ export default function ScotlandMap({
       .attr("height", CHART_LOGO.height)
       .attr("x", width - CHART_LOGO.width - CHART_LOGO.padding)
       .attr("y", height - CHART_LOGO.height - CHART_LOGO.padding);
-  }, [geoData, dataMap, onConstituencySelect]);
+  }, [geoData, dataMap, colorExtent, onConstituencySelect]);
 
   // Handle search
   useEffect(() => {
@@ -509,8 +517,8 @@ export default function ScotlandMap({
           <div className="legend-horizontal-content">
             <div className="legend-gradient-horizontal legend-gradient-sequential" />
             <div className="legend-labels-horizontal">
-              <span>£0</span>
-              <span>£{FIXED_COLOR_MAX}</span>
+              <span>£{colorExtent.min}</span>
+              <span>£{colorExtent.max}</span>
             </div>
           </div>
         </div>
