@@ -238,7 +238,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       let netRelative = 0;
       let netAbsolute = 0;
 
-      selectedPolicies.forEach(policyId => {
+      ALL_POLICY_IDS.forEach(policyId => {
         const policyName = POLICY_NAMES[policyId];
         const row = rawDistributionalData.find(
           r => r.reform_id === policyId && r.year === String(selectedYear) && r.decile === decile
@@ -255,7 +255,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       dataPoint.netAbsolute = netAbsolute;
       return dataPoint;
     });
-  }, [isStacked, rawDistributionalData, selectedPolicies, selectedYear]);
+  }, [isStacked, rawDistributionalData, selectedYear]);
 
   // Transform average income change data for stacked chart
   const stackedAvgIncomeData = useMemo(() => {
@@ -266,7 +266,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       const dataPoint = { year };
       let netImpact = 0;
 
-      selectedPolicies.forEach(policyId => {
+      ALL_POLICY_IDS.forEach(policyId => {
         const policyName = POLICY_NAMES[policyId];
         const row = rawDistributionalData.find(
           r => r.reform_id === policyId && r.year === String(year) && r.decile === "All"
@@ -279,7 +279,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       dataPoint.netImpact = netImpact;
       return dataPoint;
     }).filter(d => Object.keys(d).length > 1); // Only include years with data
-  }, [isStacked, rawDistributionalData, selectedPolicies]);
+  }, [isStacked, rawDistributionalData]);
 
   // Get decile data filtered by selected year
   const decileDataForYear = useMemo(() => {

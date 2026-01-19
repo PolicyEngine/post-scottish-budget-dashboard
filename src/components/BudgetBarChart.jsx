@@ -51,7 +51,7 @@ export default function BudgetBarChart({
       )
     : [];
 
-  // Calculate y-axis domain based on data
+  // Calculate y-axis domain based on data - symmetric around zero
   let yMin = 0, yMax = 10;
   if (stacked) {
     // For stacked with positive/negative, find min and max
@@ -66,14 +66,25 @@ export default function BudgetBarChart({
       minSum = Math.min(minSum, negativeSum);
       maxSum = Math.max(maxSum, positiveSum);
     });
-    yMin = Math.floor(minSum / 10) * 10 - 10;
-    yMax = yMaxValue || Math.ceil(maxSum / 10) * 10 + 10;
+    // Make symmetric around zero
+    const absMax = Math.max(Math.abs(minSum), Math.abs(maxSum));
+    const rounded = Math.ceil(absMax / 100) * 100 + 50;
+    yMin = -rounded;
+    yMax = yMaxValue || rounded;
   } else {
     const values = data.map(d => d.value || 0);
     const minVal = Math.min(...values);
     const maxVal = Math.max(...values);
-    yMin = minVal < 0 ? Math.floor(minVal / 10) * 10 - 10 : 0;
-    yMax = yMaxValue || Math.ceil(maxVal / 10) * 10 + 10;
+    // Make symmetric around zero if there are negative values
+    if (minVal < 0) {
+      const absMax = Math.max(Math.abs(minVal), Math.abs(maxVal));
+      const rounded = Math.ceil(absMax / 10) * 10 + 10;
+      yMin = -rounded;
+      yMax = yMaxValue || rounded;
+    } else {
+      yMin = 0;
+      yMax = yMaxValue || Math.ceil(maxVal / 10) * 10 + 10;
+    }
   }
 
   return (
