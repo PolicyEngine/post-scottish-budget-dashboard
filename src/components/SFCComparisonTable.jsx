@@ -241,8 +241,14 @@ function SFCComparisonTable() {
           ? "Post-behavioural costings include effects like tax avoidance, reduced consumption, and migration. SFC assumes behavioural responses reduce yields by ~8% for higher-rate freezes, ~25% for advanced-rate, and ~85% for top-rate."
           : "Static costings assume no change in taxpayer behaviour. Static values shown here are derived from post-behavioural figures using SFC's published behavioural adjustment rates."}{" "}
         Each provision is costed independently against baseline (not stacked).
-        SFC reports combined basic + intermediate thresholds; we show estimates
-        separately. See{" "}
+      </p>
+      <p className="comparison-note">
+        <strong>Data notes:</strong> Threshold freezes show 2026-27 as empty because
+        the freeze was already in Budget 2025-26; SFC only costs the incremental
+        extension through 2027-28/2028-29. SCP baby boost starts mid-2027-28.
+        SFC reports combined basic + intermediate thresholds (~£50m total); we
+        apportion using PolicyEngine microsimulation. SCP inflation uprating has
+        no SFC costing as it's included in their baseline. See{" "}
         <a
           href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-december-2024/"
           target="_blank"
