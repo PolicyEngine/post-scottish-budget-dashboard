@@ -6,13 +6,15 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
+  ReferenceLine,
 } from "recharts";
 import "./BudgetBarChart.css";
-import { POLICY_COLORS, POLICY_NAMES, ALL_POLICY_NAMES } from "../utils/policyConfig";
+import { POLICY_COLORS, POLICY_NAMES, ALL_POLICY_NAMES, ALL_POLICY_IDS } from "../utils/policyConfig";
 
 /**
  * Bar chart showing values by year, with stacking support for multiple policies.
+ * Uses sign convention: negative = cost to government, positive = revenue.
+ * Costs shown below axis (teal), revenue shown above axis (amber).
  */
 export default function BudgetBarChart({
   data,
@@ -23,7 +25,7 @@ export default function BudgetBarChart({
   tooltipLabel = "Value",
   stacked = false,
   selectedPolicies = [],
-  yMaxValue = 100,
+  yMaxValue = null,
   yTickCount = 6,
 }) {
   if (!data || data.length === 0) {
@@ -35,75 +37,91 @@ export default function BudgetBarChart({
     );
   }
 
-  const defaultFormat = (value) => `£${value.toFixed(0)}m`;
+  const defaultFormat = (value) => {
+    const absVal = Math.abs(value).toFixed(0);
+    return value < 0 ? `-£${absVal}m` : `£${absVal}m`;
+  };
   const formatValue = yFormat || defaultFormat;
   const formatYearRange = (year) => `${year}–${(year + 1).toString().slice(-2)}`;
 
-  // Calculate y-axis domain based on stacked or single mode with equal increments
-  let maxValue, minValue;
-  if (stacked) {
-    // For stacked, sum all policy values for max
-    maxValue = Math.max(...data.map((d) => {
-      let sum = 0;
-      ALL_POLICY_NAMES.forEach(name => {
-        if (d[name]) sum += Math.abs(d[name]);
-      });
-      return sum || Math.abs(d.netImpact || 0);
-    }));
-    minValue = 0;
-  } else {
-    maxValue = Math.max(...data.map((d) => Math.abs(d.value || 0)));
-    minValue = Math.min(...data.map((d) => d.value || 0));
-  }
-
-  // Calculate nice round numbers for equal increments
-  const getNiceMax = (val) => {
-    if (val <= 0) return 10;
-    const magnitude = Math.pow(10, Math.floor(Math.log10(val)));
-    const normalized = val / magnitude;
-    if (normalized <= 1) return magnitude;
-    if (normalized <= 2) return 2 * magnitude;
-    if (normalized <= 5) return 5 * magnitude;
-    return 10 * magnitude;
-  };
-
-  const yMin = minValue < 0 ? -getNiceMax(Math.abs(minValue)) : 0;
-  const yMax = yMaxValue;
-
-  // Check which policies have data
+  // Check which policies have non-zero data
   const activePolicies = stacked
     ? ALL_POLICY_NAMES.filter(name =>
         data.some(d => Math.abs(d[name] || 0) > 0.001)
       )
     : [];
 
+  // Calculate y-axis domain based on data - symmetric around zero
+  let yMin = 0, yMax = 10;
+  if (stacked) {
+    // For stacked with positive/negative, find min and max
+    let minSum = 0, maxSum = 0;
+    data.forEach(d => {
+      let positiveSum = 0, negativeSum = 0;
+      ALL_POLICY_NAMES.forEach(name => {
+        const val = d[name] || 0;
+        if (val > 0) positiveSum += val;
+        else negativeSum += val;
+      });
+      minSum = Math.min(minSum, negativeSum);
+      maxSum = Math.max(maxSum, positiveSum);
+    });
+    // Make symmetric around zero
+    const absMax = Math.max(Math.abs(minSum), Math.abs(maxSum));
+    const rounded = Math.ceil(absMax / 100) * 100;
+    yMin = -rounded;
+    yMax = yMaxValue || rounded;
+  } else {
+    const values = data.map(d => d.value || 0);
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+    // Make symmetric around zero if there are negative values
+    if (minVal < 0) {
+      const absMax = Math.max(Math.abs(minVal), Math.abs(maxVal));
+      const rounded = Math.ceil(absMax / 10) * 10;
+      yMin = -rounded;
+      yMax = yMaxValue || rounded;
+    } else {
+      yMin = 0;
+      yMax = yMaxValue || Math.ceil(maxVal / 10) * 10;
+    }
+  }
+
   return (
     <div className="budget-bar-chart">
       {title && <h3 className="chart-title">{title}</h3>}
       {description && <p className="chart-description">{description}</p>}
 
-      {/* Custom legend with correct order */}
-      {stacked && (
-        <div className="custom-legend" style={{ display: "flex", justifyContent: "center", gap: "24px", marginBottom: "12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: "12px", height: "12px", backgroundColor: "#0D9488", display: "inline-block" }}></span>
-            <span style={{ fontSize: "14px", color: "#374151" }}>Income tax threshold uplift</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: "12px", height: "12px", backgroundColor: "#14B8A6", display: "inline-block" }}></span>
-            <span style={{ fontSize: "14px", color: "#374151" }}>SCP inflation adjustment</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: "12px", height: "12px", backgroundColor: "#2DD4BF", display: "inline-block" }}></span>
-            <span style={{ fontSize: "14px", color: "#374151" }}>SCP Premium for under-ones</span>
-          </div>
+      {/* Custom legend showing only active policies */}
+      {stacked && activePolicies.length > 0 && (
+        <div className="custom-legend" style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "16px",
+          marginBottom: "12px",
+          maxWidth: "800px",
+          margin: "0 auto 12px auto"
+        }}>
+          {activePolicies.map(name => (
+            <div key={name} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{
+                width: "12px",
+                height: "12px",
+                backgroundColor: POLICY_COLORS[name],
+                display: "inline-block"
+              }}></span>
+              <span style={{ fontSize: "13px", color: "#374151" }}>{name}</span>
+            </div>
+          ))}
         </div>
       )}
 
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={350}>
         <ComposedChart
           data={data}
           margin={{ top: 20, right: 30, left: 60, bottom: 40 }}
+          stackOffset="sign"
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
           <XAxis
@@ -121,7 +139,18 @@ export default function BudgetBarChart({
             domain={[yMin, yMax]}
             tickFormatter={formatValue}
             tick={{ fontSize: 12, fill: "#666" }}
-            tickCount={yTickCount}
+            ticks={(() => {
+              const range = yMax - yMin;
+              let interval = 200;
+              if (range > 2000) interval = 400;
+              if (range > 4000) interval = 500;
+              const ticks = [];
+              for (let i = yMin; i <= yMax + 0.001; i += interval) {
+                ticks.push(Math.round(i));
+              }
+              if (!ticks.includes(0)) ticks.push(0);
+              return ticks.sort((a, b) => a - b);
+            })()}
             label={{
               value: yLabel,
               angle: -90,
@@ -135,6 +164,7 @@ export default function BudgetBarChart({
               },
             }}
           />
+          <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
           <Tooltip
             formatter={(value, name) => [formatValue(value), name]}
             labelFormatter={(label) => formatYearRange(label)}

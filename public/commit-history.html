@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scottish Budget Data Evolution</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #319795;
+    }
+    .subtitle {
+      color: #64748b;
+      margin-bottom: 2rem;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .control-group label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    select {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      background: white;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    select:hover {
+      border-color: #319795;
+    }
+    .chart-container {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th {
+      font-weight: 600;
+      color: #64748b;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td.value {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    tr:hover {
+      background: #f8fafc;
+    }
+    .commit-hash {
+      font-family: monospace;
+      color: #319795;
+    }
+    .change-positive {
+      color: #16a34a;
+    }
+    .change-negative {
+      color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Scottish Budget data evolution</h1>
+    <p class="subtitle">How budgetary impact estimates changed across commits</p>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Year</label>
+        <select id="yearSelect">
+          <option value="2026">2026</option>
+          <option value="2027" selected>2027</option>
+          <option value="2028">2028</option>
+          <option value="2029">2029</option>
+          <option value="2030">2030</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>View</label>
+        <select id="viewSelect">
+          <option value="stacked">Stacked (total breakdown)</option>
+          <option value="lines">Lines (each reform)</option>
+          <option value="combined">Combined total only</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Budgetary impact by commit (£ millions)</div>
+      <canvas id="chart" height="300"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">Data table</div>
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Commit</th>
+            <th>Date</th>
+            <th>Message</th>
+            <th>Combined</th>
+            <th>SCP Inflation</th>
+            <th>Baby Boost</th>
+            <th>Income Tax</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const commitData = [
+      {
+        commit: "2203899",
+        date: "2026-01-17",
+        message: "baby boost starts 2027",
+        data: [
+          {reform_id: "combined", year: 2026, value: 80.66},
+          {reform_id: "combined", year: 2027, value: 88.16},
+          {reform_id: "combined", year: 2028, value: 81.38},
+          {reform_id: "combined", year: 2029, value: 73.88},
+          {reform_id: "combined", year: 2030, value: 65.90},
+          {reform_id: "scp_inflation", year: 2026, value: 17.35},
+          {reform_id: "scp_inflation", year: 2027, value: 17.58},
+          {reform_id: "scp_inflation", year: 2028, value: 17.65},
+          {reform_id: "scp_inflation", year: 2029, value: 17.73},
+          {reform_id: "scp_inflation", year: 2030, value: 17.81},
+          {reform_id: "scp_baby_boost", year: 2026, value: 0.0},
+          {reform_id: "scp_baby_boost", year: 2027, value: 14.18},
+          {reform_id: "scp_baby_boost", year: 2028, value: 14.24},
+          {reform_id: "scp_baby_boost", year: 2029, value: 14.30},
+          {reform_id: "scp_baby_boost", year: 2030, value: 14.37},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 63.31},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 57.55},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 50.66},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 43.02},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 34.90}
+        ]
+      },
+      {
+        commit: "ba06055",
+        date: "2026-01-17",
+        message: "add SCP inflation",
+        data: [
+          {reform_id: "combined", year: 2026, value: 93.64},
+          {reform_id: "combined", year: 2027, value: 88.16},
+          {reform_id: "combined", year: 2028, value: 81.38},
+          {reform_id: "combined", year: 2029, value: 73.88},
+          {reform_id: "combined", year: 2030, value: 65.90},
+          {reform_id: "scp_inflation", year: 2026, value: 17.35},
+          {reform_id: "scp_inflation", year: 2027, value: 17.58},
+          {reform_id: "scp_inflation", year: 2028, value: 17.65},
+          {reform_id: "scp_inflation", year: 2029, value: 17.73},
+          {reform_id: "scp_inflation", year: 2030, value: 17.81},
+          {reform_id: "scp_baby_boost", year: 2026, value: 14.13},
+          {reform_id: "scp_baby_boost", year: 2027, value: 14.18},
+          {reform_id: "scp_baby_boost", year: 2028, value: 14.24},
+          {reform_id: "scp_baby_boost", year: 2029, value: 14.30},
+          {reform_id: "scp_baby_boost", year: 2030, value: 14.37},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 63.31},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 57.55},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 50.66},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 43.02},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 34.90}
+        ]
+      },
+      {
+        commit: "2cdf07a",
+        date: "2026-01-17",
+        message: "refactor reforms",
+        data: [
+          {reform_id: "combined", year: 2026, value: 75.93},
+          {reform_id: "combined", year: 2027, value: 70.17},
+          {reform_id: "combined", year: 2028, value: 63.49},
+          {reform_id: "combined", year: 2029, value: 56.18},
+          {reform_id: "combined", year: 2030, value: 48.43},
+          {reform_id: "scp_inflation", year: 2026, value: null},
+          {reform_id: "scp_inflation", year: 2027, value: null},
+          {reform_id: "scp_inflation", year: 2028, value: null},
+          {reform_id: "scp_inflation", year: 2029, value: null},
+          {reform_id: "scp_inflation", year: 2030, value: null},
+          {reform_id: "scp_baby_boost", year: 2026, value: 14.20},
+          {reform_id: "scp_baby_boost", year: 2027, value: 14.26},
+          {reform_id: "scp_baby_boost", year: 2028, value: 14.31},
+          {reform_id: "scp_baby_boost", year: 2029, value: 14.38},
+          {reform_id: "scp_baby_boost", year: 2030, value: 14.44},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 61.73},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 55.92},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 49.18},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 41.81},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 33.99}
+        ]
+      },
+      {
+        commit: "5a02bf8",
+        date: "2026-01-16",
+        message: "simulation_modifier fix",
+        data: [
+          {reform_id: "combined", year: 2026, value: 75.90},
+          {reform_id: "combined", year: 2027, value: 78.06},
+          {reform_id: "combined", year: 2028, value: 80.41},
+          {reform_id: "combined", year: 2029, value: 81.53},
+          {reform_id: "combined", year: 2030, value: 82.80},
+          {reform_id: "scp_inflation", year: 2026, value: null},
+          {reform_id: "scp_inflation", year: 2027, value: null},
+          {reform_id: "scp_inflation", year: 2028, value: null},
+          {reform_id: "scp_inflation", year: 2029, value: null},
+          {reform_id: "scp_inflation", year: 2030, value: null},
+          {reform_id: "scp_baby_boost", year: 2026, value: 14.20},
+          {reform_id: "scp_baby_boost", year: 2027, value: 14.92},
+          {reform_id: "scp_baby_boost", year: 2028, value: 16.22},
+          {reform_id: "scp_baby_boost", year: 2029, value: 16.30},
+          {reform_id: "scp_baby_boost", year: 2030, value: 16.34},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 61.70},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 63.14},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 64.19},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 65.23},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 66.46}
+        ]
+      },
+      {
+        commit: "24f8d8d",
+        date: "2026-01-15",
+        message: "regenerate with local PE-UK",
+        data: [
+          {reform_id: "combined", year: 2026, value: 88.02},
+          {reform_id: "combined", year: 2027, value: 87.32},
+          {reform_id: "combined", year: 2028, value: 90.42},
+          {reform_id: "combined", year: 2029, value: 91.48},
+          {reform_id: "combined", year: 2030, value: 93.66},
+          {reform_id: "scp_inflation", year: 2026, value: null},
+          {reform_id: "scp_inflation", year: 2027, value: null},
+          {reform_id: "scp_inflation", year: 2028, value: null},
+          {reform_id: "scp_inflation", year: 2029, value: null},
+          {reform_id: "scp_inflation", year: 2030, value: null},
+          {reform_id: "scp_baby_boost", year: 2026, value: 25.32},
+          {reform_id: "scp_baby_boost", year: 2027, value: 23.16},
+          {reform_id: "scp_baby_boost", year: 2028, value: 25.25},
+          {reform_id: "scp_baby_boost", year: 2029, value: 25.26},
+          {reform_id: "scp_baby_boost", year: 2030, value: 26.13},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 62.70},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 64.16},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 65.18},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 66.22},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 67.53}
+        ]
+      },
+      {
+        commit: "2db4c3b",
+        date: "2026-01-14",
+        message: "add combined policy",
+        data: [
+          {reform_id: "combined", year: 2026, value: 88.23},
+          {reform_id: "combined", year: 2027, value: 87.95},
+          {reform_id: "combined", year: 2028, value: 92.36},
+          {reform_id: "combined", year: 2029, value: 91.47},
+          {reform_id: "combined", year: 2030, value: 91.06},
+          {reform_id: "scp_inflation", year: 2026, value: null},
+          {reform_id: "scp_inflation", year: 2027, value: null},
+          {reform_id: "scp_inflation", year: 2028, value: null},
+          {reform_id: "scp_inflation", year: 2029, value: null},
+          {reform_id: "scp_inflation", year: 2030, value: null},
+          {reform_id: "scp_baby_boost", year: 2026, value: 25.53},
+          {reform_id: "scp_baby_boost", year: 2027, value: 23.79},
+          {reform_id: "scp_baby_boost", year: 2028, value: 27.18},
+          {reform_id: "scp_baby_boost", year: 2029, value: 25.25},
+          {reform_id: "scp_baby_boost", year: 2030, value: 23.52},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 62.70},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 64.16},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 65.18},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 66.22},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 67.53}
+        ]
+      },
+      {
+        commit: "348e679",
+        date: "2026-01-13",
+        message: "fix income tax dates",
+        data: [
+          {reform_id: "combined", year: 2026, value: null},
+          {reform_id: "combined", year: 2027, value: null},
+          {reform_id: "combined", year: 2028, value: null},
+          {reform_id: "combined", year: 2029, value: null},
+          {reform_id: "combined", year: 2030, value: null},
+          {reform_id: "scp_inflation", year: 2026, value: null},
+          {reform_id: "scp_inflation", year: 2027, value: null},
+          {reform_id: "scp_inflation", year: 2028, value: null},
+          {reform_id: "scp_inflation", year: 2029, value: null},
+          {reform_id: "scp_inflation", year: 2030, value: null},
+          {reform_id: "scp_baby_boost", year: 2026, value: 79.87},
+          {reform_id: "scp_baby_boost", year: 2027, value: 74.87},
+          {reform_id: "scp_baby_boost", year: 2028, value: 78.56},
+          {reform_id: "scp_baby_boost", year: 2029, value: 79.24},
+          {reform_id: "scp_baby_boost", year: 2030, value: 83.47},
+          {reform_id: "income_tax_threshold_uplift", year: 2026, value: 642.77},
+          {reform_id: "income_tax_threshold_uplift", year: 2027, value: 608.75},
+          {reform_id: "income_tax_threshold_uplift", year: 2028, value: 538.58},
+          {reform_id: "income_tax_threshold_uplift", year: 2029, value: 464.49},
+          {reform_id: "income_tax_threshold_uplift", year: 2030, value: 389.06}
+        ]
+      }
+    ].reverse(); // Oldest first
+
+    const colors = {
+      combined: '#319795',
+      scp_inflation: '#805AD5',
+      scp_baby_boost: '#DD6B20',
+      income_tax_threshold_uplift: '#3182CE'
+    };
+
+    const labels = {
+      combined: 'Combined total',
+      scp_inflation: 'SCP inflation',
+      scp_baby_boost: 'Baby boost',
+      income_tax_threshold_uplift: 'Income tax uplift'
+    };
+
+    let chart = null;
+
+    function getValue(commitObj, reformId, year) {
+      const item = commitObj.data.find(d => d.reform_id === reformId && d.year === year);
+      return item ? item.value : null;
+    }
+
+    function updateChart() {
+      const year = parseInt(document.getElementById('yearSelect').value);
+      const view = document.getElementById('viewSelect').value;
+
+      const ctx = document.getElementById('chart').getContext('2d');
+
+      if (chart) {
+        chart.destroy();
+      }
+
+      const commitLabels = commitData.map(c => `${c.commit.slice(0,7)}\n${c.message.slice(0,15)}...`);
+
+      let datasets = [];
+
+      if (view === 'combined') {
+        datasets = [{
+          label: 'Combined total',
+          data: commitData.map(c => getValue(c, 'combined', year)),
+          borderColor: colors.combined,
+          backgroundColor: colors.combined + '40',
+          tension: 0.1,
+          fill: true
+        }];
+      } else if (view === 'lines') {
+        datasets = [
+          {
+            label: labels.income_tax_threshold_uplift,
+            data: commitData.map(c => getValue(c, 'income_tax_threshold_uplift', year)),
+            borderColor: colors.income_tax_threshold_uplift,
+            backgroundColor: 'transparent',
+            tension: 0.1
+          },
+          {
+            label: labels.scp_baby_boost,
+            data: commitData.map(c => getValue(c, 'scp_baby_boost', year)),
+            borderColor: colors.scp_baby_boost,
+            backgroundColor: 'transparent',
+            tension: 0.1
+          },
+          {
+            label: labels.scp_inflation,
+            data: commitData.map(c => getValue(c, 'scp_inflation', year)),
+            borderColor: colors.scp_inflation,
+            backgroundColor: 'transparent',
+            tension: 0.1
+          }
+        ];
+      } else { // stacked
+        datasets = [
+          {
+            label: labels.income_tax_threshold_uplift,
+            data: commitData.map(c => {
+              const v = getValue(c, 'income_tax_threshold_uplift', year);
+              return v !== null && v < 200 ? v : null; // Filter out buggy data
+            }),
+            backgroundColor: colors.income_tax_threshold_uplift,
+            stack: 'stack1'
+          },
+          {
+            label: labels.scp_baby_boost,
+            data: commitData.map(c => {
+              const v = getValue(c, 'scp_baby_boost', year);
+              return v !== null && v < 100 ? v : null;
+            }),
+            backgroundColor: colors.scp_baby_boost,
+            stack: 'stack1'
+          },
+          {
+            label: labels.scp_inflation,
+            data: commitData.map(c => getValue(c, 'scp_inflation', year)),
+            backgroundColor: colors.scp_inflation,
+            stack: 'stack1'
+          }
+        ];
+      }
+
+      chart = new Chart(ctx, {
+        type: view === 'stacked' ? 'bar' : 'line',
+        data: {
+          labels: commitLabels,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: £${context.parsed.y?.toFixed(1)}m`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: view === 'stacked',
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            },
+            y: {
+              stacked: view === 'stacked',
+              title: {
+                display: true,
+                text: '£ millions'
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      updateTable(year);
+    }
+
+    function updateTable(year) {
+      const tbody = document.querySelector('#dataTable tbody');
+      tbody.innerHTML = '';
+
+      commitData.forEach((c, i) => {
+        const combined = getValue(c, 'combined', year);
+        const inflation = getValue(c, 'scp_inflation', year);
+        const baby = getValue(c, 'scp_baby_boost', year);
+        const tax = getValue(c, 'income_tax_threshold_uplift', year);
+
+        const prevCommit = i > 0 ? commitData[i-1] : null;
+
+        function formatChange(current, prev, reformId, year) {
+          if (current === null) return '-';
+          const formatted = `£${current.toFixed(1)}m`;
+          if (prev) {
+            const prevVal = getValue(prev, reformId, year);
+            if (prevVal !== null && prevVal !== current) {
+              const diff = current - prevVal;
+              const cls = diff > 0 ? 'change-positive' : 'change-negative';
+              const sign = diff > 0 ? '+' : '';
+              return `${formatted} <span class="${cls}">(${sign}${diff.toFixed(1)})</span>`;
+            }
+          }
+          return formatted;
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="commit-hash">${c.commit.slice(0,7)}</td>
+          <td>${c.date}</td>
+          <td>${c.message}</td>
+          <td class="value">${formatChange(combined, prevCommit, 'combined', year)}</td>
+          <td class="value">${formatChange(inflation, prevCommit, 'scp_inflation', year)}</td>
+          <td class="value">${formatChange(baby, prevCommit, 'scp_baby_boost', year)}</td>
+          <td class="value">${tax !== null && tax < 200 ? formatChange(tax, prevCommit, 'income_tax_threshold_uplift', year) : '<span style="color:#dc2626">bug</span>'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    document.getElementById('yearSelect').addEventListener('change', updateChart);
+    document.getElementById('viewSelect').addEventListener('change', updateChart);
+
+    updateChart();
+  </script>
+</body>
+</html>

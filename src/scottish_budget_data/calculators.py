@@ -9,10 +9,15 @@ from microdf import MicroSeries
 from policyengine_uk import Microsimulation
 
 from .reforms import (
+    apply_advanced_rate_freeze_reform,
+    apply_basic_rate_uplift_reform,
     apply_combined_reform,
+    apply_higher_rate_freeze_reform,
     apply_income_tax_threshold_reform,
+    apply_intermediate_rate_uplift_reform,
     apply_scp_baby_boost_reform,
     apply_scp_inflation_reform,
+    apply_top_rate_freeze_reform,
 )
 
 # Map reform IDs to their apply functions
@@ -20,6 +25,11 @@ REFORM_APPLY_FNS = {
     "scp_inflation": apply_scp_inflation_reform,
     "scp_baby_boost": apply_scp_baby_boost_reform,
     "income_tax_threshold_uplift": apply_income_tax_threshold_reform,
+    "income_tax_basic_uplift": apply_basic_rate_uplift_reform,
+    "income_tax_intermediate_uplift": apply_intermediate_rate_uplift_reform,
+    "higher_rate_freeze": apply_higher_rate_freeze_reform,
+    "advanced_rate_freeze": apply_advanced_rate_freeze_reform,
+    "top_rate_freeze": apply_top_rate_freeze_reform,
     "combined": apply_combined_reform,
 }
 
@@ -75,13 +85,17 @@ class BudgetaryImpactCalculator:
             baseline_income = baseline.calculate("household_net_income", year)
             reformed_income = reformed.calculate("household_net_income", year)
 
-            cost = (reformed_income[is_scotland] - baseline_income[is_scotland]).sum()
+            # Calculate impact: negative = cost to government, positive = revenue
+            # (matches OBR/SFC convention used in autumn budget dashboard)
+            household_change = (reformed_income[is_scotland] - baseline_income[is_scotland]).sum()
+            # Negate because household income gain = cost to government
+            impact = -household_change / 1e6
 
             results.append({
                 "reform_id": reform_id,
                 "reform_name": reform_name,
                 "year": year,
-                "value": cost / 1e6,
+                "value": impact,
             })
 
         return results
