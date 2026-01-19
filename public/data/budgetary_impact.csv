@@ -1,2 +1,6 @@
 reform_id,reform_name,year,value
-income_tax_threshold_uplift,Income tax threshold uplift,2028,49.92301396381695
+income_tax_threshold_uplift,Income tax threshold uplift,2026,71.97421634145371
+income_tax_threshold_uplift,Income tax threshold uplift,2027,74.4268877460586
+income_tax_threshold_uplift,Income tax threshold uplift,2028,76.79778433250135
+income_tax_threshold_uplift,Income tax threshold uplift,2029,79.1986148744148
+income_tax_threshold_uplift,Income tax threshold uplift,2030,81.77666031800568
