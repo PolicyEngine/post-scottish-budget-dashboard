@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional
 import pandas as pd
 import h5py
+from huggingface_hub import hf_hub_download
 
 from policyengine_uk import Microsimulation
 from policyengine_uk.data import UKSingleYearDataset
@@ -26,6 +27,20 @@ from .reforms import ReformDefinition, get_scottish_budget_reforms
 DEFAULT_OUTPUT_DIR = Path("public/data")
 DEFAULT_DATA_DIR = Path("data")
 DEFAULT_DATA_INPUTS_DIR = Path("data_inputs")
+
+# HuggingFace repo for weights and metadata
+HF_REPO = "policyengine/policyengine-uk-data"
+
+
+def get_local_authority_files() -> tuple[str, str]:
+    """Download local authority files from HuggingFace if needed.
+
+    Returns:
+        Tuple of (weights_path, csv_path) pointing to the downloaded files.
+    """
+    weights_path = hf_hub_download(HF_REPO, "local_authority_weights.h5")
+    csv_path = hf_hub_download(HF_REPO, "local_authorities_2021.csv")
+    return weights_path, csv_path
 
 
 def save_csv(df: pd.DataFrame, csv_path: Path) -> None:
@@ -71,25 +86,29 @@ def generate_all_data(
     metrics_calc = MetricsCalculator()
     local_authority_calc = LocalAuthorityCalculator()
 
-    # Load local authority data
-    weights_path = data_dir / "local_authority_weights.h5"
-    local_authorities_path = data_inputs_dir / "local_authorities_2021.csv"
+    # Load local authority data (download from HuggingFace if not local)
+    local_weights_path = data_dir / "local_authority_weights.h5"
+    local_csv_path = data_inputs_dir / "local_authorities_2021.csv"
 
-    weights = None
-    local_authority_df = None
+    if local_weights_path.exists() and local_csv_path.exists():
+        weights_path = str(local_weights_path)
+        csv_path = str(local_csv_path)
+        print("Using local authority files from local directory")
+    else:
+        print("Downloading local authority files from HuggingFace...")
+        weights_path, csv_path = get_local_authority_files()
 
-    if weights_path.exists() and local_authorities_path.exists():
-        with h5py.File(weights_path, "r") as f:
-            weights = f["2025"][...]
-        local_authority_df = pd.read_csv(local_authorities_path)
+    with h5py.File(weights_path, "r") as f:
+        weights = f["2025"][...]
+    local_authority_df = pd.read_csv(csv_path)
 
-        # Filter to Scottish local authorities if requested
-        if scotland_only:
-            scottish_mask = local_authority_df["code"].str.startswith("S")
-            scottish_indices = scottish_mask.values
-            weights = weights[scottish_indices, :]
-            local_authority_df = local_authority_df[scottish_mask].reset_index(drop=True)
-            print(f"Filtering to {len(local_authority_df)} Scottish local authorities")
+    # Filter to Scottish local authorities if requested
+    if scotland_only:
+        scottish_mask = local_authority_df["code"].str.startswith("S")
+        scottish_indices = scottish_mask.values
+        weights = weights[scottish_indices, :]
+        local_authority_df = local_authority_df[scottish_mask].reset_index(drop=True)
+        print(f"Filtering to {len(local_authority_df)} Scottish local authorities")
 
     # Aggregate results
     all_budgetary = []

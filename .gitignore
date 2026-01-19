@@ -28,3 +28,10 @@ __pycache__/
 venv/
 .vercel
 *.egg-info/
+
+# Large data files (downloaded from HuggingFace)
+data/local_authority_weights.h5
+data/parliamentary_constituency_weights.h5
+data_inputs/local_authorities_2021.csv
+data_inputs/constituencies_2024.csv
+*.h5
