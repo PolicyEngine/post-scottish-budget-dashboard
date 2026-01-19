@@ -5,7 +5,7 @@ import PovertyImpactTable from "./PovertyImpactTable";
 import LocalAreaSection from "./LocalAreaSection";
 import SFCComparisonTable from "./SFCComparisonTable";
 import "./Dashboard.css";
-import { POLICY_NAMES } from "../utils/policyConfig";
+import { POLICY_NAMES, ALL_POLICY_IDS } from "../utils/policyConfig";
 
 // Section definitions for navigation
 const SECTIONS = [
@@ -213,7 +213,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       const dataPoint = { year };
       let netImpact = 0;
 
-      selectedPolicies.forEach(policyId => {
+      ALL_POLICY_IDS.forEach(policyId => {
         const policyName = POLICY_NAMES[policyId];
         const row = rawBudgetaryData.find(
           r => r.reform_id === policyId && parseInt(r.year) === year
@@ -226,7 +226,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       dataPoint.netImpact = netImpact;
       return dataPoint;
     });
-  }, [isStacked, rawBudgetaryData, selectedPolicies]);
+  }, [isStacked, rawBudgetaryData]);
 
   // Transform distributional data for stacked decile chart
   const stackedDecileData = useMemo(() => {
@@ -371,7 +371,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       )}
 
       {/* SFC Comparison Table */}
-      <SFCComparisonTable selectedPolicies={selectedPolicies} />
+      <SFCComparisonTable />
 
       {/* Living Standards Section */}
       <h2 className="section-title" id="living-standards" ref={(el) => (sectionRefs.current["living-standards"] = el)}>Living standards</h2>
