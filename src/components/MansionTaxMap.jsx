@@ -446,31 +446,32 @@ export default function MansionTaxMap() {
             </div>
           </div>
 
-          {/* Tooltip */}
+          {/* Tooltip overlay */}
           {tooltipData && (
             <div
-              className="map-tooltip"
+              className="local-authority-tooltip"
               style={{
-                left: tooltipPosition.x,
-                top: tooltipPosition.y,
+                left: `${tooltipPosition.x}px`,
+                top: `${tooltipPosition.y}px`,
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="tooltip-header">{tooltipData.name}</div>
-              <div className="tooltip-council">{tooltipData.council}</div>
-              <div className="tooltip-metrics">
-                <div className="tooltip-row">
-                  <span>Share of revenue</span>
-                  <span className="tooltip-value-highlight">{tooltipData.pct.toFixed(2)}%</span>
-                </div>
-                <div className="tooltip-row">
-                  <span>Est. sales</span>
-                  <span>{tooltipData.num.toLocaleString()}</span>
-                </div>
-                <div className="tooltip-row">
-                  <span>Est. revenue</span>
-                  <span>£{(tooltipData.rev / 1000000).toFixed(2)}m</span>
-                </div>
+              <div
+                className="tooltip-close"
+                onClick={() => setTooltipData(null)}
+              >
+                ×
               </div>
+              <h4>{tooltipData.name}</h4>
+              <p className="tooltip-subtitle">{tooltipData.council}</p>
+              <p className="tooltip-value" style={{ color: "#2E86AB" }}>
+                {tooltipData.pct.toFixed(2)}%
+              </p>
+              <p className="tooltip-label">Share of revenue</p>
+              <p className="tooltip-value-secondary" style={{ color: "#374151" }}>
+                £{(tooltipData.rev / 1000000).toFixed(2)}m
+              </p>
+              <p className="tooltip-label">Est. revenue ({tooltipData.num} sales)</p>
             </div>
           )}
         </div>

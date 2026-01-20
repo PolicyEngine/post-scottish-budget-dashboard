@@ -1,14 +1,9 @@
 /* MansionTaxMap - extends ScotlandMap styles */
 @import "./ScotlandMap.css";
 
-/* Mansion tax specific overrides if needed */
-.mansion-tax-map .tooltip-council {
+/* Mansion tax specific overrides */
+.mansion-tax-map .tooltip-subtitle {
   font-size: 0.75rem;
   color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.mansion-tax-map .tooltip-value-highlight {
-  font-weight: 700;
-  color: #2E86AB;
+  margin: -4px 0 8px 0;
 }
