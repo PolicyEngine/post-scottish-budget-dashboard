@@ -223,6 +223,25 @@ def disable_scp_baby_boost(sim: Microsimulation) -> None:
             scp_reform.in_effect.update(period=period, value=False)
 
 
+def disable_scp_inflation(sim: Microsimulation) -> None:
+    """Disable SCP inflation to create counterfactual baseline.
+
+    Sets SCP rate to £27.15/week (the pre-inflation rate) so we can measure
+    the impact of the inflation adjustment (£27.15 → £28.20).
+    """
+    scp_amount = sim.tax_benefit_system.parameters.gov.social_security_scotland.scottish_child_payment.amount
+
+    for year in DEFAULT_YEARS:
+        period = f"{year}-01-01"
+        scp_amount.update(period=period, value=SCP_BASELINE_RATE)  # £27.15/week
+
+
+def disable_scp_combined(sim: Microsimulation) -> None:
+    """Disable both SCP inflation and baby boost for combined reform baseline."""
+    disable_scp_inflation(sim)
+    disable_scp_baby_boost(sim)
+
+
 def apply_scp_baby_boost_reform(sim: Microsimulation) -> None:
     """Apply SCP baby boost reform to a simulation.
 

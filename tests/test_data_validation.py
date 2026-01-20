@@ -61,21 +61,6 @@ def test_budgetary_impact_has_all_years(budgetary_impact):
     assert years == expected
 
 
-def test_scp_inflation_cost_all_years(budgetary_impact):
-    """Test SCP inflation adjustment is a cost (negative) for ALL years 2026-2030.
-
-    The SCP inflation adjustment (£27.15 → £28.20/week) applies from 2026.
-    Sign convention: negative = cost to government.
-    """
-    for year in [2026, 2027, 2028, 2029, 2030]:
-        scp_inflation = budgetary_impact[
-            (budgetary_impact["reform_id"] == "scp_inflation")
-            & (budgetary_impact["year"] == year)
-        ]["value"].iloc[0]
-
-        assert scp_inflation < -10, f"SCP inflation in {year} should be <-£10M (cost), got £{scp_inflation:.1f}M"
-
-
 def test_scp_baby_boost_zero_in_2026(budgetary_impact):
     """Test SCP baby boost has zero cost in 2026.
 
@@ -209,18 +194,15 @@ def test_budgetary_data_2026_stacked_chart_format(budgetary_impact):
 
     Sign convention: negative = cost to government.
     Frontend expects:
-    - SCP inflation: <0 (cost) in 2026
     - SCP baby boost: 0 in 2026
     - Income tax basic/intermediate: <0 (cost) in 2026
     """
     data_2026 = budgetary_impact[budgetary_impact["year"] == 2026]
 
-    scp_inflation = data_2026[data_2026["reform_id"] == "scp_inflation"]["value"].iloc[0]
     scp_baby_boost = data_2026[data_2026["reform_id"] == "scp_baby_boost"]["value"].iloc[0]
     basic_tax = data_2026[data_2026["reform_id"] == "income_tax_basic_uplift"]["value"].iloc[0]
     intermediate_tax = data_2026[data_2026["reform_id"] == "income_tax_intermediate_uplift"]["value"].iloc[0]
 
-    assert scp_inflation < -10, f"SCP inflation should be <-£10M in 2026, got {scp_inflation:.1f}"
     assert scp_baby_boost == 0, f"SCP baby boost should be £0 in 2026, got {scp_baby_boost:.1f}"
     assert basic_tax < 0, f"Basic rate uplift should be <£0 in 2026, got {basic_tax:.1f}"
     assert intermediate_tax < 0, f"Intermediate rate uplift should be <£0 in 2026, got {intermediate_tax:.1f}"

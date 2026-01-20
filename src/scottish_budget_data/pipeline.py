@@ -12,6 +12,7 @@ from policyengine_uk import Microsimulation
 from policyengine_uk.data import UKSingleYearDataset
 
 from .calculators import (
+    BASELINE_MODIFIERS,
     BudgetaryImpactCalculator,
     ConstituencyCalculator,
     DistributionalImpactCalculator,
@@ -107,9 +108,14 @@ def generate_all_data(
     for reform in reforms:
         print(f"\nProcessing: {reform.name}")
 
-        # Create simulations and apply reform
+        # Create simulations and apply baseline modifier + reform
         baseline = Microsimulation(dataset=dataset_obj)
         reformed = Microsimulation(dataset=dataset_obj)
+
+        # Apply baseline modifier if needed (for counterfactual baselines)
+        if reform.id in BASELINE_MODIFIERS:
+            BASELINE_MODIFIERS[reform.id](baseline)
+
         reform.apply_fn(reformed)
 
         # Calculate budgetary impact

@@ -18,6 +18,8 @@ from .reforms import (
     apply_scp_inflation_reform,
     apply_top_rate_freeze_reform,
     disable_scp_baby_boost,
+    disable_scp_combined,
+    disable_scp_inflation,
 )
 
 # Map reform IDs to their apply functions
@@ -35,8 +37,9 @@ REFORM_APPLY_FNS = {
 # Map reform IDs to baseline modifiers (for counterfactual baselines)
 # These are applied to the baseline to create a proper comparison
 BASELINE_MODIFIERS = {
+    "scp_inflation": disable_scp_inflation,  # Set SCP to £27.15 to measure inflation impact
     "scp_baby_boost": disable_scp_baby_boost,  # Baby boost is in PE baseline, disable to measure impact
-    "combined": disable_scp_baby_boost,  # Combined includes baby boost
+    "combined": disable_scp_combined,  # Combined includes both SCP inflation and baby boost
 }
 
 
