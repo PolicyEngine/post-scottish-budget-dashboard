@@ -139,10 +139,10 @@ export default function MansionTaxMap() {
       .clamp(true);
 
     const colorScale = (pct) => {
-      if (pct === 0 || pct < 0.01) return "#E0F2F1"; // Light green for zero
+      if (pct === 0 || pct < 0.01) return "#A7F3D0"; // Light green for zero
       const t = logScale(Math.max(pct, minPct));
-      // Light green to dark green (matching local authority map)
-      return d3.interpolate("#E0F2F1", "#0D9488")(t);
+      // Light green to dark green
+      return d3.interpolate("#A7F3D0", "#065F46")(t);
     };
 
     // Draw paths
@@ -154,7 +154,7 @@ export default function MansionTaxMap() {
       .attr("fill", d => {
         const name = d.properties.SPC21NM;
         const data = impactData[name];
-        return data ? colorScale(data.pct) : "#E0F2F1"; // Light green for missing data
+        return data ? colorScale(data.pct) : "#A7F3D0"; // Light green for missing data
       })
       .attr("stroke", "#fff")
       .attr("stroke-width", 0.3)
@@ -386,7 +386,7 @@ export default function MansionTaxMap() {
             <div
               className="legend-gradient-horizontal"
               style={{
-                background: "linear-gradient(to right, #E0F2F1, #0D9488)"
+                background: "linear-gradient(to right, #A7F3D0, #065F46)"
               }}
             />
             <div className="legend-labels-horizontal">
