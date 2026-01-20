@@ -14,13 +14,26 @@ from policyengine_uk import Microsimulation
 # Source: Scottish Income Tax 2026-27 Technical Factsheet, Table 1
 # https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
 #
-# Total taxable income thresholds:
-#   Basic rate (20%): £16,538 - £29,526
-#   Intermediate rate (21%): £29,527 - £43,662
+# Total taxable income thresholds (CPI uprated from 2026-27):
+#   Basic rate (20%): £16,538 in 2026-27, then CPI uprated
+#   Intermediate rate (21%): £29,527 in 2026-27, then CPI uprated
 #
 # PolicyEngine stores thresholds as amounts ABOVE personal allowance (£12,570)
-INCOME_TAX_BASIC_THRESHOLD = 3_967  # £16,537 total - £12,570 PA
-INCOME_TAX_INTERMEDIATE_THRESHOLD = 16_956  # £29,526 total - £12,570 PA
+# Year-specific values from dashboard tables (CPI ~2% annually)
+INCOME_TAX_BASIC_THRESHOLDS = {
+    2026: 3_968,   # £16,538 total - £12,570 PA
+    2027: 4_302,   # £16,872 total (CPI)
+    2028: 4_646,   # £17,216 total (CPI)
+    2029: 4_997,   # £17,567 total (CPI)
+    2030: 5_348,   # £17,918 total (CPI)
+}
+INCOME_TAX_INTERMEDIATE_THRESHOLDS = {
+    2026: 16_957,  # £29,527 total - £12,570 PA
+    2027: 17_553,  # £30,123 total (CPI)
+    2028: 18_168,  # £30,738 total (CPI)
+    2029: 18_795,  # £31,365 total (CPI)
+    2030: 19_422,  # £31,992 total (CPI)
+}
 
 # Frozen threshold values for higher/advanced/top rates (2027-28 onwards)
 # Source: Scottish Income Tax 2026-27 Technical Factsheet
@@ -74,9 +87,9 @@ def apply_scp_inflation_reform(sim: Microsimulation) -> None:
 def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
     """Apply income tax threshold uplift to a simulation.
 
-    Sets Scottish income tax thresholds to Budget 2026-27 values:
-    - Basic rate (20%): starts at £16,537 (£3,967 above PA)
-    - Intermediate rate (21%): starts at £29,526 (£16,956 above PA)
+    Sets Scottish income tax thresholds to Budget 2026-27 values with CPI uprating:
+    - Basic rate (20%): starts at £16,538 in 2026-27, then CPI uprated
+    - Intermediate rate (21%): starts at £29,527 in 2026-27, then CPI uprated
 
     Source: Scottish Income Tax 2026-27 Technical Factsheet, Table 1
     https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
@@ -86,18 +99,18 @@ def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
         scotland_rates.brackets[1].threshold.update(
-            period=period, value=INCOME_TAX_BASIC_THRESHOLD
+            period=period, value=INCOME_TAX_BASIC_THRESHOLDS[year]
         )
         scotland_rates.brackets[2].threshold.update(
-            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLD
+            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLDS[year]
         )
 
 
 def apply_basic_rate_uplift_reform(sim: Microsimulation) -> None:
     """Apply basic rate threshold uplift only.
 
-    Increases Scottish basic rate (20%) threshold by 7.4% from 2026 onwards.
-    Basic rate starts at £16,537 (£3,967 above PA).
+    Increases Scottish basic rate (20%) threshold by 7.4% in 2026, then CPI uprated.
+    Basic rate starts at £16,538 (£3,968 above PA) in 2026-27.
 
     Source: SFC costings breakdown - "Basic rate threshold +7.4%"
     """
@@ -106,15 +119,15 @@ def apply_basic_rate_uplift_reform(sim: Microsimulation) -> None:
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
         scotland_rates.brackets[1].threshold.update(
-            period=period, value=INCOME_TAX_BASIC_THRESHOLD
+            period=period, value=INCOME_TAX_BASIC_THRESHOLDS[year]
         )
 
 
 def apply_intermediate_rate_uplift_reform(sim: Microsimulation) -> None:
     """Apply intermediate rate threshold uplift only.
 
-    Increases Scottish intermediate rate (21%) threshold by 7.4% from 2026 onwards.
-    Intermediate rate starts at £29,526 (£16,956 above PA).
+    Increases Scottish intermediate rate (21%) threshold by 7.4% in 2026, then CPI uprated.
+    Intermediate rate starts at £29,527 (£16,957 above PA) in 2026-27.
 
     Source: SFC costings breakdown - "Intermediate rate threshold +7.4%"
     """
@@ -123,7 +136,7 @@ def apply_intermediate_rate_uplift_reform(sim: Microsimulation) -> None:
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
         scotland_rates.brackets[2].threshold.update(
-            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLD
+            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLDS[year]
         )
 
 
@@ -315,46 +328,46 @@ def get_scottish_budget_reforms() -> list[ReformDefinition]:
             id="income_tax_threshold_uplift",
             name="Income tax threshold uplift (7.4%)",
             description=(
-                "Scottish basic and intermediate rate thresholds increased by 7.4%. "
-                "Basic rate starts at £16,537, intermediate at £29,527."
+                "Scottish basic and intermediate rate thresholds increased by 7.4% in 2026-27, "
+                "then CPI uprated. Basic rate starts at £16,538, intermediate at £29,527."
             ),
             apply_fn=apply_income_tax_threshold_reform,
             explanation=(
-                "The Scottish basic and intermediate income tax rate thresholds are raised by 7.4%. "
-                "The basic rate (20%) threshold rises from £15,398 to £16,537, and the intermediate "
-                "rate (21%) threshold rises from £27,492 to £29,527. The higher rate (42%) remains "
-                "unchanged at £43,663. This means people pay the lower 19% starter rate on more of "
-                "their income."
+                "The Scottish basic and intermediate income tax rate thresholds are raised by 7.4% "
+                "in 2026-27, then CPI uprated annually. The basic rate (20%) threshold rises from "
+                "£15,398 to £16,538, and the intermediate rate (21%) threshold rises from £27,492 "
+                "to £29,527. The higher rate (42%) remains unchanged at £43,662. This means people "
+                "pay the lower 19% starter rate on more of their income."
             ),
         ),
         ReformDefinition(
             id="income_tax_basic_uplift",
             name="Basic rate threshold +7.4%",
             description=(
-                "Scottish basic rate (20%) threshold increased by 7.4% from 2026. "
-                "Basic rate starts at £16,537 (£3,967 above personal allowance)."
+                "Scottish basic rate (20%) threshold increased by 7.4% in 2026-27, then CPI uprated. "
+                "Basic rate starts at £16,538 (£3,968 above personal allowance)."
             ),
             apply_fn=apply_basic_rate_uplift_reform,
             explanation=(
-                "The Scottish basic rate (20%) threshold is raised by 7.4% from 2026 onwards. "
-                "The threshold rises from £15,398 to £16,537 total taxable income (£3,967 above "
-                "the personal allowance of £12,570). This means people pay the lower 19% starter "
-                "rate on more of their income before moving to the 20% basic rate."
+                "The Scottish basic rate (20%) threshold is raised by 7.4% in 2026-27, then CPI "
+                "uprated annually. The threshold rises from £15,398 to £16,538 total taxable income "
+                "(£3,968 above the personal allowance of £12,570). This means people pay the lower "
+                "19% starter rate on more of their income before moving to the 20% basic rate."
             ),
         ),
         ReformDefinition(
             id="income_tax_intermediate_uplift",
             name="Intermediate rate threshold +7.4%",
             description=(
-                "Scottish intermediate rate (21%) threshold increased by 7.4% from 2026. "
-                "Intermediate rate starts at £29,527 (£16,956 above personal allowance)."
+                "Scottish intermediate rate (21%) threshold increased by 7.4% in 2026-27, then CPI uprated. "
+                "Intermediate rate starts at £29,527 (£16,957 above personal allowance)."
             ),
             apply_fn=apply_intermediate_rate_uplift_reform,
             explanation=(
-                "The Scottish intermediate rate (21%) threshold is raised by 7.4% from 2026 onwards. "
-                "The threshold rises from £27,492 to £29,527 total taxable income (£16,956 above "
-                "the personal allowance). This means people pay the lower 20% basic rate on more of "
-                "their income before moving to the 21% intermediate rate."
+                "The Scottish intermediate rate (21%) threshold is raised by 7.4% in 2026-27, then "
+                "CPI uprated annually. The threshold rises from £27,492 to £29,527 total taxable "
+                "income (£16,957 above the personal allowance). This means people pay the lower 20% "
+                "basic rate on more of their income before moving to the 21% intermediate rate."
             ),
         ),
         ReformDefinition(
