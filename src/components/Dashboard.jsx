@@ -4,6 +4,7 @@ import BudgetBarChart from "./BudgetBarChart";
 import PovertyImpactTable from "./PovertyImpactTable";
 import LocalAreaSection from "./LocalAreaSection";
 import SFCComparisonTable from "./SFCComparisonTable";
+import MansionTaxMap from "./MansionTaxMap";
 import "./Dashboard.css";
 import { POLICY_NAMES, ALL_POLICY_IDS } from "../utils/policyConfig";
 
@@ -645,30 +646,8 @@ export default function Dashboard({ selectedPolicies = [] }) {
         <p className="chart-description" style={{ marginTop: "12px" }}>
           The Scottish Budget 2026-27 introduces new council tax bands for properties valued at £1 million or more,
           effective from April 2028. Band I applies to properties worth £1m-£2m, and Band J to properties over £2m.
-          This map shows the estimated revenue impact by Scottish Parliament constituency, based on{" "}
-          <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer">
-            PolicyEngine's mansion tax analysis
-          </a>.
         </p>
-        <div className="mansion-tax-map-container" style={{
-          width: "100%",
-          maxWidth: "900px",
-          margin: "16px auto",
-          border: "1px solid #e5e7eb",
-          borderRadius: "8px",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-        }}>
-          <iframe
-            src="https://policyengine.github.io/scotland-mansion-tax/scottish_mansion_tax_map.html"
-            title="Scottish Mansion Tax Impact Map"
-            style={{
-              width: "100%",
-              height: "700px",
-              border: "none",
-            }}
-          />
-        </div>
+        <MansionTaxMap />
         <p className="chart-note" style={{ textAlign: "center", marginTop: "8px" }}>
           Estimated total revenue: £18.5m/year. Edinburgh constituencies account for ~47% of total revenue.
           See the <a href="https://github.com/PolicyEngine/scotland-mansion-tax#readme" target="_blank" rel="noopener noreferrer">full methodology</a>.
