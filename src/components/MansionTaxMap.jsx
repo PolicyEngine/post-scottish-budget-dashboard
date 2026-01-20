@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import * as d3 from "d3";
+import { CHART_LOGO } from "../utils/chartLogo.jsx";
+import { exportMapAsSvg } from "../utils/exportMapAsSvg";
 import "./MansionTaxMap.css";
 
 /**
@@ -8,13 +10,13 @@ import "./MansionTaxMap.css";
  */
 export default function MansionTaxMap() {
   const svgRef = useRef(null);
-  const tooltipRef = useRef(null);
   const [geoData, setGeoData] = useState(null);
   const [impactData, setImpactData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const [maxPct, setMaxPct] = useState(12);
+  const [tooltipData, setTooltipData] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [loading, setLoading] = useState(true);
 
   // Load data
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function MansionTaxMap() {
               row[h.trim()] = values[idx]?.trim();
             });
             data[row.constituency] = {
+              name: row.constituency,
               pct: parseFloat(row.share_pct) || 0,
               num: parseInt(row.estimated_sales) || 0,
               rev: parseInt(row.allocated_revenue) || 0,
@@ -51,15 +54,25 @@ export default function MansionTaxMap() {
           }
 
           setImpactData(data);
-          const max = Math.max(...Object.values(data).map(d => d.pct));
-          setMaxPct(max);
         }
       } catch (err) {
         console.error("Error loading mansion tax data:", err);
+      } finally {
+        setLoading(false);
       }
     }
     loadData();
   }, []);
+
+  // Compute color scale extent
+  const colorExtent = useMemo(() => {
+    if (!impactData) return { min: 0, max: 12 };
+    const values = Object.values(impactData).map(d => d.pct);
+    return {
+      min: 0,
+      max: Math.ceil(Math.max(...values) * 10) / 10,
+    };
+  }, [impactData]);
 
   // Render D3 map
   useEffect(() => {
@@ -68,7 +81,7 @@ export default function MansionTaxMap() {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 600;
+    const width = 700;
     const height = 900;
     const g = svg.append("g");
 
@@ -115,15 +128,11 @@ export default function MansionTaxMap() {
       });
 
     svg.call(zoom);
-
-    // Store zoom for external access
-    svgRef.current._zoom = zoom;
-    svgRef.current._svg = svg;
-    svgRef.current._g = g;
-    svgRef.current._pathGenerator = pathGenerator;
+    window.mansionTaxMapZoomBehavior = { svg, zoom, pathGenerator };
 
     // Color scale (log scale for better variation)
     const minPct = 0.01;
+    const maxPct = colorExtent.max;
     const logScale = d3.scaleLog()
       .domain([minPct, maxPct])
       .range([0, 1])
@@ -150,222 +159,321 @@ export default function MansionTaxMap() {
         const data = impactData[name];
         return data ? colorScale(data.pct) : "#e5e5e5";
       })
-      .attr("stroke", "white")
-      .attr("stroke-width", 0.5)
-      .attr("opacity", 0.9)
-      .on("mouseenter", function(event, d) {
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 0.3)
+      .on("click", function(event, d) {
+        event.stopPropagation();
         const name = d.properties.SPC21NM;
-        const data = impactData[name] || { pct: 0, num: 0, rev: 0, council: "Unknown" };
-        showTooltip(name, data, event);
-        d3.select(this).attr("opacity", 1).attr("stroke-width", 2);
+        const data = impactData[name] || { name, pct: 0, num: 0, rev: 0, council: "Unknown" };
+
+        // Reset all strokes
+        svg.selectAll(".constituency-path")
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 0.3);
+
+        // Highlight selected
+        d3.select(this).attr("stroke", "#1D4044").attr("stroke-width", 1.5);
+
+        // Show tooltip
+        const bounds = pathGenerator.bounds(d);
+        const centerX = (bounds[0][0] + bounds[1][0]) / 2;
+        const centerY = (bounds[0][1] + bounds[1][1]) / 2;
+        setTooltipData(data);
+        setTooltipPosition({ x: centerX, y: centerY });
+
+        // Zoom to constituency
+        const dx = bounds[1][0] - bounds[0][0];
+        const dy = bounds[1][1] - bounds[0][1];
+        const scale = Math.min(4, 0.9 / Math.max(dx / width, dy / height));
+        const translate = [width / 2 - scale * centerX, height / 2 - scale * centerY];
+
+        svg.transition().duration(750).call(
+          zoom.transform,
+          d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+        );
       })
-      .on("mousemove", function(event, d) {
-        const name = d.properties.SPC21NM;
-        const data = impactData[name] || { pct: 0, num: 0, rev: 0, council: "Unknown" };
-        showTooltip(name, data, event);
+      .on("mouseover", function() {
+        const currentStrokeWidth = d3.select(this).attr("stroke-width");
+        if (currentStrokeWidth === "0.3") {
+          d3.select(this).attr("stroke", "#666").attr("stroke-width", 0.8);
+        }
       })
-      .on("mouseleave", function() {
-        d3.select(this).attr("opacity", 0.9).attr("stroke-width", 0.5);
-        hideTooltip();
+      .on("mouseout", function() {
+        const currentStrokeWidth = d3.select(this).attr("stroke-width");
+        if (currentStrokeWidth !== "1.5") {
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 0.3);
+        }
       });
 
-    function showTooltip(name, data, event) {
-      const tooltip = tooltipRef.current;
-      if (!tooltip) return;
+    // Add PolicyEngine logo
+    svg
+      .append("image")
+      .attr("href", CHART_LOGO.href)
+      .attr("width", CHART_LOGO.width)
+      .attr("height", CHART_LOGO.height)
+      .attr("x", width - CHART_LOGO.width - CHART_LOGO.padding)
+      .attr("y", height - CHART_LOGO.height - CHART_LOGO.padding);
 
-      tooltip.innerHTML = `
-        <h4>${name}</h4>
-        <div class="tooltip-council">${data.council}</div>
-        <div class="tooltip-value">${data.pct.toFixed(2)}%</div>
-        <div class="tooltip-row">
-          <span>Est. sales</span>
-          <span>${data.num.toLocaleString()}</span>
-        </div>
-        <div class="tooltip-row">
-          <span>Est. revenue</span>
-          <span>£${(data.rev / 1000000).toFixed(2)}m</span>
-        </div>
-      `;
-      tooltip.style.display = "block";
-
-      const rect = svgRef.current.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      tooltip.style.left = x + "px";
-      tooltip.style.top = y + "px";
-    }
-
-    function hideTooltip() {
-      const tooltip = tooltipRef.current;
-      if (tooltip) {
-        tooltip.style.display = "none";
-      }
-    }
-
-  }, [geoData, impactData, maxPct]);
+  }, [geoData, impactData, colorExtent]);
 
   // Handle search
   useEffect(() => {
-    if (!impactData) return;
-
-    if (searchQuery.length < 2) {
+    if (!impactData || !searchQuery.trim()) {
       setSearchResults([]);
-      setShowResults(false);
       return;
     }
 
-    const matches = Object.keys(impactData)
-      .filter(name => name.toLowerCase().includes(searchQuery.toLowerCase()))
-      .slice(0, 10);
+    const query = searchQuery.toLowerCase();
+    const results = Object.values(impactData)
+      .filter(d => d.name.toLowerCase().includes(query))
+      .slice(0, 5);
 
-    setSearchResults(matches);
-    setShowResults(matches.length > 0);
+    setSearchResults(results);
   }, [searchQuery, impactData]);
 
-  const handleSelectConstituency = (name) => {
-    setSearchQuery(name);
-    setShowResults(false);
-
-    if (!svgRef.current || !geoData || !impactData) return;
-
-    const { _zoom: zoom, _svg: svg, _g: g, _pathGenerator: pathGenerator } = svgRef.current;
-    if (!zoom || !svg || !g) return;
-
-    // Highlight selected
-    g.selectAll(".constituency-path").attr("opacity", 0.9).attr("stroke-width", 0.5);
-    g.selectAll(".constituency-path")
-      .filter(d => d.properties.SPC21NM === name)
-      .attr("opacity", 1).attr("stroke-width", 2);
-
-    // Show tooltip
-    const data = impactData[name] || { pct: 0, num: 0, rev: 0, council: "Unknown" };
-    const tooltip = tooltipRef.current;
-    if (tooltip) {
-      tooltip.innerHTML = `
-        <h4>${name}</h4>
-        <div class="tooltip-council">${data.council}</div>
-        <div class="tooltip-value">${data.pct.toFixed(2)}%</div>
-        <div class="tooltip-row">
-          <span>Est. sales</span>
-          <span>${data.num.toLocaleString()}</span>
-        </div>
-        <div class="tooltip-row">
-          <span>Est. revenue</span>
-          <span>£${(data.rev / 1000000).toFixed(2)}m</span>
-        </div>
-      `;
-      tooltip.style.display = "block";
-      tooltip.style.left = "50%";
-      tooltip.style.top = "40%";
+  // Zoom controls
+  const handleZoomIn = () => {
+    if (window.mansionTaxMapZoomBehavior) {
+      const { svg, zoom } = window.mansionTaxMapZoomBehavior;
+      svg.transition().duration(300).call(zoom.scaleBy, 1.5);
     }
+  };
 
-    // Zoom to constituency
-    const feature = geoData.features.find(f => f.properties.SPC21NM === name);
-    if (feature && pathGenerator) {
-      const bounds = pathGenerator.bounds(feature);
-      const dx = bounds[1][0] - bounds[0][0];
-      const dy = bounds[1][1] - bounds[0][1];
-      const x = (bounds[0][0] + bounds[1][0]) / 2;
-      const y = (bounds[0][1] + bounds[1][1]) / 2;
-      const scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / 600, dy / 900)));
-      svg.transition().duration(750).call(
+  const handleZoomOut = () => {
+    if (window.mansionTaxMapZoomBehavior) {
+      const { svg, zoom } = window.mansionTaxMapZoomBehavior;
+      svg.transition().duration(300).call(zoom.scaleBy, 0.67);
+    }
+  };
+
+  const handleResetZoom = () => {
+    if (window.mansionTaxMapZoomBehavior) {
+      const { svg, zoom } = window.mansionTaxMapZoomBehavior;
+      svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+    }
+    setTooltipData(null);
+    if (svgRef.current) {
+      const svg = d3.select(svgRef.current);
+      svg.selectAll(".constituency-path")
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.3);
+    }
+  };
+
+  const selectConstituency = (data) => {
+    setSearchQuery("");
+    setSearchResults([]);
+
+    if (!geoData || !svgRef.current) return;
+
+    const svg = d3.select(svgRef.current);
+    svg.selectAll(".constituency-path")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 0.3);
+
+    const selectedPath = svg.selectAll(".constituency-path")
+      .filter(d => d.properties.SPC21NM === data.name);
+
+    selectedPath.attr("stroke", "#1D4044").attr("stroke-width", 1.5);
+
+    const pathNode = selectedPath.node();
+    if (!pathNode) return;
+
+    const bbox = pathNode.getBBox();
+    const centerX = bbox.x + bbox.width / 2;
+    const centerY = bbox.y + bbox.height / 2;
+
+    setTooltipData(data);
+    setTooltipPosition({ x: centerX, y: centerY });
+
+    const scale = Math.min(4, 0.9 / Math.max(bbox.width / 700, bbox.height / 900));
+    const translate = [700 / 2 - scale * centerX, 900 / 2 - scale * centerY];
+
+    if (window.mansionTaxMapZoomBehavior) {
+      const { svg: svgZoom, zoom } = window.mansionTaxMapZoomBehavior;
+      svgZoom.transition().duration(750).call(
         zoom.transform,
-        d3.zoomIdentity.translate(300, 450).scale(scale).translate(-x, -y)
+        d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
       );
     }
   };
 
-  const handleZoom = (action) => {
+  const handleExportSvg = async () => {
     if (!svgRef.current) return;
-    const { _zoom: zoom, _svg: svg } = svgRef.current;
-    if (!zoom || !svg) return;
 
-    if (action === "in") {
-      svg.transition().call(zoom.scaleBy, 1.5);
-    } else if (action === "out") {
-      svg.transition().call(zoom.scaleBy, 0.67);
-    } else {
-      svg.transition().call(zoom.transform, d3.zoomIdentity);
-    }
+    await exportMapAsSvg(svgRef.current, "mansion-tax-map", {
+      title: "Scottish mansion tax by parliament constituency",
+      description: "Share of estimated annual revenue from council tax reform for properties valued at £1m+. Darker colors indicate higher revenue share.",
+      logo: CHART_LOGO,
+      tooltipData,
+    });
   };
 
+  if (loading) {
+    return <div className="scotland-map-loading">Loading map...</div>;
+  }
+
   if (!geoData || !impactData) {
-    return (
-      <div className="mansion-tax-map loading">
-        <p>Loading mansion tax map...</p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="mansion-tax-map">
+    <div className="scotland-map-wrapper mansion-tax-map">
+      {/* Header section */}
       <div className="map-header">
-        <h3>Scottish mansion tax by parliament constituency</h3>
-        <p>Share of estimated annual revenue from council tax reform for properties valued at £1m+</p>
+        <div className="chart-header">
+          <div>
+            <h3 className="chart-title">Mansion tax by parliament constituency</h3>
+            <p className="chart-description">
+              Share of estimated annual revenue (£18.5m) from council tax reform for properties valued at £1m+.
+              Darker colors indicate higher revenue share.
+            </p>
+          </div>
+          <button
+            className="export-button"
+            onClick={handleExportSvg}
+            title="Download as SVG"
+            aria-label="Download map as SVG"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </button>
+        </div>
       </div>
 
+      {/* Search and legend */}
       <div className="map-top-bar">
         <div className="map-search-section">
-          <label>Search constituency</label>
           <div className="search-container">
             <input
               type="text"
-              className="constituency-search"
-              placeholder="Type to search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchResults.length > 0 && setShowResults(true)}
+              placeholder="Search constituency..."
+              className="local-authority-search"
             />
-            {showResults && (
+            {searchResults.length > 0 && (
               <div className="search-results">
-                {searchResults.map(name => {
-                  const data = impactData[name] || { pct: 0, num: 0 };
-                  return (
-                    <button
-                      key={name}
-                      className="search-result-item"
-                      onClick={() => handleSelectConstituency(name)}
-                    >
-                      <div className="result-name">{name}</div>
-                      <div className="result-value">
-                        {data.num.toLocaleString()} sales | {data.pct.toFixed(2)}%
-                      </div>
-                    </button>
-                  );
-                })}
+                {searchResults.map((result) => (
+                  <button
+                    key={result.name}
+                    onClick={() => selectConstituency(result)}
+                    className="search-result-item"
+                  >
+                    <div className="result-name">{result.name}</div>
+                    <div className="result-value">
+                      {result.num} sales | {result.pct.toFixed(2)}%
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
           </div>
         </div>
 
-        <div className="map-legend">
-          <div className="legend-gradient"></div>
-          <div className="legend-labels">
-            <span>0%</span>
-            <span>{maxPct.toFixed(1)}%</span>
+        <div className="map-legend-horizontal">
+          <div className="legend-horizontal-content">
+            <div
+              className="legend-gradient-horizontal"
+              style={{
+                background: "linear-gradient(to right, #E8F4F8, #2E86AB, #1A535C)"
+              }}
+            />
+            <div className="legend-labels-horizontal">
+              <span>0%</span>
+              <span>{colorExtent.max.toFixed(1)}%</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="map-canvas">
-        <svg
-          ref={svgRef}
-          viewBox="0 0 600 900"
-          preserveAspectRatio="xMidYMid meet"
-        />
-        <div className="map-controls">
-          <button className="zoom-btn" onClick={() => handleZoom("in")} title="Zoom in">+</button>
-          <button className="zoom-btn" onClick={() => handleZoom("out")} title="Zoom out">-</button>
-          <button className="zoom-btn" onClick={() => handleZoom("reset")} title="Reset">↺</button>
-        </div>
-        <div className="tooltip" ref={tooltipRef}></div>
-      </div>
+      {/* Map */}
+      <div className="map-content">
+        <div className="map-canvas">
+          <svg
+            ref={svgRef}
+            width="700"
+            height="900"
+            viewBox="0 0 700 900"
+            preserveAspectRatio="xMidYMid meet"
+            onClick={() => {
+              setTooltipData(null);
+              if (svgRef.current) {
+                const svg = d3.select(svgRef.current);
+                svg.selectAll(".constituency-path")
+                  .attr("stroke", "#fff")
+                  .attr("stroke-width", 0.3);
+              }
+            }}
+          />
 
-      <div className="map-source">
-        Source: Analysis based on Scottish Government Budget 2026-27 |{" "}
-        <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer">
-          PolicyEngine
-        </a>
+          {/* Map controls */}
+          <div className="map-controls-container" onClick={(e) => e.stopPropagation()}>
+            <div className="zoom-controls">
+              <button className="zoom-control-btn" onClick={handleZoomIn} title="Zoom in">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="2" />
+                  <path d="M10 7V13M7 10H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <path d="M15 15L20 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+              <button className="zoom-control-btn" onClick={handleZoomOut} title="Zoom out">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="2" />
+                  <path d="M7 10H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <path d="M15 15L20 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+              <button className="zoom-control-btn" onClick={handleResetZoom} title="Reset zoom">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M3 3v5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Tooltip */}
+          {tooltipData && (
+            <div
+              className="map-tooltip"
+              style={{
+                left: tooltipPosition.x,
+                top: tooltipPosition.y,
+              }}
+            >
+              <div className="tooltip-header">{tooltipData.name}</div>
+              <div className="tooltip-council">{tooltipData.council}</div>
+              <div className="tooltip-metrics">
+                <div className="tooltip-row">
+                  <span>Share of revenue</span>
+                  <span className="tooltip-value-highlight">{tooltipData.pct.toFixed(2)}%</span>
+                </div>
+                <div className="tooltip-row">
+                  <span>Est. sales</span>
+                  <span>{tooltipData.num.toLocaleString()}</span>
+                </div>
+                <div className="tooltip-row">
+                  <span>Est. revenue</span>
+                  <span>£{(tooltipData.rev / 1000000).toFixed(2)}m</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
