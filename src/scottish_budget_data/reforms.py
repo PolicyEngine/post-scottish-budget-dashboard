@@ -10,30 +10,14 @@ from typing import Callable
 from policyengine_uk import Microsimulation
 
 
-# Scottish Budget 2026-27 income tax thresholds (absolute values)
+# Scottish Budget 2026-27 income tax thresholds (base values for 2026-27)
 # Source: Scottish Income Tax 2026-27 Technical Factsheet, Table 1
 # https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
 #
-# Total taxable income thresholds (CPI uprated from 2026-27):
-#   Basic rate (20%): £16,538 in 2026-27, then CPI uprated
-#   Intermediate rate (21%): £29,527 in 2026-27, then CPI uprated
-#
 # PolicyEngine stores thresholds as amounts ABOVE personal allowance (£12,570)
-# Year-specific values from dashboard tables (CPI ~2% annually)
-INCOME_TAX_BASIC_THRESHOLDS = {
-    2026: 3_968,   # £16,538 total - £12,570 PA
-    2027: 4_302,   # £16,872 total (CPI)
-    2028: 4_646,   # £17,216 total (CPI)
-    2029: 4_997,   # £17,567 total (CPI)
-    2030: 5_348,   # £17,918 total (CPI)
-}
-INCOME_TAX_INTERMEDIATE_THRESHOLDS = {
-    2026: 16_957,  # £29,527 total - £12,570 PA
-    2027: 17_553,  # £30,123 total (CPI)
-    2028: 18_168,  # £30,738 total (CPI)
-    2029: 18_795,  # £31,365 total (CPI)
-    2030: 19_422,  # £31,992 total (CPI)
-}
+# These base values are CPI uprated dynamically using PE UK's CPI index
+INCOME_TAX_BASIC_THRESHOLD_2026 = 3_968   # £16,538 total - £12,570 PA
+INCOME_TAX_INTERMEDIATE_THRESHOLD_2026 = 16_957  # £29,527 total - £12,570 PA
 
 # Frozen threshold values for higher/advanced/top rates (2027-28 onwards)
 # Source: Scottish Income Tax 2026-27 Technical Factsheet
@@ -58,6 +42,40 @@ SCP_PREMIUM_UNDER_ONE_AMOUNT = 40  # £/week total for under-1s
 
 # Default years for microsim analysis
 DEFAULT_YEARS = [2026, 2027, 2028, 2029, 2030]
+
+
+# =============================================================================
+# Helper Functions
+# =============================================================================
+
+
+def get_cpi_uprated_value(sim: Microsimulation, base_value: float, base_year: int, target_year: int) -> float:
+    """Calculate CPI-uprated value using PE UK's CPI index.
+
+    Args:
+        sim: Microsimulation instance to read CPI from
+        base_value: The value in the base year
+        base_year: The year of the base value
+        target_year: The year to uprate to
+
+    Returns:
+        The CPI-uprated value for the target year
+    """
+    if target_year <= base_year:
+        return base_value
+
+    cpi = sim.tax_benefit_system.parameters.gov.economic_assumptions.indices.obr.consumer_price_index
+
+    # Get CPI index values for base and target years
+    base_period = f"{base_year}-01-01"
+    target_period = f"{target_year}-01-01"
+
+    cpi_base = cpi(base_period)
+    cpi_target = cpi(target_period)
+
+    # Calculate uprated value
+    uprating_factor = cpi_target / cpi_base
+    return round(base_value * uprating_factor)
 
 
 # =============================================================================
@@ -91,6 +109,8 @@ def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
     - Basic rate (20%): starts at £16,538 in 2026-27, then CPI uprated
     - Intermediate rate (21%): starts at £29,527 in 2026-27, then CPI uprated
 
+    Uses PE UK's CPI index for consistent uprating with baseline.
+
     Source: Scottish Income Tax 2026-27 Technical Factsheet, Table 1
     https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/
     """
@@ -98,11 +118,17 @@ def apply_income_tax_threshold_reform(sim: Microsimulation) -> None:
 
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
+        basic_threshold = get_cpi_uprated_value(
+            sim, INCOME_TAX_BASIC_THRESHOLD_2026, 2026, year
+        )
+        intermediate_threshold = get_cpi_uprated_value(
+            sim, INCOME_TAX_INTERMEDIATE_THRESHOLD_2026, 2026, year
+        )
         scotland_rates.brackets[1].threshold.update(
-            period=period, value=INCOME_TAX_BASIC_THRESHOLDS[year]
+            period=period, value=basic_threshold
         )
         scotland_rates.brackets[2].threshold.update(
-            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLDS[year]
+            period=period, value=intermediate_threshold
         )
 
 
@@ -112,14 +138,19 @@ def apply_basic_rate_uplift_reform(sim: Microsimulation) -> None:
     Increases Scottish basic rate (20%) threshold by 7.4% in 2026, then CPI uprated.
     Basic rate starts at £16,538 (£3,968 above PA) in 2026-27.
 
+    Uses PE UK's CPI index for consistent uprating with baseline.
+
     Source: SFC costings breakdown - "Basic rate threshold +7.4%"
     """
     scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
 
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
+        basic_threshold = get_cpi_uprated_value(
+            sim, INCOME_TAX_BASIC_THRESHOLD_2026, 2026, year
+        )
         scotland_rates.brackets[1].threshold.update(
-            period=period, value=INCOME_TAX_BASIC_THRESHOLDS[year]
+            period=period, value=basic_threshold
         )
 
 
@@ -129,14 +160,19 @@ def apply_intermediate_rate_uplift_reform(sim: Microsimulation) -> None:
     Increases Scottish intermediate rate (21%) threshold by 7.4% in 2026, then CPI uprated.
     Intermediate rate starts at £29,527 (£16,957 above PA) in 2026-27.
 
+    Uses PE UK's CPI index for consistent uprating with baseline.
+
     Source: SFC costings breakdown - "Intermediate rate threshold +7.4%"
     """
     scotland_rates = sim.tax_benefit_system.parameters.gov.hmrc.income_tax.rates.scotland.rates
 
     for year in DEFAULT_YEARS:
         period = f"{year}-01-01"
+        intermediate_threshold = get_cpi_uprated_value(
+            sim, INCOME_TAX_INTERMEDIATE_THRESHOLD_2026, 2026, year
+        )
         scotland_rates.brackets[2].threshold.update(
-            period=period, value=INCOME_TAX_INTERMEDIATE_THRESHOLDS[year]
+            period=period, value=intermediate_threshold
         )
 
 
