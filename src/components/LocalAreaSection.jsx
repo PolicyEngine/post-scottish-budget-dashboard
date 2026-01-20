@@ -63,9 +63,11 @@ function getRegion(constituencyName) {
 }
 
 const POLICY_DISPLAY_NAMES = {
-  combined: "both policies",
+  combined: "all policies",
   scp_baby_boost: "SCP Premium for under-ones",
-  income_tax_threshold_uplift: "income tax threshold uplift",
+  scp_inflation: "SCP inflation adjustment",
+  income_tax_basic_uplift: "basic rate threshold uplift",
+  income_tax_intermediate_uplift: "intermediate rate threshold uplift",
 };
 
 export default function LocalAreaSection({
@@ -179,7 +181,7 @@ export default function LocalAreaSection({
         <div className="section-box">
           <p className="chart-description">
             Constituency-level data is not yet available for this policy reform.
-            {selectedPolicy === "income_tax_threshold_uplift" && (
+            {(selectedPolicy === "income_tax_basic_uplift" || selectedPolicy === "income_tax_intermediate_uplift") && (
               <> The income tax threshold uplift affects taxpayers across Scotland relatively uniformly,
               with minor variations based on local income distributions.</>
             )}

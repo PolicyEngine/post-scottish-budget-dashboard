@@ -429,6 +429,6 @@ PRESETS = [
     {
         "id": "scottish-budget-2026",
         "name": "Scottish Budget 2026",
-        "policies": ["scp_inflation", "scp_baby_boost", "income_tax_threshold_uplift"],
+        "policies": ["scp_inflation", "scp_baby_boost", "income_tax_basic_uplift", "income_tax_intermediate_uplift"],
     },
 ]
