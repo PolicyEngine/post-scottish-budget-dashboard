@@ -17,14 +17,22 @@ const SECTIONS = [
 ];
 
 // Common table styles
-const tableStyle = { marginTop: "8px", width: "auto", borderCollapse: "collapse", fontSize: "14px" };
-const thStyle = { textAlign: "left", padding: "8px", borderBottom: "2px solid #ddd" };
-const thCenterStyle = { textAlign: "center", padding: "8px", borderBottom: "2px solid #ddd" };
-const thRightStyle = { textAlign: "right", padding: "8px", borderBottom: "2px solid #ddd" };
-const tdStyle = { padding: "8px", borderBottom: "1px solid #eee" };
-const tdCenterStyle = { textAlign: "center", padding: "8px", borderBottom: "1px solid #eee" };
-const tdRightStyle = { textAlign: "right", padding: "8px", borderBottom: "1px solid #eee" };
-const noteStyle = { marginTop: "8px", fontSize: "13px", color: "#666" };
+const tableStyle = {
+  margin: "12px auto 0 auto",
+  width: "auto",
+  borderCollapse: "collapse",
+  fontSize: "14px",
+  backgroundColor: "#fafafa",
+  borderRadius: "6px",
+  overflow: "hidden",
+};
+const thStyle = { textAlign: "left", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const thCenterStyle = { textAlign: "center", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const thRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const tdStyle = { padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const tdCenterStyle = { textAlign: "center", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const tdRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const noteStyle = { marginTop: "12px", fontSize: "13px", color: "#666", textAlign: "center" };
 const summaryStyle = { cursor: "pointer", color: "#2c6e49", fontWeight: "500" };
 
 // Policy descriptions (active voice, clear impacts)
