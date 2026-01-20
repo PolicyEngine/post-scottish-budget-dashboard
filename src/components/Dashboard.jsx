@@ -75,8 +75,8 @@ const POLICY_INFO = {
     explanation: (
       <li>
         <strong>SCP Premium for under-ones</strong>: The Budget raises the Scottish Child Payment
-        to £40 per week for each child under one year old. This is £11.15/week extra on top of the
-        standard rate of £28.85/week. Commences 2027-28, subject to parliamentary approval.
+        to £40 per week for children under one year old (£11.15/week extra in 2027-28). Both the
+        total and standard rate are CPI uprated annually. Commences 2027-28, subject to parliamentary approval.
         <details className="policy-table-details" style={{ marginTop: "12px" }}>
           <summary style={summaryStyle}>View baby boost rates by year</summary>
           <table style={tableStyle}>
