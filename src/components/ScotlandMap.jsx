@@ -84,11 +84,17 @@ export default function ScotlandMap({
 
   // Compute color scale extent from data (min/max of average_gain)
   const colorExtent = useMemo(() => {
-    if (localAuthorityData.length === 0) return { min: 0, max: 35 };
+    if (localAuthorityData.length === 0) return { min: 0, max: 35, type: 'positive' };
     const gains = localAuthorityData.map((d) => d.average_gain || 0);
     const min = Math.floor(Math.min(...gains));
     const max = Math.ceil(Math.max(...gains));
-    return { min, max };
+
+    // Determine type: all positive, all negative, or mixed
+    let type = 'mixed';
+    if (min >= 0) type = 'positive';
+    else if (max <= 0) type = 'negative';
+
+    return { min, max, type };
   }, [localAuthorityData]);
 
   // Highlight and zoom to controlled local authority when it changes
@@ -212,15 +218,30 @@ export default function ScotlandMap({
 
     const path = d3.geoPath().projection(projection);
 
-    // Color scale - sequential from light to dark teal (min to max gain)
-    // Uses average_gain (absolute £ values)
+    // Color scale - sequential based on value type
+    // Positive: light to dark teal, Negative: light to dark red
     const getValue = (d) => d.average_gain || 0;
 
-    const colorScale = d3
-      .scaleLinear()
-      .domain([colorExtent.min, colorExtent.max])
-      .range(["#E0F2F1", "#0D9488"])
-      .clamp(true);
+    let colorScale;
+    if (colorExtent.type === 'negative') {
+      // All negative: light red to dark red (more negative = darker)
+      colorScale = d3.scaleLinear()
+        .domain([colorExtent.max, colorExtent.min]) // max is closer to 0, min is more negative
+        .range(["#FECACA", "#B91C1C"])
+        .clamp(true);
+    } else if (colorExtent.type === 'positive') {
+      // All positive: light teal to dark teal
+      colorScale = d3.scaleLinear()
+        .domain([colorExtent.min, colorExtent.max])
+        .range(["#E0F2F1", "#0D9488"])
+        .clamp(true);
+    } else {
+      // Mixed: diverging scale
+      colorScale = d3.scaleLinear()
+        .domain([colorExtent.min, 0, colorExtent.max])
+        .range(["#B91C1C", "#F5F5F5", "#0D9488"])
+        .clamp(true);
+    }
 
     // Draw local authorities
     const paths = g
@@ -528,9 +549,19 @@ export default function ScotlandMap({
 
         <div className="map-legend-horizontal">
           <div className="legend-horizontal-content">
-            <div className="legend-gradient-horizontal legend-gradient-sequential" />
+            <div
+              className="legend-gradient-horizontal"
+              style={{
+                background: colorExtent.type === 'negative'
+                  ? 'linear-gradient(to right, #FECACA, #B91C1C)'
+                  : colorExtent.type === 'positive'
+                  ? 'linear-gradient(to right, #E0F2F1, #0D9488)'
+                  : 'linear-gradient(to right, #B91C1C, #F5F5F5, #0D9488)'
+              }}
+            />
             <div className="legend-labels-horizontal">
               <span>£{colorExtent.min}</span>
+              {colorExtent.type === 'mixed' && <span>£0</span>}
               <span>£{colorExtent.max}</span>
             </div>
           </div>
