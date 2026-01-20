@@ -7,7 +7,6 @@ import "./App.css";
 
 const POLICIES = [
   // Income tax threshold uplifts (costs to government)
-  { id: "income_tax_threshold_uplift", name: "Income tax threshold uplift", category: "cost" },
   { id: "income_tax_basic_uplift", name: "Basic rate threshold uplift", category: "cost" },
   { id: "income_tax_intermediate_uplift", name: "Intermediate rate threshold uplift", category: "cost" },
   // SCP policies (costs to government)
@@ -22,7 +21,6 @@ const POLICIES = [
 function App() {
   const [activeTab, setActiveTab] = useState("budget");
   const [selectedPolicies, setSelectedPolicies] = useState([
-    "income_tax_threshold_uplift",
     "income_tax_basic_uplift",
     "income_tax_intermediate_uplift",
     "scp_inflation",

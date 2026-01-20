@@ -103,44 +103,6 @@ const POLICY_INFO = {
       </li>
     ),
   },
-  income_tax_threshold_uplift: {
-    name: "Income tax threshold uplift",
-    description: "Basic and intermediate rate thresholds raised by 7.4%",
-    explanation: (
-      <li>
-        <strong>Income tax threshold uplift (7.4%)</strong>: The Budget raises the basic rate (20%)
-        threshold from £15,398 to £16,538, and the intermediate rate (21%) threshold from £27,492
-        to £29,527. Scottish taxpayers pay the lower 19% starter rate on more of their income.
-        <details className="policy-table-details" style={{ marginTop: "12px" }}>
-          <summary style={summaryStyle}>View all tax bands 2026-27</summary>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Band</th>
-                <th style={thCenterStyle}>Rate</th>
-                <th style={thRightStyle}>2025-26</th>
-                <th style={thRightStyle}>2026-27</th>
-                <th style={thCenterStyle}>Change</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td style={tdStyle}>Starter</td><td style={tdCenterStyle}>19%</td><td style={tdRightStyle}>£12,571–£15,397</td><td style={tdRightStyle}>£12,571–£16,537</td><td style={{...tdCenterStyle, color: "#2e7d32"}}>+£1,140</td></tr>
-              <tr><td style={tdStyle}>Basic</td><td style={tdCenterStyle}>20%</td><td style={tdRightStyle}>£15,398–£27,491</td><td style={tdRightStyle}>£16,538–£29,526</td><td style={{...tdCenterStyle, color: "#2e7d32"}}>+7.4%</td></tr>
-              <tr><td style={tdStyle}>Intermediate</td><td style={tdCenterStyle}>21%</td><td style={tdRightStyle}>£27,492–£43,662</td><td style={tdRightStyle}>£29,527–£43,662</td><td style={{...tdCenterStyle, color: "#2e7d32"}}>+7.4%</td></tr>
-              <tr><td style={tdStyle}>Higher</td><td style={tdCenterStyle}>42%</td><td style={tdRightStyle}>£43,663–£75,000</td><td style={tdRightStyle}>£43,663–£75,000</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
-              <tr><td style={tdStyle}>Advanced</td><td style={tdCenterStyle}>45%</td><td style={tdRightStyle}>£75,001–£125,140</td><td style={tdRightStyle}>£75,001–£125,140</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
-              <tr><td style={{...tdStyle, borderBottom: "none"}}>Top</td><td style={{...tdCenterStyle, borderBottom: "none"}}>48%</td><td style={{...tdRightStyle, borderBottom: "none"}}>Over £125,140</td><td style={{...tdRightStyle, borderBottom: "none"}}>Over £125,140</td><td style={{...tdCenterStyle, borderBottom: "none", color: "#c62828"}}>Frozen</td></tr>
-            </tbody>
-          </table>
-          <p style={noteStyle}>
-            Higher, Advanced, and Top rate thresholds frozen until 2028-29. UK Personal Allowance (£12,570) frozen until 2030-31.<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> |{" "}
-            <a href="https://www.gov.scot/publications/scottish-income-tax-technical-factsheet/" target="_blank" rel="noopener noreferrer">Technical Factsheet</a>
-          </p>
-        </details>
-      </li>
-    ),
-  },
   income_tax_basic_uplift: {
     name: "Basic rate threshold uplift",
     description: "Basic rate threshold raised from £15,398 to £16,538 (+7.4%)",
