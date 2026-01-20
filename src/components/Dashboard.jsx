@@ -673,7 +673,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       </p>
 
       <LocalAreaSection
-        selectedPolicy={effectivePolicy}
+        selectedPolicies={selectedPolicies}
         selectedYear={selectedYear}
         onYearChange={setSelectedYear}
         availableYears={AVAILABLE_YEARS}

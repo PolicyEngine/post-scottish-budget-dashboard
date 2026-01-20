@@ -382,6 +382,41 @@
   line-height: 1;
 }
 
+/* Policy breakdown in tooltip */
+.tooltip-breakdown {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--pe-gray-200);
+}
+
+.tooltip-breakdown-header {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--pe-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px 0;
+}
+
+.tooltip-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 0.8rem;
+}
+
+.tooltip-breakdown-name {
+  color: var(--pe-gray-600);
+  flex: 1;
+  margin-right: 12px;
+}
+
+.tooltip-breakdown-value {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 /* Loading state */
 .scotland-map-loading {
   display: flex;

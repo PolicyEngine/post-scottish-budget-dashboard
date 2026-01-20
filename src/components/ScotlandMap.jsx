@@ -17,6 +17,14 @@ const formatYearRange = (year) => `${year}-${(year + 1).toString().slice(-2)}`;
 // Scottish constituency codes start with 'S'
 const isScottishConstituency = (code) => code && code.startsWith("S");
 
+// Policy display names for breakdown tooltip
+const POLICY_DISPLAY_NAMES = {
+  scp_baby_boost: "SCP Premium for under-ones",
+  scp_inflation: "SCP inflation adjustment",
+  income_tax_basic_uplift: "Basic rate +7.4%",
+  income_tax_intermediate_uplift: "Intermediate rate +7.4%",
+};
+
 export default function ScotlandMap({
   constituencyData = [],
   selectedYear = 2026,
@@ -25,6 +33,7 @@ export default function ScotlandMap({
   selectedConstituency: controlledConstituency = null,
   onConstituencySelect = null,
   policyName = "SCP Premium for under-ones",
+  selectedPolicies = [],
 }) {
   const svgRef = useRef(null);
   const [internalSelectedConstituency, setInternalSelectedConstituency] = useState(null);
@@ -623,6 +632,34 @@ export default function ScotlandMap({
                 <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "#6b7280" }}>/year</span>
               </p>
               <p className="tooltip-label">Average household gain</p>
+
+              {/* Policy breakdown - only show if multiple policies selected */}
+              {tooltipData.policyBreakdown &&
+                selectedPolicies.length > 1 &&
+                Object.keys(tooltipData.policyBreakdown).length > 1 && (
+                  <div className="tooltip-breakdown">
+                    <p className="tooltip-breakdown-header">By policy:</p>
+                    {Object.entries(tooltipData.policyBreakdown)
+                      .sort((a, b) => b[1].avgGain - a[1].avgGain)
+                      .map(([reformId, data]) => (
+                        <div key={reformId} className="tooltip-breakdown-row">
+                          <span className="tooltip-breakdown-name">
+                            {POLICY_DISPLAY_NAMES[reformId] || reformId}
+                          </span>
+                          <span
+                            className="tooltip-breakdown-value"
+                            style={{
+                              color: data.avgGain >= 0 ? "#16a34a" : "#dc2626",
+                            }}
+                          >
+                            {data.avgGain < 0 ? "-" : ""}£
+                            {Math.abs(data.avgGain).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+
               {tooltipData.povertyReduction !== undefined && (
                 <>
                   <p
