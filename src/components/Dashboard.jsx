@@ -139,8 +139,9 @@ const POLICY_INFO = {
             </tbody>
           </table>
           <p style={noteStyle}>
-            *Future thresholds subject to annual Budget decisions. PolicyEngine models assume thresholds rise with projected earnings growth.<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a>
+            *From 2027-28, SFC baseline assumes starter/basic rate thresholds increase with CPI inflation.<br/>
+            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> |{" "}
+            <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a>
           </p>
         </details>
       </li>
@@ -174,8 +175,9 @@ const POLICY_INFO = {
             </tbody>
           </table>
           <p style={noteStyle}>
-            *Future thresholds subject to annual Budget decisions. PolicyEngine models assume thresholds rise with projected earnings growth.<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a>
+            *From 2027-28, SFC baseline assumes intermediate rate threshold increases with CPI inflation.<br/>
+            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> |{" "}
+            <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a>
           </p>
         </details>
       </li>
