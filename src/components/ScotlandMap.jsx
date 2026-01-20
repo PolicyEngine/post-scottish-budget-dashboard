@@ -82,28 +82,13 @@ export default function ScotlandMap({
     );
   }, [localAuthorityData]);
 
-  // Calculate dynamic color extent based on min/max values in data
+  // Compute color scale extent from data (min/max of average_gain)
   const colorExtent = useMemo(() => {
-    if (!localAuthorityData || localAuthorityData.length === 0) {
-      return { min: 0, max: 10, type: 'positive' };
-    }
-    const values = localAuthorityData.map(d => d.average_gain || 0);
-    const minVal = Math.min(...values);
-    const maxVal = Math.max(...values);
-
-    // Determine the type of scale needed
-    let type = 'diverging';
-    if (minVal >= 0) {
-      type = 'positive'; // All positive: light green to dark green
-    } else if (maxVal <= 0) {
-      type = 'negative'; // All negative: light red to dark red
-    }
-
-    return {
-      min: Math.floor(minVal),
-      max: Math.ceil(maxVal),
-      type
-    };
+    if (localAuthorityData.length === 0) return { min: 0, max: 35 };
+    const gains = localAuthorityData.map((d) => d.average_gain || 0);
+    const min = Math.floor(Math.min(...gains));
+    const max = Math.ceil(Math.max(...gains));
+    return { min, max };
   }, [localAuthorityData]);
 
   // Highlight and zoom to controlled local authority when it changes
@@ -146,8 +131,8 @@ export default function ScotlandMap({
     setTooltipPosition({ x: centerX, y: centerY });
 
     // Smooth zoom to local authority
-    const scale = Math.min(4, 0.9 / Math.max(bbox.width / 600, bbox.height / 600));
-    const translate = [600 / 2 - scale * centerX, 600 / 2 - scale * centerY];
+    const scale = Math.min(4, 0.9 / Math.max(bbox.width / 700, bbox.height / 900));
+    const translate = [700 / 2 - scale * centerX, 900 / 2 - scale * centerY];
 
     if (window.scotlandMapZoomBehavior) {
       const { svg: svgZoom, zoom } = window.scotlandMapZoomBehavior;
@@ -168,8 +153,8 @@ export default function ScotlandMap({
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = 600;
-    const height = 700;
+    const width = 700;
+    const height = 900;
 
     const g = svg.append("g");
 
@@ -207,52 +192,35 @@ export default function ScotlandMap({
       (height - 2 * padding) / dataHeight,
     );
 
+    const scaleX = scale * 0.6;
+    const scaleY = scale;
+
     // Calculate centering offsets
-    const scaledWidth = dataWidth * scale;
-    const scaledHeight = dataHeight * scale;
+    const scaledWidth = dataWidth * scaleX;
+    const scaledHeight = dataHeight * scaleY;
     const offsetX = (width - scaledWidth) / 2;
     const offsetY = (height - scaledHeight) / 2;
 
     const projection = d3.geoTransform({
       point: function (x, y) {
         this.stream.point(
-          (x - bounds.xMin) * scale + offsetX,
-          height - ((y - bounds.yMin) * scale + offsetY),
+          (x - bounds.xMin) * scaleX + offsetX,
+          height - ((y - bounds.yMin) * scaleY + offsetY),
         );
       },
     });
 
     const path = d3.geoPath().projection(projection);
 
-    // Color scale - uses average_gain (absolute £ values) with dynamic extent based on data
+    // Color scale - sequential from light to dark teal (min to max gain)
+    // Uses average_gain (absolute £ values)
     const getValue = (d) => d.average_gain || 0;
 
-    // Create color scale based on data range type
-    let colorScale;
-    if (colorExtent.type === 'positive') {
-      // All positive: light green to dark green
-      colorScale = d3.scaleLinear()
-        .domain([colorExtent.min, colorExtent.max])
-        .range(["#bbf7d0", "#15803d"]);
-    } else if (colorExtent.type === 'negative') {
-      // All negative: dark red to light red (more negative = darker)
-      colorScale = d3.scaleLinear()
-        .domain([colorExtent.min, colorExtent.max])
-        .range(["#b91c1c", "#fecaca"]);
-    } else {
-      // Diverging: red for negative, green for positive
-      colorScale = d3.scaleDiverging()
-        .domain([colorExtent.min, 0, colorExtent.max])
-        .interpolator((t) => {
-          if (t < 0.5) {
-            const ratio = t * 2;
-            return d3.interpolateRgb("#b91c1c", "#f5f5f5")(ratio);
-          } else {
-            const ratio = (t - 0.5) * 2;
-            return d3.interpolateRgb("#f5f5f5", "#15803d")(ratio);
-          }
-        });
-    }
+    const colorScale = d3
+      .scaleLinear()
+      .domain([colorExtent.min, colorExtent.max])
+      .range(["#E0F2F1", "#0D9488"])
+      .clamp(true);
 
     // Draw local authorities
     const paths = g
@@ -440,8 +408,8 @@ export default function ScotlandMap({
 
     const dx = bbox.width;
     const dy = bbox.height;
-    const scale = Math.min(4, 0.9 / Math.max(dx / 600, dy / 700));
-    const translate = [600 / 2 - scale * centerX, 700 / 2 - scale * centerY];
+    const scale = Math.min(4, 0.9 / Math.max(dx / 700, dy / 900));
+    const translate = [700 / 2 - scale * centerX, 900 / 2 - scale * centerY];
 
     if (window.scotlandMapZoomBehavior) {
       const { svg: svgZoom, zoom } = window.scotlandMapZoomBehavior;
@@ -560,19 +528,9 @@ export default function ScotlandMap({
 
         <div className="map-legend-horizontal">
           <div className="legend-horizontal-content">
-            <div
-              className="legend-gradient-horizontal"
-              style={{
-                background: colorExtent.type === 'positive'
-                  ? 'linear-gradient(to right, #bbf7d0, #15803d)'
-                  : colorExtent.type === 'negative'
-                  ? 'linear-gradient(to right, #b91c1c, #fecaca)'
-                  : 'linear-gradient(to right, #b91c1c, #f5f5f5, #15803d)'
-              }}
-            />
+            <div className="legend-gradient-horizontal legend-gradient-sequential" />
             <div className="legend-labels-horizontal">
               <span>£{colorExtent.min}</span>
-              {colorExtent.type === 'diverging' && <span className="legend-zero">£0</span>}
               <span>£{colorExtent.max}</span>
             </div>
           </div>
@@ -584,9 +542,9 @@ export default function ScotlandMap({
         <div className="map-canvas">
           <svg
             ref={svgRef}
-            width="600"
-            height="700"
-            viewBox="0 0 600 700"
+            width="700"
+            height="900"
+            viewBox="0 0 700 900"
             preserveAspectRatio="xMidYMid meet"
             onClick={() => {
               setTooltipData(null);
