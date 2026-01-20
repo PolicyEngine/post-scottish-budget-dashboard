@@ -32,7 +32,7 @@ const thRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "
 const tdStyle = { padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
 const tdCenterStyle = { textAlign: "center", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
 const tdRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
-const noteStyle = { marginTop: "12px", fontSize: "13px", color: "#666", textAlign: "center" };
+const noteStyle = { marginTop: "12px", fontSize: "13px", color: "#666", textAlign: "left", width: "100%" };
 const summaryStyle = { cursor: "pointer", color: "#2c6e49", fontWeight: "500" };
 
 // Policy descriptions (active voice, clear impacts)
@@ -65,11 +65,10 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£30.65</td><td style={{...tdRightStyle, borderBottom: "none"}}>£1,594</td><td style={{...tdCenterStyle, borderBottom: "none", color: "#2e7d32"}}>+2.0%</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            Uprated annually by CPI (September of prior year).<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> |{" "}
-            <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>Uprated annually by CPI (September of prior year).</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> | <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -102,11 +101,10 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£30.65</td><td style={{...tdRightStyle, borderBottom: "none", color: "#2e7d32"}}>+£11.85</td><td style={{...tdRightStyle, borderBottom: "none", color: "#2e7d32"}}>£42.50</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            Under-one premium starts 2027-28. Both standard rate and premium uprated by CPI annually.<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> |{" "}
-            <a href="https://www.gov.scot/news/a-budget-to-tackle-child-poverty/" target="_blank" rel="noopener noreferrer">Scottish Government announcement</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>Under-one premium starts 2027-28. Both standard rate and premium uprated by CPI annually.</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> | <a href="https://www.gov.scot/news/a-budget-to-tackle-child-poverty/" target="_blank" rel="noopener noreferrer">Scottish Government announcement</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -138,11 +136,10 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£17,918</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually).<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> |{" "}
-            <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually).</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> | <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -174,11 +171,10 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£31,992</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually).<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> |{" "}
-            <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually).</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> | <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -210,12 +206,11 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>TBC</td><td style={{...tdCenterStyle, borderBottom: "none"}}>TBC</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            *Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.<br/>
-            SFC estimates freeze raises ~£190m in 2026-27 (combined with Advanced and Top rate freezes).<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a> |{" "}
-            <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>*Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.</p>
+            <p style={{ margin: "4px 0 0 0" }}>SFC estimates freeze raises ~£190m in 2026-27 (combined with Advanced and Top rate freezes).</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a> | <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -247,10 +242,10 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>TBC</td><td style={{...tdCenterStyle, borderBottom: "none"}}>TBC</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            *Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>*Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a></p>
+          </div>
         </details>
       </li>
     ),
@@ -282,11 +277,11 @@ const POLICY_INFO = {
               <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>TBC</td><td style={{...tdCenterStyle, borderBottom: "none"}}>TBC</td></tr>
             </tbody>
           </table>
-          <p style={noteStyle}>
-            *Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.<br/>
-            Note: £125,140 threshold aligns with UK Personal Allowance taper (allowance fully withdrawn at this income).<br/>
-            Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a>
-          </p>
+          <div style={noteStyle}>
+            <p style={{ margin: 0 }}>*Freeze confirmed until 2028-29. Future policy beyond 2028-29 to be decided by next Scottish Parliament.</p>
+            <p style={{ margin: "4px 0 0 0" }}>Note: £125,140 threshold aligns with UK Personal Allowance taper (allowance fully withdrawn at this income).</p>
+            <p style={{ margin: "4px 0 0 0" }}>Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a></p>
+          </div>
         </details>
       </li>
     ),
