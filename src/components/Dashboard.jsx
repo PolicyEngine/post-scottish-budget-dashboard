@@ -16,6 +16,25 @@ const SECTIONS = [
   { id: "constituencies", label: "Impact by constituency" },
 ];
 
+// Common table styles
+const tableStyle = {
+  margin: "12px auto 0 auto",
+  width: "auto",
+  borderCollapse: "collapse",
+  fontSize: "14px",
+  backgroundColor: "#fafafa",
+  borderRadius: "6px",
+  overflow: "hidden",
+};
+const thStyle = { textAlign: "left", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const thCenterStyle = { textAlign: "center", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const thRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "2px solid #e5e7eb", backgroundColor: "#f3f4f6" };
+const tdStyle = { padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const tdCenterStyle = { textAlign: "center", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const tdRightStyle = { textAlign: "right", padding: "10px 16px", borderBottom: "1px solid #e5e7eb" };
+const noteStyle = { marginTop: "12px", fontSize: "13px", color: "#666", textAlign: "left", width: "100%" };
+const summaryStyle = { cursor: "pointer", color: "#2c6e49", fontWeight: "500" };
+
 // Policy descriptions (active voice, clear impacts)
 const POLICY_INFO = {
   scp_inflation: {
@@ -26,6 +45,27 @@ const POLICY_INFO = {
         <strong>SCP inflation adjustment</strong>: The Budget uprates the Scottish Child Payment
         from £27.15 to £28.20 per week (+3.9% for inflation). This benefits all families receiving
         SCP, providing approximately £55 extra per child per year.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View SCP rates by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Weekly rate</th>
+                <th style={thRightStyle}>Annual (per child)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£27.15</td><td style={tdRightStyle}>£1,412</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£28.20</td><td style={tdRightStyle}>£1,466</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£28.85</td><td style={tdRightStyle}>£1,500</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£29.45</td><td style={tdRightStyle}>£1,531</td></tr>
+              <tr><td style={tdStyle}>2029-30</td><td style={tdRightStyle}>£30.05</td><td style={tdRightStyle}>£1,563</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£30.65</td><td style={{...tdRightStyle, borderBottom: "none"}}>£1,594</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: Uprated annually by CPI (September of prior year). Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> | <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a></p>
+        </details>
       </li>
     ),
   },
@@ -35,19 +75,30 @@ const POLICY_INFO = {
     explanation: (
       <li>
         <strong>SCP Premium for under-ones</strong>: The Budget raises the Scottish Child Payment
-        to £40 per week for each child under one year old. This is £11.80/week extra on top of the
-        inflation-adjusted rate of £28.20/week.
-      </li>
-    ),
-  },
-  income_tax_threshold_uplift: {
-    name: "Income tax threshold uplift",
-    description: "Basic and intermediate rate thresholds raised by 7.4%",
-    explanation: (
-      <li>
-        <strong>Income tax threshold uplift (7.4%)</strong>: The Budget raises the basic rate (20%)
-        threshold from £15,398 to £16,538, and the intermediate rate (21%) threshold from £27,492
-        to £29,527. Scottish taxpayers pay the lower 19% starter rate on more of their income.
+        to £40 per week for each child under one year old. This is £11.15/week extra on top of the
+        standard rate of £28.85/week. Commences 2027-28, subject to parliamentary approval.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View baby boost rates by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Weekly rate</th>
+                <th style={thRightStyle}>Under-1 premium</th>
+                <th style={thRightStyle}>Weekly total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£27.15</td><td style={tdRightStyle}>—</td><td style={tdRightStyle}>£27.15</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£28.20</td><td style={tdRightStyle}>—</td><td style={tdRightStyle}>£28.20</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£28.85</td><td style={{...tdRightStyle, color: "#2e7d32"}}>+£11.15</td><td style={{...tdRightStyle, color: "#2e7d32"}}>£40.00</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£29.45</td><td style={{...tdRightStyle, color: "#2e7d32"}}>+£11.35</td><td style={{...tdRightStyle, color: "#2e7d32"}}>£40.80</td></tr>
+              <tr><td style={tdStyle}>2029-30</td><td style={tdRightStyle}>£30.05</td><td style={{...tdRightStyle, color: "#2e7d32"}}>+£11.60</td><td style={{...tdRightStyle, color: "#2e7d32"}}>£41.65</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£30.65</td><td style={{...tdRightStyle, borderBottom: "none", color: "#2e7d32"}}>+£11.85</td><td style={{...tdRightStyle, borderBottom: "none", color: "#2e7d32"}}>£42.50</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: Under-one premium starts 2027-28. Both standard rate and premium uprated by CPI annually. Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/" target="_blank" rel="noopener noreferrer">Scottish Budget 2026-27</a> | <a href="https://www.gov.scot/news/a-budget-to-tackle-child-poverty/" target="_blank" rel="noopener noreferrer">Scottish Government announcement</a></p>
+        </details>
       </li>
     ),
   },
@@ -59,6 +110,27 @@ const POLICY_INFO = {
         <strong>Basic rate threshold uplift (+7.4%)</strong>: The Budget raises the basic rate (20%)
         threshold from £15,398 to £16,538. This means taxpayers can earn £1,140 more before paying
         the 20% basic rate instead of the 19% starter rate.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View basic rate threshold by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Basic rate starts at</th>
+                <th style={thCenterStyle}>Change from prior year</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£15,398</td><td style={tdCenterStyle}>—</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£16,538</td><td style={{...tdCenterStyle, color: "#2e7d32"}}>+7.4%</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£16,872</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£17,216</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={tdStyle}>2029-30</td><td style={tdRightStyle}>£17,567</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£17,918</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually). Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> | <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a></p>
+        </details>
       </li>
     ),
   },
@@ -70,6 +142,27 @@ const POLICY_INFO = {
         <strong>Intermediate rate threshold uplift (+7.4%)</strong>: The Budget raises the intermediate
         rate (21%) threshold from £27,492 to £29,527. This means taxpayers can earn £2,035 more before
         paying the 21% intermediate rate instead of the 20% basic rate.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View intermediate rate threshold by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Intermediate rate starts at</th>
+                <th style={thCenterStyle}>Change from prior year</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£27,492</td><td style={tdCenterStyle}>—</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£29,527</td><td style={{...tdCenterStyle, color: "#2e7d32"}}>+7.4%</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£30,123</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£30,738</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={tdStyle}>2029-30</td><td style={tdRightStyle}>£31,365</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31</td><td style={{...tdRightStyle, borderBottom: "none"}}>£31,992</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: From 2027-28, thresholds projected using OBR CPI forecasts (~2% annually). Source: <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener noreferrer">Scottish Government</a> | <a href="https://obr.uk/efo/economic-and-fiscal-outlook-november-2025/" target="_blank" rel="noopener noreferrer">OBR EFO November 2025</a></p>
+        </details>
       </li>
     ),
   },
@@ -81,6 +174,27 @@ const POLICY_INFO = {
         <strong>Higher rate threshold freeze</strong>: The higher rate (42%) threshold remains frozen
         at £43,662 until 2028-29. Without the freeze, this threshold would increase with inflation,
         meaning fewer taxpayers would pay the higher rate. The freeze raises revenue for the Scottish Government.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View higher rate threshold by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Higher rate (42%) starts at</th>
+                <th style={thCenterStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£43,662</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£43,662</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£43,662</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£43,662</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2029-30*</td><td style={tdRightStyle}>£44,553</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>£45,444</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: Freeze confirmed until 2028-29. *2029-30 onwards: PolicyEngine assumption (CPI uprating). Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a> | <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC January 2026</a></p>
+        </details>
       </li>
     ),
   },
@@ -92,6 +206,27 @@ const POLICY_INFO = {
         <strong>Advanced rate threshold freeze</strong>: The advanced rate (45%) threshold remains frozen
         at £75,000 until 2028-29. Without the freeze, this threshold would increase with inflation.
         The freeze raises revenue from higher earners.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View advanced rate threshold by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Advanced rate (45%) starts at</th>
+                <th style={thCenterStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£75,000</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£75,000</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£75,000</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£75,000</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2029-30*</td><td style={tdRightStyle}>£76,530</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>£78,061</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: Freeze confirmed until 2028-29. *2029-30 onwards: PolicyEngine assumption (CPI uprating). Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a></p>
+        </details>
       </li>
     ),
   },
@@ -103,6 +238,27 @@ const POLICY_INFO = {
         <strong>Top rate threshold freeze</strong>: The top rate (48%) threshold remains frozen
         at £125,140 until 2028-29. Without the freeze, this threshold would increase with inflation.
         The freeze raises revenue from the highest earners.
+        <details className="policy-table-details" style={{ marginTop: "12px" }}>
+          <summary style={summaryStyle}>View top rate threshold by year</summary>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Year</th>
+                <th style={thRightStyle}>Top rate (48%) starts at</th>
+                <th style={thCenterStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style={tdStyle}>2025-26</td><td style={tdRightStyle}>£125,140</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2026-27</td><td style={tdRightStyle}>£125,140</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2027-28</td><td style={tdRightStyle}>£125,140</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2028-29</td><td style={tdRightStyle}>£125,140</td><td style={{...tdCenterStyle, color: "#c62828"}}>Frozen</td></tr>
+              <tr><td style={tdStyle}>2029-30*</td><td style={tdRightStyle}>£127,693</td><td style={tdCenterStyle}>CPI</td></tr>
+              <tr><td style={{...tdStyle, borderBottom: "none"}}>2030-31*</td><td style={{...tdRightStyle, borderBottom: "none"}}>£130,247</td><td style={{...tdCenterStyle, borderBottom: "none"}}>CPI</td></tr>
+            </tbody>
+          </table>
+          <p style={noteStyle}>Note: Freeze confirmed until 2028-29. *2029-30 onwards: PolicyEngine assumption (CPI uprating). £125,140 aligns with UK Personal Allowance taper. Source: <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/3/" target="_blank" rel="noopener noreferrer">Scottish Budget Chapter 2</a></p>
+        </details>
       </li>
     ),
   },
@@ -380,7 +536,6 @@ export default function Dashboard({ selectedPolicies = [] }) {
       <ul className="policy-list">
         {isStacked ? (
           <>
-            {POLICY_INFO.income_tax_threshold_uplift.explanation}
             {POLICY_INFO.income_tax_basic_uplift.explanation}
             {POLICY_INFO.income_tax_intermediate_uplift.explanation}
             {POLICY_INFO.scp_inflation.explanation}
@@ -425,7 +580,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
             .map(([year, value]) => ({ year: parseInt(year), value }))
             .sort((a, b) => a.year - b.year)}
           title="Estimated budgetary impact"
-          description={`Estimated annual ${effectivePolicy === "income_tax_threshold_uplift" ? "cost (revenue foregone)" : "cost"} of the ${policyInfo.name} policy in Scotland.`}
+          description={`Estimated annual cost of the ${policyInfo.name} policy in Scotland.`}
           tooltipLabel="Cost"
         />
       )}
@@ -444,7 +599,6 @@ export default function Dashboard({ selectedPolicies = [] }) {
         <p className="chart-description">
           Average change in household net income due to the policy, across all Scottish households.
           {effectivePolicy === "scp_baby_boost" && " The change is small when averaged across all households because only families with babies under 1 receiving SCP benefit."}
-          {effectivePolicy === "income_tax_threshold_uplift" && " Most Scottish taxpayers will see a benefit from the increased thresholds."}
         </p>
         {isStacked && stackedAvgIncomeData ? (
           <BudgetBarChart
@@ -482,9 +636,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
           description={
             effectivePolicy === "scp_baby_boost"
               ? "The SCP Premium for under-ones is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
-              : effectivePolicy === "income_tax_threshold_uplift"
-              ? "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
-              : "Combined impact of selected policies across income deciles. The SCP Premium for under-ones targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
+              : "Combined impact of selected policies across income deciles. SCP policies target lower income families, income tax threshold uplifts benefit middle deciles, and threshold freezes affect higher earners."
           }
           stacked={isStacked}
           stackedData={stackedDecileData}
@@ -502,11 +654,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
         The UK uses four poverty measures: absolute vs relative poverty, each measured before or after housing costs.
         Absolute poverty uses a fixed threshold (60% of 2010-11 median income, adjusted for inflation),
         while relative poverty uses 60% of current median income.
-        {effectivePolicy === "income_tax_threshold_uplift" && (
-          <strong> Note: Income tax threshold increases have minimal direct impact on poverty rates
-          because people in poverty typically pay little or no income tax.</strong>
-        )}
-      </p>
+              </p>
 
       {/* Poverty Impact Table */}
       {povertyMetrics.length > 0 && (
