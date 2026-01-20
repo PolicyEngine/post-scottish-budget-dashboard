@@ -555,7 +555,6 @@ export default function Dashboard({ selectedPolicies = [] }) {
       <ul className="policy-list">
         {isStacked ? (
           <>
-            {POLICY_INFO.income_tax_threshold_uplift.explanation}
             {POLICY_INFO.income_tax_basic_uplift.explanation}
             {POLICY_INFO.income_tax_intermediate_uplift.explanation}
             {POLICY_INFO.scp_inflation.explanation}
@@ -600,7 +599,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
             .map(([year, value]) => ({ year: parseInt(year), value }))
             .sort((a, b) => a.year - b.year)}
           title="Estimated budgetary impact"
-          description={`Estimated annual ${effectivePolicy === "income_tax_threshold_uplift" ? "cost (revenue foregone)" : "cost"} of the ${policyInfo.name} policy in Scotland.`}
+          description={`Estimated annual cost of the ${policyInfo.name} policy in Scotland.`}
           tooltipLabel="Cost"
         />
       )}
@@ -619,7 +618,6 @@ export default function Dashboard({ selectedPolicies = [] }) {
         <p className="chart-description">
           Average change in household net income due to the policy, across all Scottish households.
           {effectivePolicy === "scp_baby_boost" && " The change is small when averaged across all households because only families with babies under 1 receiving SCP benefit."}
-          {effectivePolicy === "income_tax_threshold_uplift" && " Most Scottish taxpayers will see a benefit from the increased thresholds."}
         </p>
         {isStacked && stackedAvgIncomeData ? (
           <BudgetBarChart
@@ -657,9 +655,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
           description={
             effectivePolicy === "scp_baby_boost"
               ? "The SCP Premium for under-ones is a targeted policy that only benefits families receiving Scottish Child Payment (a means-tested benefit) with babies under 1. Higher income deciles show no impact because they don't qualify for SCP. Values shown are averages across all households in each decile."
-              : effectivePolicy === "income_tax_threshold_uplift"
-              ? "The income tax threshold uplift benefits taxpayers across income levels, with the largest absolute gains in middle deciles where more taxpayers are affected by the threshold changes."
-              : "Combined impact of selected policies across income deciles. The SCP Premium for under-ones targets lower income families while the income tax threshold uplift benefits taxpayers across income levels."
+              : "Combined impact of selected policies across income deciles. SCP policies target lower income families, income tax threshold uplifts benefit middle deciles, and threshold freezes affect higher earners."
           }
           stacked={isStacked}
           stackedData={stackedDecileData}
@@ -677,11 +673,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
         The UK uses four poverty measures: absolute vs relative poverty, each measured before or after housing costs.
         Absolute poverty uses a fixed threshold (60% of 2010-11 median income, adjusted for inflation),
         while relative poverty uses 60% of current median income.
-        {effectivePolicy === "income_tax_threshold_uplift" && (
-          <strong> Note: Income tax threshold increases have minimal direct impact on poverty rates
-          because people in poverty typically pay little or no income tax.</strong>
-        )}
-      </p>
+              </p>
 
       {/* Poverty Impact Table */}
       {povertyMetrics.length > 0 && (
