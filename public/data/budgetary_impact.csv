@@ -1,14 +1,14 @@
 reform_id,reform_name,year,value
-combined,All policies combined,2026,-63.36040966534802
-combined,All policies combined,2027,-68.95569481310427
-combined,All policies combined,2028,-61.09863030189449
-combined,All policies combined,2029,-53.207819277800866
-combined,All policies combined,2030,-45.50444147636658
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,-0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,11.486098057026396
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,22.17706825659635
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,32.966331712429636
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,43.85478901121462
+combined,All policies combined,2026,-83.06151026120513
+combined,All policies combined,2027,-101.14319008644428
+combined,All policies combined,2028,-104.82070599664046
+combined,All policies combined,2029,-108.57800683614877
+combined,All policies combined,2030,-112.63138654414632
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,-19.701100595857095
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,-18.55457588294739
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,-18.62880131412018
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,-18.710732780507374
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,-18.79487190650192
 scp_baby_boost,SCP Premium for under-ones (£40/week),2026,-0.0
 scp_baby_boost,SCP Premium for under-ones (£40/week),2027,-14.080935849845659
 scp_baby_boost,SCP Premium for under-ones (£40/week),2028,-14.390834507079985

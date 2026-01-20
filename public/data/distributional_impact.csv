@@ -1,114 +1,114 @@
 reform_id,reform_name,year,decile,value,absolute_change
-combined,All policies combined,2026,1st,0.006128588797736679,1.0805010746659292
-combined,All policies combined,2026,2nd,0.025023358267558908,6.908808560945846
-combined,All policies combined,2026,3rd,0.026468916781171154,9.75724594414861
-combined,All policies combined,2026,4th,0.0393985146181504,17.39382431389533
-combined,All policies combined,2026,5th,0.050412675836007975,22.620667297720733
-combined,All policies combined,2026,6th,0.04261260728065731,23.440490830537012
-combined,All policies combined,2026,7th,0.05250186760881542,27.89431890671613
-combined,All policies combined,2026,8th,0.05482501205929111,40.01422869417456
+combined,All policies combined,2026,1st,0.0590389855855911,10.406213478364107
+combined,All policies combined,2026,2nd,0.09299433843754963,25.654981448106977
+combined,All policies combined,2026,3rd,0.09662960613261545,35.59562148992816
+combined,All policies combined,2026,4th,0.05915080212713752,26.10899337732755
+combined,All policies combined,2026,5th,0.05316958591955538,23.857062790131543
+combined,All policies combined,2026,6th,0.05114844685033414,28.13351466194217
+combined,All policies combined,2026,7th,0.0525020111967434,27.89439515515992
+combined,All policies combined,2026,8th,0.054825133947655966,40.01431760608208
 combined,All policies combined,2026,9th,0.05803812957754686,43.34632229047881
-combined,All policies combined,2026,10th,0.043493222740546976,52.634305626722785
-combined,All policies combined,2026,All,0.045426942890877814,23.11875149217394
-combined,All policies combined,2027,1st,0.032136565706672796,5.767066567363119
-combined,All policies combined,2027,2nd,0.03559904356708557,9.932580286402816
-combined,All policies combined,2027,3rd,0.02950831837114338,11.128293616462516
-combined,All policies combined,2027,4th,0.034806480134737965,15.297466544602747
-combined,All policies combined,2027,5th,0.04988301397637151,22.680539994726544
-combined,All policies combined,2027,6th,0.05017891883900323,28.079131202293503
-combined,All policies combined,2027,7th,0.0533940802902264,28.848084286622786
-combined,All policies combined,2027,8th,0.05653854012239411,41.87899686073608
+combined,All policies combined,2026,10th,0.04349345439485811,52.63458584654114
+combined,All policies combined,2026,All,0.05956027658452198,30.307228511239604
+combined,All policies combined,2027,1st,0.11630853183424153,20.854603933754422
+combined,All policies combined,2027,2nd,0.14609963734919484,40.718660834355106
+combined,All policies combined,2027,3rd,0.1383265917865341,52.305516634139344
+combined,All policies combined,2027,4th,0.07526609691587538,33.0121728493649
+combined,All policies combined,2027,5th,0.05427676517345255,24.67718339935673
+combined,All policies combined,2027,6th,0.06424647880203894,35.946005524313215
+combined,All policies combined,2027,7th,0.053394307119589805,28.84820677399437
+combined,All policies combined,2027,8th,0.056538731745912216,41.87913871912199
 combined,All policies combined,2027,9th,0.05871059248707971,44.65169883768173
-combined,All policies combined,2027,10th,0.04369601643489597,53.704612917919356
-combined,All policies combined,2027,All,0.048378250581435606,25.06759146653386
-combined,All policies combined,2028,1st,0.006554466702732647,1.200322611294815
-combined,All policies combined,2028,2nd,0.0010271325579028587,0.2905076802111234
-combined,All policies combined,2028,3rd,-0.003263947090937429,-1.2512111983294347
-combined,All policies combined,2028,4th,0.0210646815446688,9.304575570281648
-combined,All policies combined,2028,5th,0.050717968343810774,23.52873428107308
-combined,All policies combined,2028,6th,0.04678086449001366,26.88781334955807
-combined,All policies combined,2028,7th,0.05363184206629899,29.431974980897863
-combined,All policies combined,2028,8th,0.0588650002821521,44.246466728228455
+combined,All policies combined,2027,10th,0.0436963813924913,53.7050612733366
+combined,All policies combined,2027,All,0.07097652828273002,36.768771246245706
+combined,All policies combined,2028,1st,0.1182275649144241,21.809971452798926
+combined,All policies combined,2028,2nd,0.1530965809836014,43.0201530840509
+combined,All policies combined,2028,3rd,0.13793031471783618,52.9854208064445
+combined,All policies combined,2028,4th,0.07317813919739627,32.251469864915705
+combined,All policies combined,2028,5th,0.07649682597714272,35.70602675137741
+combined,All policies combined,2028,6th,0.0526626444651602,30.197232083255557
+combined,All policies combined,2028,7th,0.053632141013828516,29.432138948785482
+combined,All policies combined,2028,8th,0.0588652514378306,44.24665540084577
 combined,All policies combined,2028,9th,0.0583432927695493,45.33097969873389
-combined,All policies combined,2028,10th,0.043809946649230984,54.82339577239778
-combined,All policies combined,2028,All,0.04193950552263611,22.122808188442516
-combined,All policies combined,2029,1st,-0.03891793915307916,-7.6651541035242
-combined,All policies combined,2029,2nd,-0.01836783184176157,-5.131742546410137
-combined,All policies combined,2029,3rd,-0.034595369270713036,-13.372672036227227
-combined,All policies combined,2029,4th,0.00816874767862038,3.724631278505687
-combined,All policies combined,2029,5th,0.04852988021144955,22.582106043214193
-combined,All policies combined,2029,6th,0.043155540541654394,25.051441159133553
-combined,All policies combined,2029,7th,0.054406152259547445,30.335976203000122
-combined,All policies combined,2029,8th,0.06010902340611454,46.161964057905145
+combined,All policies combined,2028,10th,0.04381043007675894,54.82400046458903
+combined,All policies combined,2028,All,0.07197294458817566,37.953852017348744
+combined,All policies combined,2029,1st,0.12531721140786256,24.641595358335653
+combined,All policies combined,2029,2nd,0.15709650538974118,43.81390737581117
+combined,All policies combined,2029,3rd,0.13631998871534914,52.95917238012784
+combined,All policies combined,2029,4th,0.07843581679360621,35.49947933158807
+combined,All policies combined,2029,5th,0.07619042308040147,35.6719375346148
+combined,All policies combined,2029,6th,0.052903714613537975,30.63591071637752
+combined,All policies combined,2029,7th,0.05440652023102593,30.33618126628023
+combined,All policies combined,2029,8th,0.06010933334543344,46.16220193920762
 combined,All policies combined,2029,9th,0.058920812654657345,46.10349024210986
-combined,All policies combined,2029,10th,0.04426326842601548,56.07202878915604
-combined,All policies combined,2029,All,0.035733206525657105,19.18127750858127
-combined,All policies combined,2030,1st,-0.06838520418038346,-13.585438955751677
-combined,All policies combined,2030,2nd,-0.043146062580633485,-12.189061544069808
-combined,All policies combined,2030,3rd,-0.07014481736149078,-27.16633951391845
-combined,All policies combined,2030,4th,-0.0048786046760837965,-2.2850773115477043
-combined,All policies combined,2030,5th,0.06077516313823744,28.936703539802497
-combined,All policies combined,2030,6th,0.033258366802103916,19.88581284453973
-combined,All policies combined,2030,7th,0.05436112958113705,30.57044752824855
-combined,All policies combined,2030,8th,0.06158642980453375,48.06640583282427
+combined,All policies combined,2029,10th,0.044263843617273826,56.07275711022727
+combined,All policies combined,2029,All,0.07294573741529957,39.142083038192176
+combined,All policies combined,2030,1st,0.12861737163142495,25.500926684946094
+combined,All policies combined,2030,2nd,0.1613020762889147,45.74734113174343
+combined,All policies combined,2030,3rd,0.13968711445406123,54.242955720864224
+combined,All policies combined,2030,4th,0.07796624926965565,36.25638051778194
+combined,All policies combined,2030,5th,0.07866520017308395,37.44794001203827
+combined,All policies combined,2030,6th,0.05422517626373921,32.41547451884194
+combined,All policies combined,2030,7th,0.05436158013637069,30.57070076418599
+combined,All policies combined,2030,8th,0.061586789299270916,48.06668623525341
 combined,All policies combined,2030,9th,0.05910403451759132,47.160471643496344
-combined,All policies combined,2030,10th,0.04449851492385638,57.91437772315546
-combined,All policies combined,2030,All,0.029878644183209402,16.33074146417638
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,1st,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,2nd,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,3rd,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,4th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,5th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,6th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,7th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,8th,0.0,0.0
+combined,All policies combined,2030,10th,0.044499204294341406,57.915274532960524
+combined,All policies combined,2030,All,0.07398743839496004,40.42141810177946
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,1st,0.052909797543956624,9.325882599070491
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,2nd,0.06794752075084862,18.745145280844447
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,3rd,0.07014214005783252,25.83838605908799
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,4th,0.019744508465932894,8.71516906343222
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,5th,0.0027555209517024105,1.236395492410808
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,6th,0.008532203775189724,4.693023831405163
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,7th,1.4351258118325503e-07,7.624844378363537e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,8th,1.218215761433747e-07,8.891190751542011e-05
 scp_inflation,SCP inflation adjustment (£28.20/week),2026,9th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,10th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2026,All,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,1st,-0.029056851470916547,-5.209102470865487
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,2nd,-0.03918801493327613,-10.940449259247387
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,3rd,-0.03766504416458673,-14.20990919240987
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,4th,-0.017246770133442852,-7.580959462171667
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,5th,-0.0016792158474036318,-0.7634968128601246
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,6th,-0.004781812455768081,-2.6760798589169417
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,7th,-8.66761084127007e-08,-4.6829904505045686e-05
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,8th,-7.322562244551879e-08,-5.4239384424902833e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,10th,2.3155360100559224e-07,0.00028021981835605676
+scp_inflation,SCP inflation adjustment (£28.20/week),2026,All,0.014126916267459096,7.188477019065662
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,1st,0.04697401434368509,8.414765380828126
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,2nd,0.0633695501773154,17.673282690440452
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,3rd,0.06628250979829052,25.07446924617614
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,4th,0.020127814689334035,8.829551442606462
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,5th,0.002712270963131533,1.2331465917700575
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,6th,0.007725917548894267,4.323169664329697
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,7th,1.4003220598005486e-07,7.56574670794647e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,8th,1.1828961559319664e-07,8.761900147888028e-05
 scp_inflation,SCP inflation adjustment (£28.20/week),2027,9th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,10th,-1.395060474493274e-07,-0.00017145998398132597
-scp_inflation,SCP inflation adjustment (£28.20/week),2027,All,-0.008057672999357496,-4.175562503118572
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,1st,-0.05479815525789073,-10.017547413940205
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,2nd,-0.07655730825845196,-21.694316447428395
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,3rd,-0.07011159893562124,-26.887078413266824
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,4th,-0.03032973833083704,-13.398722312088434
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,5th,-0.0033946060241275586,-1.5748024958175222
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,6th,-0.009075137296189051,-5.216567230329348
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,7th,-1.6239012221731822e-07,-8.911612635524893e-05
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,8th,-1.36422016514915e-07,-0.00010254297436154426
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,10th,2.25292145108086e-07,0.0002768954332568674
+scp_inflation,SCP inflation adjustment (£28.20/week),2027,All,0.013019061654786402,6.7451793405776295
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,1st,0.04615057153888057,8.434705063447877
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,2nd,0.06433417187682512,18.18135302298067
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,3rd,0.06428397107406118,24.70564041616883
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,4th,0.01834668470494669,8.087064622223895
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,5th,0.002851746034970695,1.3228799541595044
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,6th,0.00762450215967945,4.3819818095370975
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,7th,1.363971616940251e-07,7.485176126314664e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,8th,1.1458590581427037e-07,8.612964294754468e-05
 scp_inflation,SCP inflation adjustment (£28.20/week),2028,9th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,10th,-2.625817826231435e-07,-0.00032859261634419297
-scp_inflation,SCP inflation adjustment (£28.20/week),2028,All,-0.015221346279489548,-8.029951322942598
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,1st,-0.09679434472290069,-19.04957214253817
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,2nd,-0.10253986584680473,-28.669397381525403
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,3rd,-0.10104303868778983,-39.072406429228174
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,4th,-0.04565641928274398,-20.820195488174463
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,5th,-0.004861126903818783,-2.2619978197609147
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,6th,-0.01306387090030767,-7.584241209320818
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,7th,-2.3460800425075094e-07,-0.00013081356681927817
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,8th,-1.9761164763949315e-07,-0.00015175993983674931
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,10th,2.2063404746555218e-07,0.00027609957490858864
+scp_inflation,SCP inflation adjustment (£28.20/week),2028,All,0.0127895567990379,6.745182276862073
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,1st,0.05502017076296992,10.811792838013409
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,2nd,0.05829313164063864,16.27213591666572
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,3rd,0.06110573087119793,23.75009495512453
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,4th,0.0206621593727577,9.353056234151435
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,5th,0.0027591453814435293,1.2837980531786768
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,6th,0.007416647126426879,4.3048589378241235
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,7th,1.3316338312330542e-07,7.424971329366601e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,8th,1.1214148107700103e-07,8.612136264245609e-05
 scp_inflation,SCP inflation adjustment (£28.20/week),2029,9th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,10th,-3.667895231734318e-07,-0.00046464333598224673
-scp_inflation,SCP inflation adjustment (£28.20/week),2029,All,-0.022137270414298957,-11.884275010682062
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,1st,-0.12691851004189575,-25.226792867643535
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,2nd,-0.12989424038383476,-36.71694406928487
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,3rd,-0.13769677265183594,-53.3489161646193
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,4th,-0.05841874054093154,-27.366035973974107
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,5th,-0.0062881660641968444,-2.9757233071224594
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,6th,-0.016547412000635326,-9.914193531849195
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,7th,-3.152277462384023e-07,-0.00017727102711222878
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,8th,-2.514771839025817e-07,-0.00019627058131996855
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,10th,2.081472472529065e-07,0.0002636777352480055
+scp_inflation,SCP inflation adjustment (£28.20/week),2029,All,0.012568833588123973,6.745169464247472
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,1st,0.05449244192579167,10.811484297767741
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,2nd,0.05877729456913956,16.682166362041063
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,3rd,0.060911642890623834,23.667671341009015
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,4th,0.019731676184798836,9.176908689972302
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,5th,0.0026953274079665936,1.275384269482971
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,6th,0.007093707666525669,4.249109493493438
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,7th,1.3508269215595884e-07,7.596491032749754e-05
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,8th,1.0779628866963311e-07,8.413184781609318e-05
 scp_inflation,SCP inflation adjustment (£28.20/week),2030,9th,0.0,0.0
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,10th,-4.823349569559621e-07,-0.0006277541831233918
-scp_inflation,SCP inflation adjustment (£28.20/week),2030,All,-0.028792601011922065,-15.738710290073747
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,10th,2.067289015491402e-07,0.00026905562193700394
+scp_inflation,SCP inflation adjustment (£28.20/week),2030,All,0.012344739086604556,6.745148033886004
 scp_baby_boost,SCP Premium for under-ones (£40/week),2026,1st,0.0,0.0
 scp_baby_boost,SCP Premium for under-ones (£40/week),2026,2nd,0.0,0.0
 scp_baby_boost,SCP Premium for under-ones (£40/week),2026,3rd,0.0,0.0
