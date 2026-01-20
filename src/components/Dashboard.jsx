@@ -637,14 +637,13 @@ export default function Dashboard({ selectedPolicies = [] }) {
       />
 
       {/* Mansion Tax Section */}
-      <h2 className="section-title" id="mansion-tax" ref={(el) => (sectionRefs.current["mansion-tax"] = el)}>Mansion tax</h2>
-      <p className="chart-description">
-        The Scottish Budget 2026-27 introduces new council tax bands for properties valued at £1 million or more,
-        effective from April 2028. Band I applies to properties worth £1m-£2m, and Band J to properties over £2m.
-      </p>
-      <details className="mansion-tax-details" style={{ marginTop: "16px" }}>
-        <summary style={summaryStyle}>View mansion tax impact map by constituency</summary>
+      <details className="mansion-tax-section" id="mansion-tax" ref={(el) => (sectionRefs.current["mansion-tax"] = el)}>
+        <summary className="section-title" style={{ cursor: "pointer", listStyle: "none" }}>
+          Mansion tax
+        </summary>
         <p className="chart-description" style={{ marginTop: "12px" }}>
+          The Scottish Budget 2026-27 introduces new council tax bands for properties valued at £1 million or more,
+          effective from April 2028. Band I applies to properties worth £1m-£2m, and Band J to properties over £2m.
           This map shows the estimated revenue impact by Scottish Parliament constituency, based on{" "}
           <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer">
             PolicyEngine's mansion tax analysis
