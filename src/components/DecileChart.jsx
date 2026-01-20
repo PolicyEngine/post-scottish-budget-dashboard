@@ -199,7 +199,7 @@ export default function DecileChart({
           {stacked && activePolicies.length > 1 && (
             <Legend
               verticalAlign="top"
-              height={36}
+              height={70}
               payload={[...activePolicies].reverse().map(name => ({
                 value: name,
                 type: "rect",
