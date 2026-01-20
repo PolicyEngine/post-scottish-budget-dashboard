@@ -17,7 +17,7 @@ const SECTIONS = [
 ];
 
 // Common table styles
-const tableStyle = { marginTop: "8px", width: "100%", borderCollapse: "collapse", fontSize: "14px" };
+const tableStyle = { marginTop: "8px", width: "auto", borderCollapse: "collapse", fontSize: "14px" };
 const thStyle = { textAlign: "left", padding: "8px", borderBottom: "2px solid #ddd" };
 const thCenterStyle = { textAlign: "center", padding: "8px", borderBottom: "2px solid #ddd" };
 const thRightStyle = { textAlign: "right", padding: "8px", borderBottom: "2px solid #ddd" };
