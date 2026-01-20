@@ -37,16 +37,8 @@ def get_local_authority_files() -> tuple[str, str]:
     Returns:
         Tuple of (weights_path, csv_path) for local authority data.
     """
-    weights_path = hf_hub_download(
-        repo_id=HF_REPO,
-        filename="local_authority_weights.h5",
-        repo_type="dataset",
-    )
-    csv_path = hf_hub_download(
-        repo_id=HF_REPO,
-        filename="local_authorities_2021.csv",
-        repo_type="dataset",
-    )
+    weights_path = hf_hub_download(HF_REPO, "local_authority_weights.h5")
+    csv_path = hf_hub_download(HF_REPO, "local_authorities_2021.csv")
     return weights_path, csv_path
 
 
