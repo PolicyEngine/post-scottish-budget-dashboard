@@ -328,7 +328,7 @@ def flask_app():
 
     @flask_app.route("/calculate-variation", methods=["POST"])
     def calculate_variation():
-        """Calculate household impact across earnings range for chart display."""
+        """Calculate household impact across earnings range for chart display with all 7 reforms."""
         try:
             inputs = request.get_json()
             year = inputs.get("year", 2027)
@@ -344,57 +344,106 @@ def flask_app():
             baseline_sim.calculate("scottish_child_payment", year)
             baseline_nets = baseline_sim.calculate("household_net_income", year)
 
-            # Combined income tax uplifts
-            tax_sim = Simulation(situation=situation)
-            set_scp_baseline_rate(tax_sim, year)
-            disable_scp_baby_boost(tax_sim, year)
-            apply_basic_rate_uplift(tax_sim, year)
-            apply_intermediate_rate_uplift(tax_sim, year)
-            tax_sim.calculate("scottish_child_payment", year)
-            tax_nets = tax_sim.calculate("household_net_income", year)
-            tax_impacts = tax_nets - baseline_nets
+            # 1. Basic rate uplift
+            basic_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(basic_sim, year)
+            disable_scp_baby_boost(basic_sim, year)
+            apply_basic_rate_uplift(basic_sim, year)
+            basic_sim.calculate("scottish_child_payment", year)
+            basic_nets = basic_sim.calculate("household_net_income", year)
+            basic_impacts = basic_nets - baseline_nets
 
-            # Combined threshold freezes (negative impact)
-            freeze_sim = Simulation(situation=situation)
-            set_scp_baseline_rate(freeze_sim, year)
-            disable_scp_baby_boost(freeze_sim, year)
-            apply_higher_rate_freeze(freeze_sim, year)
-            apply_advanced_rate_freeze(freeze_sim, year)
-            apply_top_rate_freeze(freeze_sim, year)
-            freeze_sim.calculate("scottish_child_payment", year)
-            freeze_nets = freeze_sim.calculate("household_net_income", year)
-            freeze_impacts = freeze_nets - baseline_nets
+            # 2. Intermediate rate uplift
+            intermediate_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(intermediate_sim, year)
+            disable_scp_baby_boost(intermediate_sim, year)
+            apply_intermediate_rate_uplift(intermediate_sim, year)
+            intermediate_sim.calculate("scottish_child_payment", year)
+            intermediate_nets = intermediate_sim.calculate("household_net_income", year)
+            intermediate_impacts = intermediate_nets - baseline_nets
 
-            # SCP impacts (only if receives UC)
+            # 3. Higher rate freeze
+            higher_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(higher_sim, year)
+            disable_scp_baby_boost(higher_sim, year)
+            apply_higher_rate_freeze(higher_sim, year)
+            higher_sim.calculate("scottish_child_payment", year)
+            higher_nets = higher_sim.calculate("household_net_income", year)
+            higher_impacts = higher_nets - baseline_nets
+
+            # 4. Advanced rate freeze
+            advanced_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(advanced_sim, year)
+            disable_scp_baby_boost(advanced_sim, year)
+            apply_advanced_rate_freeze(advanced_sim, year)
+            advanced_sim.calculate("scottish_child_payment", year)
+            advanced_nets = advanced_sim.calculate("household_net_income", year)
+            advanced_impacts = advanced_nets - baseline_nets
+
+            # 5. Top rate freeze
+            top_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(top_sim, year)
+            disable_scp_baby_boost(top_sim, year)
+            apply_top_rate_freeze(top_sim, year)
+            top_sim.calculate("scottish_child_payment", year)
+            top_nets = top_sim.calculate("household_net_income", year)
+            top_impacts = top_nets - baseline_nets
+
+            # 6. SCP inflation (only if receives UC)
             if receives_uc:
-                scp_sim = Simulation(situation=situation)
-                apply_scp_inflation(scp_sim, year)
-                if year >= 2027:
-                    apply_scp_baby_boost(scp_sim, year)
-                scp_sim.calculate("scottish_child_payment", year)
-                scp_nets = scp_sim.calculate("household_net_income", year)
-
+                scp_inf_sim = Simulation(situation=situation)
+                apply_scp_inflation(scp_inf_sim, year)
+                disable_scp_baby_boost(scp_inf_sim, year)
+                scp_inf_sim.calculate("scottish_child_payment", year)
+                scp_inf_nets = scp_inf_sim.calculate("household_net_income", year)
                 scp_baseline_sim = Simulation(situation=situation)
                 set_scp_baseline_rate(scp_baseline_sim, year)
                 disable_scp_baby_boost(scp_baseline_sim, year)
                 scp_baseline_sim.calculate("scottish_child_payment", year)
                 scp_baseline_nets = scp_baseline_sim.calculate("household_net_income", year)
-                scp_impacts = scp_nets - scp_baseline_nets
+                scp_inf_impacts = scp_inf_nets - scp_baseline_nets
             else:
-                scp_impacts = [0.0] * earnings_count
+                scp_inf_impacts = [0.0] * earnings_count
 
-            # Build results
+            # 7. SCP baby boost (only if receives UC and year >= 2027)
+            if receives_uc and year >= 2027:
+                baby_sim = Simulation(situation=situation)
+                apply_scp_inflation(baby_sim, year)
+                apply_scp_baby_boost(baby_sim, year)
+                baby_sim.calculate("scottish_child_payment", year)
+                baby_nets = baby_sim.calculate("household_net_income", year)
+                no_baby_sim = Simulation(situation=situation)
+                apply_scp_inflation(no_baby_sim, year)
+                disable_scp_baby_boost(no_baby_sim, year)
+                no_baby_sim.calculate("scottish_child_payment", year)
+                no_baby_nets = no_baby_sim.calculate("household_net_income", year)
+                baby_impacts = baby_nets - no_baby_nets
+            else:
+                baby_impacts = [0.0] * earnings_count
+
+            # Build results with all 7 reforms
             earnings_step = 1000  # £1k increments
             results = []
             for i in range(earnings_count):
                 earnings = i * earnings_step
-                income_tax_impact = float(tax_impacts[i]) + float(freeze_impacts[i])
-                scp_impact = float(scp_impacts[i]) if receives_uc else 0.0
+                basic = float(basic_impacts[i])
+                intermediate = float(intermediate_impacts[i])
+                higher = float(higher_impacts[i])
+                advanced = float(advanced_impacts[i])
+                top = float(top_impacts[i])
+                scp_inf = float(scp_inf_impacts[i]) if receives_uc else 0.0
+                baby = float(baby_impacts[i]) if receives_uc else 0.0
+                total = basic + intermediate + higher + advanced + top + scp_inf + baby
                 results.append({
                     "earnings": earnings,
-                    "income_tax": round(income_tax_impact, 2),
-                    "scp": round(scp_impact, 2),
-                    "total": round(income_tax_impact + scp_impact, 2),
+                    "income_tax_basic_uplift": round(basic, 2),
+                    "income_tax_intermediate_uplift": round(intermediate, 2),
+                    "higher_rate_freeze": round(higher, 2),
+                    "advanced_rate_freeze": round(advanced, 2),
+                    "top_rate_freeze": round(top, 2),
+                    "scp_inflation": round(scp_inf, 2),
+                    "scp_baby_boost": round(baby, 2),
+                    "total": round(total, 2),
                 })
 
             return jsonify({"data": results})
