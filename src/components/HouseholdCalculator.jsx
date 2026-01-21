@@ -802,57 +802,56 @@ function HouseholdCalculator() {
                   handleInputChange("receives_uc", e.target.checked)
                 }
               />
-              Receives Universal Credit or qualifying benefit
+              Receives Universal Credit
             </label>
             <span className="help-text">
-              Required for Scottish Child Payment eligibility
+              Required for Scottish Child Payment
             </span>
           </div>
 
           {/* Children */}
           <div className="input-group">
-            <label>Children (add ages)</label>
-            <span className="help-text">For babies under 1, enter age 0</span>
-            <div className="children-input-row">
-              <input
-                type="number"
-                value={childAgeInput}
-                onChange={(e) => setChildAgeInput(e.target.value)}
-                placeholder="Age"
-                min="0"
-                max="18"
-                className="age-input"
-              />
-              <button type="button" onClick={addChild} className="add-btn">
-                Add
-              </button>
-            </div>
-            {childrenCount > 0 && (
-              <div className="children-tags">
-                {inputs.children_ages.map((age, index) => (
-                  <span
-                    key={index}
-                    className={`child-tag ${age < 1 ? "baby" : ""}`}
-                  >
-                    {age < 1 ? "Baby" : `${age}yr`}
-                    <button
-                      type="button"
-                      onClick={() => removeChild(index)}
-                      className="remove-btn"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
+            <label>Children</label>
+            <div className="children-section">
+              <div className="children-input-row">
+                <input
+                  type="number"
+                  value={childAgeInput}
+                  onChange={(e) => setChildAgeInput(e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  max="18"
+                  className="age-input"
+                />
+                <button type="button" onClick={addChild} className="add-btn">
+                  Add child
+                </button>
               </div>
-            )}
-            <span className="help-text">
-              {inputs.receives_uc && scpEligibleChildren > 0
-                ? `${scpEligibleChildren} child(ren) eligible for SCP${babiesCount > 0 ? `, ${babiesCount} eligible for baby premium` : ""}`
-                : inputs.receives_uc
-                  ? "Add children under 16 for SCP impact"
-                  : "Enable UC to see SCP impact"}
-            </span>
+              {childrenCount > 0 && (
+                <div className="children-tags">
+                  {inputs.children_ages.map((age, index) => (
+                    <span
+                      key={index}
+                      className={`child-tag ${age < 1 ? "baby" : ""}`}
+                    >
+                      {age < 1 ? "Baby (<1)" : `${age} yr`}
+                      <button
+                        type="button"
+                        onClick={() => removeChild(index)}
+                        className="remove-btn"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <span className="help-text">
+                {inputs.receives_uc && scpEligibleChildren > 0
+                  ? `${scpEligibleChildren} eligible for SCP${babiesCount > 0 ? ` · ${babiesCount} for baby premium` : ""}`
+                  : "Enter age (0 for babies under 1)"}
+              </span>
+            </div>
           </div>
 
           {/* Calculate button */}

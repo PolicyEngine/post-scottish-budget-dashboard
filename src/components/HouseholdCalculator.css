@@ -61,10 +61,15 @@
 
 .input-group > label {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
   margin-bottom: 8px;
+}
+
+.input-group > .help-text {
+  display: block;
+  margin-top: 6px;
 }
 
 .slider-row {
@@ -118,29 +123,47 @@
 /* Checkbox group */
 .checkbox-group label {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
   cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.4;
 }
 
 .checkbox-group input[type="checkbox"] {
   width: 18px;
   height: 18px;
+  min-width: 18px;
+  margin-top: 1px;
   accent-color: #319795;
 }
 
+.checkbox-group .help-text {
+  margin-left: 28px;
+}
+
 /* Children input */
+.children-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .children-input-row {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
 .age-input {
-  width: 80px;
-  padding: 8px 12px;
+  width: 70px;
+  padding: 10px 12px;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .age-input:focus {
@@ -149,13 +172,18 @@
   box-shadow: 0 0 0 3px rgba(49, 151, 149, 0.1);
 }
 
+.age-input::placeholder {
+  color: #94a3b8;
+}
+
 .add-btn {
-  padding: 8px 16px;
+  padding: 10px 16px;
   background: #319795;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -168,17 +196,17 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
 }
 
 .child-tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: #e2e8f0;
   border-radius: 16px;
   font-size: 0.8rem;
+  font-weight: 500;
   color: #475569;
 }
 
