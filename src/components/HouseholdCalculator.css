@@ -525,15 +525,18 @@
   font-size: 1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: #64748b;
 }
 
 .reform-value.positive {
-  color: #16a34a;
+  color: #16a34a !important;
 }
 
 .reform-value.negative {
-  color: #dc2626;
+  color: #dc2626 !important;
+}
+
+.reform-value:not(.positive):not(.negative) {
+  color: #64748b;
 }
 
 /* Earnings variation chart */
