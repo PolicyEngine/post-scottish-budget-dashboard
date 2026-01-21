@@ -790,7 +790,7 @@ function HouseholdCalculator() {
   // Format currency
   const formatCurrency = useCallback(
     (value, showSign = true) => {
-      const sign = value < 0 ? "-" : (showSign ? "+" : "");
+      const sign = value < 0 ? "-" : (value > 0 && showSign ? "+" : "");
       return `${sign}£${Math.abs(value).toLocaleString("en-GB", {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
