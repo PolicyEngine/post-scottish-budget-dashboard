@@ -591,21 +591,96 @@
 }
 
 .reforms-explanation h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   font-size: 0.95rem;
   font-weight: 600;
   color: #1e293b;
 }
 
-.reforms-explanation p {
+/* Reform accordions */
+.reform-accordions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reform-accordion {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+.reform-accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: white;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.reform-accordion-header:hover {
+  background: #f1f5f9;
+}
+
+.reform-accordion-header.expanded {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.reform-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.reform-accordion-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.reform-accordion-icon {
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: #64748b;
+  line-height: 1;
+}
+
+.reform-accordion-content {
+  padding: 12px 16px 16px 38px;
+  background: #fafafa;
+}
+
+.reform-accordion-content p {
   margin: 0 0 8px 0;
   font-size: 0.85rem;
   color: #475569;
   line-height: 1.6;
 }
 
-.reforms-explanation p:last-child {
+.reform-accordion-content p:last-child {
   margin-bottom: 0;
+}
+
+.reform-type-note {
+  font-size: 0.8rem !important;
+  font-style: italic;
+  margin-top: 8px !important;
+}
+
+.reform-type-note.positive {
+  color: #16a34a !important;
+}
+
+.reform-type-note.negative {
+  color: #dc2626 !important;
 }
 
 /* Responsive */

@@ -65,6 +65,7 @@ function HouseholdCalculator() {
   });
   const [variationData, setVariationData] = useState([]);
   const [yearlyData, setYearlyData] = useState([]);
+  const [expandedReforms, setExpandedReforms] = useState({});
   const chartRef = useRef(null);
   const chartContainerRef = useRef(null);
   const yearlyChartRef = useRef(null);
@@ -118,6 +119,14 @@ function HouseholdCalculator() {
     setInputs((prev) => ({
       ...prev,
       children_ages: prev.children_ages.filter((_, i) => i !== index),
+    }));
+  }, []);
+
+  // Toggle reform explanation
+  const toggleReform = useCallback((reformId) => {
+    setExpandedReforms((prev) => ({
+      ...prev,
+      [reformId]: !prev[reformId],
     }));
   }, []);
 
@@ -999,28 +1008,43 @@ function HouseholdCalculator() {
         </div>
       </div>
 
-      {/* Reforms explanation */}
+      {/* Reforms explanation - expandable accordion for each reform */}
       <div className="reforms-explanation">
         <h4>About the reforms</h4>
-        <p>
-          <strong>Income Tax Threshold Uplifts:</strong> Basic rate (20%)
-          threshold: £14,877 → £16,537. Intermediate rate (21%) threshold:
-          £26,562 → £29,527. Both are 7.4% increases, saving Scottish taxpayers
-          money by allowing more income to be taxed at lower rates.
-        </p>
-        <p>
-          <strong>Income Tax Threshold Freezes:</strong> Higher rate (42%)
-          threshold frozen at £31,092. Advanced rate (45%) threshold frozen at
-          £62,430. Top rate (48%) threshold frozen at £125,140. All frozen
-          through 2028-29. This raises revenue by moving more earners into higher
-          tax bands over time—a form of fiscal drag.
-        </p>
-        <p>
-          <strong>Scottish Child Payment:</strong> SCP uprated from £27.15 →
-          £28.20/week (+3.9%) for children under 16 on qualifying benefits. New
-          Premium adds £11.80/week extra for babies under 1 (£40/week total from
-          mid-2027).
-        </p>
+        <div className="reform-accordions">
+          {REFORMS.map((reform) => (
+            <div key={reform.id} className="reform-accordion">
+              <button
+                className={`reform-accordion-header ${expandedReforms[reform.id] ? "expanded" : ""}`}
+                onClick={() => toggleReform(reform.id)}
+              >
+                <span
+                  className="reform-color-dot"
+                  style={{ backgroundColor: reform.color }}
+                />
+                <span className="reform-accordion-title">{reform.name}</span>
+                <span className="reform-accordion-icon">
+                  {expandedReforms[reform.id] ? "−" : "+"}
+                </span>
+              </button>
+              {expandedReforms[reform.id] && (
+                <div className="reform-accordion-content">
+                  <p>{reform.description}</p>
+                  {reform.type === "positive" && (
+                    <p className="reform-type-note positive">
+                      This reform benefits households.
+                    </p>
+                  )}
+                  {reform.type === "negative" && (
+                    <p className="reform-type-note negative">
+                      This reform costs households money (raises revenue).
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
