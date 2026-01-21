@@ -3,19 +3,31 @@ import * as d3 from "d3";
 import { REFORMS, API_BASE_URL } from "../utils/reformConfig";
 import "./HouseholdCalculator.css";
 
+// CPI forecasts for real terms conversion (from OBR)
+const CPI_FORECASTS = {
+  2026: 0.024,
+  2027: 0.021,
+  2028: 0.02,
+  2029: 0.02,
+  2030: 0.02,
+};
+
 // Default input values
 const DEFAULT_INPUTS = {
   employment_income: 30000,
   is_married: false,
   partner_income: 0,
   children_ages: [],
+  receives_uc: true, // UC or other qualifying benefit for SCP
 };
 
 // Chart colors matching REFORMS
 const CHART_COLORS = {
-  total: "#319795",
-  scp_baby_boost: "#2C6496",
-  income_tax_uplift: "#29AB87",
+  total: "#0F766E", // Teal 700
+  income_tax_basic_uplift: "#0D9488", // Teal 600
+  income_tax_intermediate_uplift: "#14B8A6", // Teal 500
+  scp_inflation: "#2DD4BF", // Teal 400
+  scp_baby_boost: "#5EEAD4", // Teal 300
 };
 
 // Slider configurations
@@ -24,9 +36,10 @@ const SLIDER_CONFIGS = [
     id: "employment_income",
     label: "Your annual employment income",
     min: 0,
-    max: 150000,
+    max: 200000,
     step: 1000,
     format: (v) => `£${d3.format(",.0f")(v)}`,
+    tooltip: "Your gross annual salary before tax",
   },
 ];
 
@@ -35,14 +48,44 @@ function HouseholdCalculator() {
   const [childAgeInput, setChildAgeInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(2027);
+  const [showRealTerms, setShowRealTerms] = useState(false);
   const [impacts, setImpacts] = useState({
+    income_tax_basic_uplift: 0,
+    income_tax_intermediate_uplift: 0,
+    scp_inflation: 0,
     scp_baby_boost: 0,
-    income_tax_uplift: 0,
     total: 0,
   });
   const [variationData, setVariationData] = useState([]);
+  const [yearlyData, setYearlyData] = useState([]);
   const chartRef = useRef(null);
   const chartContainerRef = useRef(null);
+  const yearlyChartRef = useRef(null);
+  const yearlyChartContainerRef = useRef(null);
+
+  const years = [2026, 2027, 2028, 2029, 2030];
+
+  // Calculate cumulative inflation from 2026 to target year
+  const getCumulativeInflation = useCallback((targetYear) => {
+    if (targetYear <= 2026) return 1.0;
+    let factor = 1.0;
+    for (let y = 2026; y < targetYear; y++) {
+      const rate = CPI_FORECASTS[y] || 0.02;
+      factor *= 1 + rate;
+    }
+    return factor;
+  }, []);
+
+  // Convert nominal value to 2026 real terms
+  const toRealTerms = useCallback(
+    (value, year) => {
+      if (!showRealTerms) return value;
+      const inflationFactor = getCumulativeInflation(year);
+      return value / inflationFactor;
+    },
+    [showRealTerms, getCumulativeInflation]
+  );
 
   // Handle input change
   const handleInputChange = useCallback((id, value) => {
@@ -72,50 +115,75 @@ function HouseholdCalculator() {
     }));
   }, []);
 
-  // Combined calculate function for both single calc and variation
+  // Combined calculate function for all years and variation
   const calculateAll = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Run both calculations in parallel
-      const [calcResponse, variationResponse] = await Promise.all([
+      // Calculate for all years
+      const yearPromises = years.map((year) =>
         fetch(`${API_BASE_URL}/calculate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(inputs),
+          body: JSON.stringify({ ...inputs, year }),
+        }).then((res) => res.json())
+      );
+
+      // Also get variation data for chart
+      const variationPromise = fetch(`${API_BASE_URL}/calculate-variation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          is_married: inputs.is_married,
+          partner_income: inputs.partner_income,
+          children_ages: inputs.children_ages,
+          receives_uc: inputs.receives_uc,
+          year: selectedYear,
         }),
-        fetch(`${API_BASE_URL}/calculate-variation`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            is_married: inputs.is_married,
-            partner_income: inputs.partner_income,
-            children_ages: inputs.children_ages,
-          }),
-        }),
+      }).then((res) => res.json());
+
+      const [yearResults, variationResult] = await Promise.all([
+        Promise.all(yearPromises),
+        variationPromise,
       ]);
 
-      // Process single calculation
-      if (calcResponse.ok) {
-        const calcResult = await calcResponse.json();
-        if (!calcResult.error) {
-          setImpacts({
-            scp_baby_boost: calcResult.impacts.scp_baby_boost ?? 0,
-            income_tax_uplift: calcResult.impacts.income_tax_uplift ?? 0,
-            total: calcResult.total ?? 0,
-          });
-        } else {
-          setError(calcResult.error);
-        }
+      // Process yearly data
+      const processedYearlyData = years.map((year, i) => {
+        const result = yearResults[i];
+        if (result.error) return { year, total: 0 };
+
+        // Split income_tax_uplift into basic and intermediate (rough 50/50 split for now)
+        const incomeTaxTotal = result.impacts?.income_tax_uplift ?? 0;
+
+        return {
+          year,
+          income_tax_basic_uplift: incomeTaxTotal * 0.5,
+          income_tax_intermediate_uplift: incomeTaxTotal * 0.5,
+          scp_inflation: result.impacts?.scp_inflation ?? 0,
+          scp_baby_boost: result.impacts?.scp_baby_boost ?? 0,
+          total: result.total ?? 0,
+        };
+      });
+      setYearlyData(processedYearlyData);
+
+      // Set current year impacts
+      const currentYearData = processedYearlyData.find(
+        (d) => d.year === selectedYear
+      );
+      if (currentYearData) {
+        setImpacts({
+          income_tax_basic_uplift: currentYearData.income_tax_basic_uplift,
+          income_tax_intermediate_uplift: currentYearData.income_tax_intermediate_uplift,
+          scp_inflation: currentYearData.scp_inflation,
+          scp_baby_boost: currentYearData.scp_baby_boost,
+          total: currentYearData.total,
+        });
       }
 
       // Process variation data
-      if (variationResponse.ok) {
-        const variationResult = await variationResponse.json();
-        if (variationResult.data) {
-          setVariationData(variationResult.data);
-        }
+      if (variationResult.data) {
+        setVariationData(variationResult.data);
       }
     } catch (err) {
       console.error("Error calculating:", err);
@@ -123,11 +191,28 @@ function HouseholdCalculator() {
     } finally {
       setLoading(false);
     }
-  }, [inputs]);
+  }, [inputs, selectedYear, years]);
+
+  // Update impacts when year changes
+  useEffect(() => {
+    if (yearlyData.length > 0) {
+      const currentYearData = yearlyData.find((d) => d.year === selectedYear);
+      if (currentYearData) {
+        setImpacts({
+          income_tax_basic_uplift: currentYearData.income_tax_basic_uplift,
+          income_tax_intermediate_uplift: currentYearData.income_tax_intermediate_uplift,
+          scp_inflation: currentYearData.scp_inflation,
+          scp_baby_boost: currentYearData.scp_baby_boost,
+          total: currentYearData.total,
+        });
+      }
+    }
+  }, [selectedYear, yearlyData]);
 
   // Draw the earnings variation chart
   useEffect(() => {
-    if (!variationData.length || !chartRef.current || !chartContainerRef.current) return;
+    if (!variationData.length || !chartRef.current || !chartContainerRef.current)
+      return;
 
     const svg = d3.select(chartRef.current);
     svg.selectAll("*").remove();
@@ -139,18 +224,17 @@ function HouseholdCalculator() {
 
     svg.attr("width", containerWidth).attr("height", 280);
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Scales
-    const x = d3
-      .scaleLinear()
-      .domain([0, 150000])
-      .range([0, width]);
+    const x = d3.scaleLinear().domain([0, 150000]).range([0, width]);
 
     const allValues = variationData.flatMap((d) => [
       d.total,
-      d.scp_baby_boost,
-      d.income_tax_uplift,
+      d.scp_baby_boost || 0,
+      d.income_tax_uplift || 0,
     ]);
     const yMax = Math.max(100, d3.max(allValues) * 1.1);
     const yMin = Math.min(0, d3.min(allValues) * 1.1);
@@ -227,32 +311,32 @@ function HouseholdCalculator() {
       .attr("text-anchor", "middle")
       .attr("fill", "#475569")
       .attr("font-size", "12px")
-      .text("Annual impact (£)");
+      .text(`Annual impact (£${showRealTerms ? ", 2026 prices" : ""})`);
 
     // Line generators
     const lineTotal = d3
       .line()
       .x((d) => x(d.earnings))
-      .y((d) => y(d.total))
+      .y((d) => y(toRealTerms(d.total, selectedYear)))
       .curve(d3.curveMonotoneX);
 
     const lineScp = d3
       .line()
       .x((d) => x(d.earnings))
-      .y((d) => y(d.scp_baby_boost))
+      .y((d) => y(toRealTerms(d.scp_baby_boost || 0, selectedYear)))
       .curve(d3.curveMonotoneX);
 
     const lineTax = d3
       .line()
       .x((d) => x(d.earnings))
-      .y((d) => y(d.income_tax_uplift))
+      .y((d) => y(toRealTerms(d.income_tax_uplift || 0, selectedYear)))
       .curve(d3.curveMonotoneX);
 
     // Draw lines
     g.append("path")
       .datum(variationData)
       .attr("fill", "none")
-      .attr("stroke", CHART_COLORS.income_tax_uplift)
+      .attr("stroke", CHART_COLORS.income_tax_basic_uplift)
       .attr("stroke-width", 2)
       .attr("d", lineTax);
 
@@ -272,9 +356,13 @@ function HouseholdCalculator() {
 
     // Current income marker
     const currentIncome = inputs.employment_income;
-    const currentPoint = variationData.find((d) => d.earnings === currentIncome) ||
+    const currentPoint =
+      variationData.find((d) => d.earnings === currentIncome) ||
       variationData.reduce((prev, curr) =>
-        Math.abs(curr.earnings - currentIncome) < Math.abs(prev.earnings - currentIncome) ? curr : prev
+        Math.abs(curr.earnings - currentIncome) <
+        Math.abs(prev.earnings - currentIncome)
+          ? curr
+          : prev
       );
 
     if (currentPoint) {
@@ -284,7 +372,7 @@ function HouseholdCalculator() {
         .attr("x2", x(currentIncome))
         .attr("y1", 0)
         .attr("y2", height)
-        .attr("stroke", "#319795")
+        .attr("stroke", CHART_COLORS.total)
         .attr("stroke-width", 1)
         .attr("stroke-dasharray", "4,4")
         .attr("opacity", 0.6);
@@ -292,7 +380,7 @@ function HouseholdCalculator() {
       // Dot at current total
       g.append("circle")
         .attr("cx", x(currentIncome))
-        .attr("cy", y(currentPoint.total))
+        .attr("cy", y(toRealTerms(currentPoint.total, selectedYear)))
         .attr("r", 6)
         .attr("fill", CHART_COLORS.total)
         .attr("stroke", "white")
@@ -300,11 +388,11 @@ function HouseholdCalculator() {
     }
 
     // Legend
-    const legend = g.append("g").attr("transform", `translate(${width - 200}, 0)`);
+    const legend = g.append("g").attr("transform", `translate(${width - 180}, 0)`);
 
     const legendItems = [
       { label: "Total", color: CHART_COLORS.total },
-      { label: "Income tax", color: CHART_COLORS.income_tax_uplift },
+      { label: "Income tax", color: CHART_COLORS.income_tax_basic_uplift },
       { label: "SCP Premium", color: CHART_COLORS.scp_baby_boost },
     ];
 
@@ -327,41 +415,11 @@ function HouseholdCalculator() {
         .text(item.label);
     });
 
-    // Hover interaction
-    const hoverLine = g.append("line")
-      .attr("stroke", "#94a3b8")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "4,4")
-      .attr("y1", 0)
-      .attr("y2", height)
-      .style("opacity", 0);
-
-    const hoverCircleTotal = g.append("circle")
-      .attr("r", 5)
-      .attr("fill", CHART_COLORS.total)
-      .attr("stroke", "white")
-      .attr("stroke-width", 2)
-      .style("opacity", 0);
-
-    const hoverCircleTax = g.append("circle")
-      .attr("r", 4)
-      .attr("fill", CHART_COLORS.income_tax_uplift)
-      .attr("stroke", "white")
-      .attr("stroke-width", 1.5)
-      .style("opacity", 0);
-
-    const hoverCircleScp = g.append("circle")
-      .attr("r", 4)
-      .attr("fill", CHART_COLORS.scp_baby_boost)
-      .attr("stroke", "white")
-      .attr("stroke-width", 1.5)
-      .style("opacity", 0);
-
-    // Ensure container has relative positioning for tooltip
+    // Hover interaction - tooltip
     d3.select(chartContainerRef.current).style("position", "relative");
 
-    // Tooltip
-    const tooltip = d3.select(chartContainerRef.current)
+    const tooltip = d3
+      .select(chartContainerRef.current)
       .append("div")
       .attr("class", "chart-tooltip")
       .style("position", "absolute")
@@ -373,111 +431,282 @@ function HouseholdCalculator() {
       .style("box-shadow", "0 4px 12px rgba(0,0,0,0.1)")
       .style("pointer-events", "none")
       .style("opacity", 0)
-      .style("z-index", 10)
-      .style("transition", "opacity 0.15s ease");
+      .style("z-index", 10);
+
+    const hoverLine = g
+      .append("line")
+      .attr("stroke", "#94a3b8")
+      .attr("stroke-width", 1)
+      .attr("stroke-dasharray", "4,4")
+      .attr("y1", 0)
+      .attr("y2", height)
+      .style("opacity", 0);
+
+    const hoverCircle = g
+      .append("circle")
+      .attr("r", 5)
+      .attr("fill", CHART_COLORS.total)
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .style("opacity", 0);
 
     // Overlay for mouse events
     g.append("rect")
       .attr("width", width)
       .attr("height", height)
       .attr("fill", "transparent")
-      .on("mousemove", function(event) {
+      .on("mousemove", function (event) {
         const [mouseX] = d3.pointer(event);
         const earnings = x.invert(mouseX);
 
-        // Find closest data point
         const closest = variationData.reduce((prev, curr) =>
-          Math.abs(curr.earnings - earnings) < Math.abs(prev.earnings - earnings) ? curr : prev
+          Math.abs(curr.earnings - earnings) < Math.abs(prev.earnings - earnings)
+            ? curr
+            : prev
         );
 
-        // Update hover elements
         hoverLine
           .attr("x1", x(closest.earnings))
           .attr("x2", x(closest.earnings))
           .style("opacity", 1);
 
-        hoverCircleTotal
+        hoverCircle
           .attr("cx", x(closest.earnings))
-          .attr("cy", y(closest.total))
+          .attr("cy", y(toRealTerms(closest.total, selectedYear)))
           .style("opacity", 1);
 
-        hoverCircleTax
-          .attr("cx", x(closest.earnings))
-          .attr("cy", y(closest.income_tax_uplift))
-          .style("opacity", 1);
-
-        hoverCircleScp
-          .attr("cx", x(closest.earnings))
-          .attr("cy", y(closest.scp_baby_boost))
-          .style("opacity", 1);
-
-        // Update tooltip
-        const sign = (v) => v >= 0 ? "+" : "";
-        const tooltipX = x(closest.earnings) + margin.left;
-        const tooltipY = Math.min(y(closest.total), y(closest.income_tax_uplift), y(closest.scp_baby_boost));
+        const sign = (v) => (v >= 0 ? "+" : "");
+        const total = toRealTerms(closest.total, selectedYear);
+        const tax = toRealTerms(closest.income_tax_uplift || 0, selectedYear);
+        const scp = toRealTerms(closest.scp_baby_boost || 0, selectedYear);
 
         tooltip
-          .html(`
+          .html(
+            `
             <div style="font-weight:600;margin-bottom:6px;color:#1e293b">
               £${closest.earnings.toLocaleString()} income
             </div>
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
               <span style="width:10px;height:10px;background:${CHART_COLORS.total};border-radius:2px"></span>
               <span style="color:#475569">Total:</span>
-              <span style="font-weight:600;color:${closest.total >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.total)}£${Math.abs(closest.total).toFixed(0)}</span>
+              <span style="font-weight:600;color:${total >= 0 ? "#16a34a" : "#dc2626"}">${sign(total)}£${Math.abs(total).toFixed(0)}</span>
             </div>
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-              <span style="width:10px;height:10px;background:${CHART_COLORS.income_tax_uplift};border-radius:2px"></span>
+              <span style="width:10px;height:10px;background:${CHART_COLORS.income_tax_basic_uplift};border-radius:2px"></span>
               <span style="color:#475569">Income tax:</span>
-              <span style="font-weight:600;color:${closest.income_tax_uplift >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.income_tax_uplift)}£${Math.abs(closest.income_tax_uplift).toFixed(0)}</span>
+              <span style="font-weight:600;color:${tax >= 0 ? "#16a34a" : "#dc2626"}">${sign(tax)}£${Math.abs(tax).toFixed(0)}</span>
             </div>
             <div style="display:flex;align-items:center;gap:6px">
               <span style="width:10px;height:10px;background:${CHART_COLORS.scp_baby_boost};border-radius:2px"></span>
               <span style="color:#475569">SCP Premium:</span>
-              <span style="font-weight:600;color:${closest.scp_baby_boost >= 0 ? '#16a34a' : '#dc2626'}">${sign(closest.scp_baby_boost)}£${Math.abs(closest.scp_baby_boost).toFixed(0)}</span>
+              <span style="font-weight:600;color:${scp >= 0 ? "#16a34a" : "#dc2626"}">${sign(scp)}£${Math.abs(scp).toFixed(0)}</span>
             </div>
-          `)
+          `
+          )
           .style("opacity", 1);
 
-        // Position tooltip - flip if too close to right edge
+        const tooltipX = x(closest.earnings) + margin.left;
+        const tooltipY = y(toRealTerms(closest.total, selectedYear));
+
         if (tooltipX > width - 100) {
           tooltip.style("left", `${tooltipX - 175}px`).style("top", `${tooltipY}px`);
         } else {
           tooltip.style("left", `${tooltipX + 15}px`).style("top", `${tooltipY}px`);
         }
       })
-      .on("mouseleave", function() {
+      .on("mouseleave", function () {
         hoverLine.style("opacity", 0);
-        hoverCircleTotal.style("opacity", 0);
-        hoverCircleTax.style("opacity", 0);
-        hoverCircleScp.style("opacity", 0);
+        hoverCircle.style("opacity", 0);
         tooltip.style("opacity", 0);
       });
 
-    // Cleanup tooltip on unmount
     return () => {
       tooltip.remove();
     };
-  }, [variationData, inputs.employment_income]);
+  }, [variationData, inputs.employment_income, selectedYear, showRealTerms, toRealTerms]);
+
+  // Draw yearly projection chart
+  useEffect(() => {
+    if (
+      !yearlyData.length ||
+      !yearlyChartRef.current ||
+      !yearlyChartContainerRef.current
+    )
+      return;
+
+    const svg = d3.select(yearlyChartRef.current);
+    svg.selectAll("*").remove();
+
+    const containerWidth = yearlyChartContainerRef.current.clientWidth;
+    const margin = { top: 20, right: 24, bottom: 40, left: 70 };
+    const width = containerWidth - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
+
+    svg.attr("width", containerWidth).attr("height", 200);
+
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Process data for stacked bar
+    const processedData = yearlyData.map((d) => ({
+      year: d.year,
+      income_tax: toRealTerms(
+        (d.income_tax_basic_uplift || 0) + (d.income_tax_intermediate_uplift || 0),
+        d.year
+      ),
+      scp: toRealTerms((d.scp_inflation || 0) + (d.scp_baby_boost || 0), d.year),
+      total: toRealTerms(d.total, d.year),
+    }));
+
+    // Scales
+    const x = d3
+      .scaleBand()
+      .domain(processedData.map((d) => d.year))
+      .range([0, width])
+      .padding(0.3);
+
+    const yMax = Math.max(100, d3.max(processedData, (d) => d.total) * 1.1);
+    const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
+
+    // X axis
+    g.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(
+        d3
+          .axisBottom(x)
+          .tickFormat((d) => `${d}-${(d + 1).toString().slice(-2)}`)
+          .tickSize(0)
+          .tickPadding(10)
+      )
+      .call((g) => g.select(".domain").attr("stroke", "#D1D5DB"))
+      .selectAll("text")
+      .attr("fill", "#6B7280")
+      .attr("font-size", "11px");
+
+    // Y axis
+    g.append("g")
+      .call(
+        d3
+          .axisLeft(y)
+          .ticks(4)
+          .tickFormat((d) => `£${d}`)
+          .tickSize(0)
+          .tickPadding(10)
+      )
+      .call((g) => g.select(".domain").remove())
+      .selectAll("text")
+      .attr("fill", "#6B7280")
+      .attr("font-size", "11px");
+
+    // Bars - stacked
+    processedData.forEach((d) => {
+      let yPos = height;
+
+      // Income tax portion
+      if (d.income_tax > 0) {
+        const barHeight = height - y(d.income_tax);
+        g.append("rect")
+          .attr("x", x(d.year))
+          .attr("y", yPos - barHeight)
+          .attr("width", x.bandwidth())
+          .attr("height", barHeight)
+          .attr("fill", CHART_COLORS.income_tax_basic_uplift)
+          .attr("rx", 2);
+        yPos -= barHeight;
+      }
+
+      // SCP portion
+      if (d.scp > 0) {
+        const barHeight = height - y(d.scp);
+        g.append("rect")
+          .attr("x", x(d.year))
+          .attr("y", yPos - barHeight)
+          .attr("width", x.bandwidth())
+          .attr("height", barHeight)
+          .attr("fill", CHART_COLORS.scp_baby_boost)
+          .attr("rx", 2);
+      }
+
+      // Highlight selected year
+      if (d.year === selectedYear) {
+        g.append("rect")
+          .attr("x", x(d.year) - 2)
+          .attr("y", y(d.total) - 2)
+          .attr("width", x.bandwidth() + 4)
+          .attr("height", height - y(d.total) + 4)
+          .attr("fill", "none")
+          .attr("stroke", CHART_COLORS.total)
+          .attr("stroke-width", 2)
+          .attr("rx", 4);
+      }
+    });
+
+    // Total line
+    const line = d3
+      .line()
+      .x((d) => x(d.year) + x.bandwidth() / 2)
+      .y((d) => y(d.total))
+      .curve(d3.curveMonotoneX);
+
+    g.append("path")
+      .datum(processedData)
+      .attr("fill", "none")
+      .attr("stroke", CHART_COLORS.total)
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    // Dots on line
+    g.selectAll(".total-dot")
+      .data(processedData)
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => x(d.year) + x.bandwidth() / 2)
+      .attr("cy", (d) => y(d.total))
+      .attr("r", 4)
+      .attr("fill", CHART_COLORS.total)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1.5);
+
+    // Click handler for year selection
+    g.selectAll(".year-clickarea")
+      .data(processedData)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => x(d.year))
+      .attr("y", 0)
+      .attr("width", x.bandwidth())
+      .attr("height", height)
+      .attr("fill", "transparent")
+      .style("cursor", "pointer")
+      .on("click", (event, d) => setSelectedYear(d.year));
+  }, [yearlyData, selectedYear, showRealTerms, toRealTerms]);
 
   // Format currency
-  const formatCurrency = useCallback((value, showSign = true) => {
-    const sign = showSign && value >= 0 ? "+" : "";
-    return `${sign}£${Math.abs(value).toLocaleString("en-GB", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })}`;
-  }, []);
+  const formatCurrency = useCallback(
+    (value, showSign = true) => {
+      const sign = showSign && value >= 0 ? "+" : "";
+      return `${sign}£${Math.abs(value).toLocaleString("en-GB", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })}`;
+    },
+    []
+  );
 
   const childrenCount = inputs.children_ages.length;
   const babiesCount = inputs.children_ages.filter((age) => age < 1).length;
+  const scpEligibleChildren = inputs.receives_uc
+    ? inputs.children_ages.filter((age) => age < 16).length
+    : 0;
 
   return (
     <div className="household-calculator">
       <div className="calculator-header">
         <h3>Calculate your household impact</h3>
         <p className="calculator-subtitle">
-          Enter your household details to see how the Scottish Budget 2026-27 affects you
+          Enter your household details to see how the Scottish Budget 2026-27
+          affects you over time
         </p>
       </div>
 
@@ -489,7 +718,14 @@ function HouseholdCalculator() {
           {/* Employment income slider */}
           {SLIDER_CONFIGS.map((config) => (
             <div className="input-group" key={config.id}>
-              <label>{config.label}</label>
+              <label>
+                {config.label}
+                {config.tooltip && (
+                  <span className="tooltip-icon" title={config.tooltip}>
+                    ?
+                  </span>
+                )}
+              </label>
               <div className="slider-row">
                 <input
                   type="range"
@@ -497,9 +733,13 @@ function HouseholdCalculator() {
                   min={config.min}
                   max={config.max}
                   step={config.step}
-                  onChange={(e) => handleInputChange(config.id, parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange(config.id, parseFloat(e.target.value))
+                  }
                 />
-                <span className="slider-value">{config.format(inputs[config.id])}</span>
+                <span className="slider-value">
+                  {config.format(inputs[config.id])}
+                </span>
               </div>
             </div>
           ))}
@@ -510,7 +750,9 @@ function HouseholdCalculator() {
               <input
                 type="checkbox"
                 checked={inputs.is_married}
-                onChange={(e) => handleInputChange("is_married", e.target.checked)}
+                onChange={(e) =>
+                  handleInputChange("is_married", e.target.checked)
+                }
               />
               Married or cohabiting
             </label>
@@ -525,14 +767,35 @@ function HouseholdCalculator() {
                   type="range"
                   value={inputs.partner_income}
                   min={0}
-                  max={150000}
+                  max={200000}
                   step={1000}
-                  onChange={(e) => handleInputChange("partner_income", parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    handleInputChange("partner_income", parseFloat(e.target.value))
+                  }
                 />
-                <span className="slider-value">£{d3.format(",.0f")(inputs.partner_income)}</span>
+                <span className="slider-value">
+                  £{d3.format(",.0f")(inputs.partner_income)}
+                </span>
               </div>
             </div>
           )}
+
+          {/* UC eligibility */}
+          <div className="input-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={inputs.receives_uc}
+                onChange={(e) =>
+                  handleInputChange("receives_uc", e.target.checked)
+                }
+              />
+              Receives Universal Credit or qualifying benefit
+            </label>
+            <span className="help-text">
+              Required for Scottish Child Payment eligibility
+            </span>
+          </div>
 
           {/* Children */}
           <div className="input-group">
@@ -554,9 +817,16 @@ function HouseholdCalculator() {
             {childrenCount > 0 && (
               <div className="children-tags">
                 {inputs.children_ages.map((age, index) => (
-                  <span key={index} className={`child-tag ${age < 1 ? "baby" : ""}`}>
+                  <span
+                    key={index}
+                    className={`child-tag ${age < 1 ? "baby" : ""}`}
+                  >
                     {age < 1 ? "Baby" : `${age}yr`}
-                    <button type="button" onClick={() => removeChild(index)} className="remove-btn">
+                    <button
+                      type="button"
+                      onClick={() => removeChild(index)}
+                      className="remove-btn"
+                    >
                       ×
                     </button>
                   </span>
@@ -564,9 +834,11 @@ function HouseholdCalculator() {
               </div>
             )}
             <span className="help-text">
-              {babiesCount > 0
-                ? `${babiesCount} baby/babies under 1 eligible for SCP Premium`
-                : "Add a baby (age 0) to see SCP Premium impact"}
+              {inputs.receives_uc && scpEligibleChildren > 0
+                ? `${scpEligibleChildren} child(ren) eligible for SCP${babiesCount > 0 ? `, ${babiesCount} eligible for baby premium` : ""}`
+                : inputs.receives_uc
+                  ? "Add children under 16 for SCP impact"
+                  : "Enable UC to see SCP impact"}
             </span>
           </div>
 
@@ -583,6 +855,34 @@ function HouseholdCalculator() {
 
         {/* Results */}
         <div className="calculator-results">
+          {/* Year selector and real terms toggle */}
+          <div className="results-controls">
+            <div className="year-selector">
+              <label>Year:</label>
+              <div className="year-buttons">
+                {years.map((year) => (
+                  <button
+                    key={year}
+                    className={`year-btn ${year === selectedYear ? "active" : ""}`}
+                    onClick={() => setSelectedYear(year)}
+                  >
+                    {year}-{(year + 1).toString().slice(-2)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="real-terms-toggle">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showRealTerms}
+                  onChange={(e) => setShowRealTerms(e.target.checked)}
+                />
+                Show in 2026 prices
+              </label>
+            </div>
+          </div>
+
           {/* Loading/Error state */}
           {loading && (
             <div className="loading-indicator">
@@ -592,45 +892,54 @@ function HouseholdCalculator() {
           )}
 
           {error && (
-            <div className="error-message">
-              Error: {error}. Please try again.
-            </div>
+            <div className="error-message">Error: {error}. Please try again.</div>
           )}
 
-          {/* Total impact card - hide while loading */}
+          {/* Total impact card */}
           {!loading && (
             <div
               className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}
             >
-              <div className="total-label">Your estimated annual gain</div>
-              <div className="total-value">{formatCurrency(impacts.total)}</div>
+              <div className="total-label">
+                Your estimated annual gain in {selectedYear}-
+                {(selectedYear + 1).toString().slice(-2)}
+              </div>
+              <div className="total-value">
+                {formatCurrency(toRealTerms(impacts.total, selectedYear))}
+              </div>
               <div className="total-context">
                 {impacts.total > 0
-                  ? "per year from Scottish Budget 2026-27"
+                  ? `per year from Scottish Budget 2026-27${showRealTerms ? " (2026 prices)" : ""}`
                   : "No impact from these policies"}
               </div>
             </div>
           )}
 
-          {/* Breakdown by reform - hide while loading */}
+          {/* Breakdown by reform */}
           {!loading && (
             <div className="impact-breakdown">
               <h4>Breakdown by policy</h4>
               {REFORMS.map((reform) => {
                 const value = impacts[reform.id] ?? 0;
+                const displayValue = toRealTerms(value, selectedYear);
                 return (
                   <div key={reform.id} className="reform-row">
                     <div className="reform-info">
-                      <div className="reform-color" style={{ backgroundColor: reform.color }} />
+                      <div
+                        className="reform-color"
+                        style={{ backgroundColor: reform.color }}
+                      />
                       <div className="reform-details">
                         <span className="reform-label">{reform.name}</span>
-                        <span className="reform-description">{reform.description}</span>
+                        <span className="reform-description">
+                          {reform.description}
+                        </span>
                       </div>
                     </div>
                     <div
-                      className={`reform-value ${value > 0 ? "positive" : value < 0 ? "negative" : ""}`}
+                      className={`reform-value ${displayValue > 0 ? "positive" : displayValue < 0 ? "negative" : ""}`}
                     >
-                      {formatCurrency(value)}
+                      {formatCurrency(displayValue)}
                     </div>
                   </div>
                 );
@@ -638,7 +947,23 @@ function HouseholdCalculator() {
             </div>
           )}
 
-          {/* Earnings variation chart - hide while loading */}
+          {/* Yearly projection chart */}
+          {!loading && yearlyData.length > 0 && (
+            <div className="yearly-chart-section">
+              <h4>Impact over time</h4>
+              <p className="chart-subtitle">
+                Click a year to see detailed breakdown
+              </p>
+              <div
+                ref={yearlyChartContainerRef}
+                className="yearly-chart-container"
+              >
+                <svg ref={yearlyChartRef}></svg>
+              </div>
+            </div>
+          )}
+
+          {/* Earnings variation chart */}
           {!loading && (
             <div className="earnings-chart-section">
               <h4>Impact by earnings level</h4>
@@ -647,14 +972,15 @@ function HouseholdCalculator() {
               </p>
               <div ref={chartContainerRef} className="earnings-chart-container">
                 {variationData.length > 0 ? (
-                <svg ref={chartRef}></svg>
-              ) : (
-                <div className="chart-placeholder">
-                  <span className="chart-hint">
-                    Click Calculate to see how impacts vary across the income range
-                  </span>
-                </div>
-              )}
+                  <svg ref={chartRef}></svg>
+                ) : (
+                  <div className="chart-placeholder">
+                    <span className="chart-hint">
+                      Click Calculate to see how impacts vary across the income
+                      range
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -665,13 +991,16 @@ function HouseholdCalculator() {
       <div className="reforms-explanation">
         <h4>About the reforms</h4>
         <p>
-          <strong>SCP Premium for under-ones:</strong> The Scottish Child Payment increases to £40/week for
-          babies under 1 (up from £27.15/week), for families receiving Universal Credit or other
-          qualifying benefits.
+          <strong>Income Tax Threshold Uplifts:</strong> The basic rate threshold
+          rises from £14,877 to £16,537, and the intermediate rate threshold from
+          £26,562 to £29,527 (7.4% increases). This saves Scottish taxpayers money
+          by allowing more income to be taxed at lower rates.
         </p>
         <p>
-          <strong>Income Tax Threshold Uplift:</strong> The basic rate threshold rises from £14,877
-          to £16,537, and the intermediate rate threshold from £26,562 to £29,527 (7.4% increases).
+          <strong>Scottish Child Payment:</strong> Families receiving Universal
+          Credit or other qualifying benefits get £28.20/week per child under 16
+          (up from £27.15). The new Premium adds £11.15/week extra for babies under
+          1, totaling £40/week from mid-2027.
         </p>
       </div>
     </div>
