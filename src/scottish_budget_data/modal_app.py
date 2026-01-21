@@ -15,13 +15,14 @@ import modal
 app = modal.App("scottish-budget-api")
 
 # Create image with all dependencies
+# Pin policyengine-uk to 2.72.2 for contrib.scotland.scottish_child_payment support
 image = (
     modal.Image.debian_slim(python_version="3.13")
     .pip_install(
         "flask",
         "flask-cors",
         "asgiref",
-        "policyengine-uk>=2.68.0",
+        "policyengine-uk==2.72.2",
     )
 )
 
