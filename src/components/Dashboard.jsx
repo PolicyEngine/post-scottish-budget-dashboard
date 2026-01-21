@@ -661,15 +661,38 @@ export default function Dashboard({ selectedPolicies = [] }) {
           effective from April 2028. The Finance Secretary <a href="https://www.lbc.co.uk/article/wealthy-scots-in-snp-sights-as-budget-proposes-mansion-house-tax-and-a-tax-on-pr-5HjdQg9_2/" target="_blank" rel="noopener noreferrer">estimated £16m</a> in annual revenue; using UK benchmark rates, we estimate £18.5m.
           The map below shows each constituency's share. Edinburgh constituencies account for ~47% of total revenue.
         </p>
-        <details className="methodology-details" style={{ marginTop: "8px", marginBottom: "16px" }}>
-          <summary style={{ cursor: "pointer", fontSize: "0.85rem", color: "#0F766E", fontWeight: 500 }}>How we calculate</summary>
-          <ul style={{ marginTop: "8px", paddingLeft: "20px", fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
-            <li>We estimate total revenue by multiplying 11,481 £1m+ properties (from Savills) by the £1,607 average annual rate based on UK benchmark rates.</li>
-            <li>We use council-level £1m+ sales data from Registers of Scotland to determine geographic distribution across Scotland.</li>
-            <li>Within each council, we allocate sales to constituencies based on population weighted by Band H property concentration.</li>
-            <li>We use Band H as a proxy because its threshold (&gt;£212k in 1991) equals approximately £1.06m today, closely matching the mansion tax's £1m threshold.</li>
-            <li>Each constituency's revenue is calculated by multiplying its share of total sales by the £18.5m total revenue.</li>
-          </ul>
+        <details className="methodology-details" style={{ marginTop: "12px", marginBottom: "16px" }}>
+          <summary style={{ cursor: "pointer", fontSize: "0.85rem", color: "#0F766E", fontWeight: 600 }}>How we calculate</summary>
+          <div style={{
+            marginTop: "12px",
+            padding: "16px",
+            background: "#f8fafc",
+            borderRadius: "8px",
+            borderLeft: "3px solid #0F766E"
+          }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>1.</span>
+                <span>We estimate total revenue by multiplying <strong>11,481 £1m+ properties</strong> (from Savills) by the <strong>£1,607 average annual rate</strong> based on UK benchmark rates.</span>
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>2.</span>
+                <span>We use council-level £1m+ sales data from <strong>Registers of Scotland</strong> to determine geographic distribution across Scotland.</span>
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>3.</span>
+                <span>Within each council, we allocate sales to constituencies based on population weighted by <strong>Band H property concentration</strong>.</span>
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>4.</span>
+                <span>We use Band H as a proxy because its threshold (&gt;£212k in 1991) equals approximately <strong>£1.06m today</strong>, closely matching the mansion tax's £1m threshold.</span>
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>5.</span>
+                <span>Each constituency's revenue is calculated by multiplying its share of total sales by the <strong>£18.5m total revenue</strong>.</span>
+              </div>
+            </div>
+          </div>
         </details>
         <div className="section-box map-section">
           <MansionTaxMap />
