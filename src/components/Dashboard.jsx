@@ -692,6 +692,11 @@ export default function Dashboard({ selectedPolicies = [] }) {
                 <span>Each constituency's revenue is calculated by multiplying its share of total sales by the <strong>£18.5m total revenue</strong>.</span>
               </div>
             </div>
+            <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #e2e8f0" }}>
+              <a href="https://github.com/PolicyEngine/scottish-budget-2026-2027" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E", fontWeight: 500, fontSize: "0.85rem" }}>
+                View full methodology on GitHub →
+              </a>
+            </div>
           </div>
         </details>
         <div className="section-box map-section">
