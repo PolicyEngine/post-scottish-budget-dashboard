@@ -997,9 +997,16 @@ function HouseholdCalculator() {
           by allowing more income to be taxed at lower rates.
         </p>
         <p>
+          <strong>Income Tax Threshold Freezes:</strong> The higher rate (42%)
+          threshold is frozen at £31,092, the advanced rate (45%) at £62,430, and
+          the top rate (48%) at £125,140 through 2028-29. Without these freezes,
+          thresholds would rise with inflation. This raises revenue by moving more
+          earners into higher tax bands over time—a form of fiscal drag.
+        </p>
+        <p>
           <strong>Scottish Child Payment:</strong> Families receiving Universal
           Credit or other qualifying benefits get £28.20/week per child under 16
-          (up from £27.15). The new Premium adds £11.15/week extra for babies under
+          (up from £27.15). The new Premium adds £11.80/week extra for babies under
           1, totaling £40/week from mid-2027.
         </p>
       </div>
