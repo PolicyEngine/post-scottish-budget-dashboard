@@ -202,7 +202,7 @@ function HouseholdCalculator() {
     }
   }, [inputs, selectedYear, years]);
 
-  // Update impacts when year changes
+  // Update impacts and re-fetch variation data when year changes
   useEffect(() => {
     if (yearlyData.length > 0) {
       const currentYearData = yearlyData.find((d) => d.year === selectedYear);
@@ -218,8 +218,28 @@ function HouseholdCalculator() {
           total: currentYearData.total,
         });
       }
+
+      // Re-fetch variation data for the new year
+      fetch(`${API_BASE_URL}/calculate-variation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          is_married: inputs.is_married,
+          partner_income: inputs.partner_income,
+          children_ages: inputs.children_ages,
+          receives_uc: inputs.receives_uc,
+          year: selectedYear,
+        }),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.data) {
+            setVariationData(result.data);
+          }
+        })
+        .catch((err) => console.error("Error fetching variation data:", err));
     }
-  }, [selectedYear, yearlyData]);
+  }, [selectedYear, yearlyData, inputs]);
 
   // Draw the earnings variation chart
   useEffect(() => {
