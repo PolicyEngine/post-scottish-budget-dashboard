@@ -26,6 +26,9 @@ const CHART_COLORS = {
   total: "#0F766E", // Teal 700
   income_tax_basic_uplift: "#0D9488", // Teal 600
   income_tax_intermediate_uplift: "#14B8A6", // Teal 500
+  higher_rate_freeze: "#F97316", // Orange 500
+  advanced_rate_freeze: "#FB923C", // Orange 400
+  top_rate_freeze: "#FDBA74", // Orange 300
   scp_inflation: "#2DD4BF", // Teal 400
   scp_baby_boost: "#5EEAD4", // Teal 300
 };
@@ -53,6 +56,9 @@ function HouseholdCalculator() {
   const [impacts, setImpacts] = useState({
     income_tax_basic_uplift: 0,
     income_tax_intermediate_uplift: 0,
+    higher_rate_freeze: 0,
+    advanced_rate_freeze: 0,
+    top_rate_freeze: 0,
     scp_inflation: 0,
     scp_baby_boost: 0,
     total: 0,
@@ -148,18 +154,18 @@ function HouseholdCalculator() {
         variationPromise,
       ]);
 
-      // Process yearly data
+      // Process yearly data - API now returns all 7 reforms individually
       const processedYearlyData = years.map((year, i) => {
         const result = yearResults[i];
         if (result.error) return { year, total: 0 };
 
-        // Split income_tax_uplift into basic and intermediate (rough 50/50 split for now)
-        const incomeTaxTotal = result.impacts?.income_tax_uplift ?? 0;
-
         return {
           year,
-          income_tax_basic_uplift: incomeTaxTotal * 0.5,
-          income_tax_intermediate_uplift: incomeTaxTotal * 0.5,
+          income_tax_basic_uplift: result.impacts?.income_tax_basic_uplift ?? 0,
+          income_tax_intermediate_uplift: result.impacts?.income_tax_intermediate_uplift ?? 0,
+          higher_rate_freeze: result.impacts?.higher_rate_freeze ?? 0,
+          advanced_rate_freeze: result.impacts?.advanced_rate_freeze ?? 0,
+          top_rate_freeze: result.impacts?.top_rate_freeze ?? 0,
           scp_inflation: result.impacts?.scp_inflation ?? 0,
           scp_baby_boost: result.impacts?.scp_baby_boost ?? 0,
           total: result.total ?? 0,
@@ -175,6 +181,9 @@ function HouseholdCalculator() {
         setImpacts({
           income_tax_basic_uplift: currentYearData.income_tax_basic_uplift,
           income_tax_intermediate_uplift: currentYearData.income_tax_intermediate_uplift,
+          higher_rate_freeze: currentYearData.higher_rate_freeze,
+          advanced_rate_freeze: currentYearData.advanced_rate_freeze,
+          top_rate_freeze: currentYearData.top_rate_freeze,
           scp_inflation: currentYearData.scp_inflation,
           scp_baby_boost: currentYearData.scp_baby_boost,
           total: currentYearData.total,
@@ -201,6 +210,9 @@ function HouseholdCalculator() {
         setImpacts({
           income_tax_basic_uplift: currentYearData.income_tax_basic_uplift,
           income_tax_intermediate_uplift: currentYearData.income_tax_intermediate_uplift,
+          higher_rate_freeze: currentYearData.higher_rate_freeze,
+          advanced_rate_freeze: currentYearData.advanced_rate_freeze,
+          top_rate_freeze: currentYearData.top_rate_freeze,
           scp_inflation: currentYearData.scp_inflation,
           scp_baby_boost: currentYearData.scp_baby_boost,
           total: currentYearData.total,
