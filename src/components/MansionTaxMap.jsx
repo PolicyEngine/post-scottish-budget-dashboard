@@ -312,20 +312,18 @@ export default function MansionTaxMap() {
             <h3 className="chart-title">Mansion tax by parliament constituency</h3>
             <p className="chart-description">
               The Scottish Budget 2026-27 introduces new council tax bands for properties
-              valued at £1 million or more, effective from April 2028. The Finance Secretary
-              estimated £16m in annual revenue; using UK benchmark rates, we estimate £18.5m.
-              The map below shows each constituency's share. Edinburgh constituencies account
-              for ~47% of total revenue.
+              valued at £1 million or more, effective from April 2028. Band I applies to
+              properties worth £1m–£2m, and Band J to properties over £2m. The Finance
+              Secretary estimated £16m in annual revenue; using UK benchmark rates, we
+              estimate £18.5m. The map below shows each constituency's share. Edinburgh
+              constituencies account for ~47% of total revenue.{" "}
+              <button
+                className="methodology-link"
+                onClick={() => setShowMethodology(!showMethodology)}
+              >
+                See the full methodology.
+              </button>
             </p>
-
-            {/* Expandable methodology section */}
-            <button
-              className="methodology-toggle"
-              onClick={() => setShowMethodology(!showMethodology)}
-            >
-              <span>How we calculate</span>
-              <span className="methodology-toggle-icon">{showMethodology ? "−" : "+"}</span>
-            </button>
 
             {showMethodology && (
               <div className="methodology-content">
