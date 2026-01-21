@@ -991,23 +991,23 @@ function HouseholdCalculator() {
       <div className="reforms-explanation">
         <h4>About the reforms</h4>
         <p>
-          <strong>Income Tax Threshold Uplifts:</strong> The basic rate threshold
-          rises from £14,877 to £16,537, and the intermediate rate threshold from
-          £26,562 to £29,527 (7.4% increases). This saves Scottish taxpayers money
-          by allowing more income to be taxed at lower rates.
+          <strong>Income Tax Threshold Uplifts:</strong> Basic rate (20%)
+          threshold: £14,877 → £16,537. Intermediate rate (21%) threshold:
+          £26,562 → £29,527. Both are 7.4% increases, saving Scottish taxpayers
+          money by allowing more income to be taxed at lower rates.
         </p>
         <p>
-          <strong>Income Tax Threshold Freezes:</strong> The higher rate (42%)
-          threshold is frozen at £31,092, the advanced rate (45%) at £62,430, and
-          the top rate (48%) at £125,140 through 2028-29. Without these freezes,
-          thresholds would rise with inflation. This raises revenue by moving more
-          earners into higher tax bands over time—a form of fiscal drag.
+          <strong>Income Tax Threshold Freezes:</strong> Higher rate (42%)
+          threshold frozen at £31,092. Advanced rate (45%) threshold frozen at
+          £62,430. Top rate (48%) threshold frozen at £125,140. All frozen
+          through 2028-29. This raises revenue by moving more earners into higher
+          tax bands over time—a form of fiscal drag.
         </p>
         <p>
-          <strong>Scottish Child Payment:</strong> Families receiving Universal
-          Credit or other qualifying benefits get £28.20/week per child under 16
-          (up from £27.15). The new Premium adds £11.80/week extra for babies under
-          1, totaling £40/week from mid-2027.
+          <strong>Scottish Child Payment:</strong> SCP uprated from £27.15 →
+          £28.20/week (+3.9%) for children under 16 on qualifying benefits. New
+          Premium adds £11.80/week extra for babies under 1 (£40/week total from
+          mid-2027).
         </p>
       </div>
     </div>
