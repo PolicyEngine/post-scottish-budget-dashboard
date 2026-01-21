@@ -333,7 +333,7 @@ def flask_app():
             inputs = request.get_json()
             year = inputs.get("year", 2027)
             receives_uc = inputs.get("receives_uc", True)
-            earnings_count = 201  # 0 to 200k in 1k steps
+            earnings_count = 101  # 0 to 200k in 2k steps
 
             situation = create_situation_with_axes(inputs, year, earnings_count)
 
@@ -422,7 +422,7 @@ def flask_app():
                 baby_impacts = [0.0] * earnings_count
 
             # Build results with all 7 reforms
-            earnings_step = 1000  # £1k increments
+            earnings_step = 2000  # £2k increments
             results = []
             for i in range(earnings_count):
                 earnings = i * earnings_step
@@ -538,7 +538,7 @@ def flask_app():
 
     def calculate_variation_for_year(inputs: dict, year: int, receives_uc: bool) -> list:
         """Calculate variation across earnings for a single year."""
-        earnings_count = 201
+        earnings_count = 101  # 0 to 200k in 2k steps
         situation = create_situation_with_axes(inputs, year, earnings_count)
 
         # Baseline
@@ -612,7 +612,7 @@ def flask_app():
 
         results = []
         for i in range(earnings_count):
-            earnings = i * 1000
+            earnings = i * 2000  # £2k increments
             basic = float(basic_impacts[i])
             intermediate = float(intermediate_impacts[i])
             higher = float(higher_impacts[i])
