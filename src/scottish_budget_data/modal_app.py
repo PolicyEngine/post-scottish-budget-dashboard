@@ -453,6 +453,211 @@ def flask_app():
             traceback.print_exc()
             return jsonify({"error": str(e)}), 500
 
+    def calculate_for_year(inputs: dict, year: int, receives_uc: bool) -> dict:
+        """Calculate all 7 reform impacts for a single year."""
+        situation = create_situation(inputs, year)
+
+        # Baseline
+        baseline_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(baseline_sim, year)
+        disable_scp_baby_boost(baseline_sim, year)
+        baseline_sim.calculate("scottish_child_payment", year)
+        baseline_net = float(baseline_sim.calculate("household_net_income", year)[0])
+
+        impacts = {}
+
+        # 1. Basic rate uplift
+        basic_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(basic_sim, year)
+        disable_scp_baby_boost(basic_sim, year)
+        apply_basic_rate_uplift(basic_sim, year)
+        basic_sim.calculate("scottish_child_payment", year)
+        impacts["income_tax_basic_uplift"] = round(float(basic_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
+
+        # 2. Intermediate rate uplift
+        intermediate_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(intermediate_sim, year)
+        disable_scp_baby_boost(intermediate_sim, year)
+        apply_intermediate_rate_uplift(intermediate_sim, year)
+        intermediate_sim.calculate("scottish_child_payment", year)
+        impacts["income_tax_intermediate_uplift"] = round(float(intermediate_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
+
+        # 3. Higher rate freeze
+        higher_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(higher_sim, year)
+        disable_scp_baby_boost(higher_sim, year)
+        apply_higher_rate_freeze(higher_sim, year)
+        higher_sim.calculate("scottish_child_payment", year)
+        impacts["higher_rate_freeze"] = round(float(higher_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
+
+        # 4. Advanced rate freeze
+        advanced_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(advanced_sim, year)
+        disable_scp_baby_boost(advanced_sim, year)
+        apply_advanced_rate_freeze(advanced_sim, year)
+        advanced_sim.calculate("scottish_child_payment", year)
+        impacts["advanced_rate_freeze"] = round(float(advanced_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
+
+        # 5. Top rate freeze
+        top_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(top_sim, year)
+        disable_scp_baby_boost(top_sim, year)
+        apply_top_rate_freeze(top_sim, year)
+        top_sim.calculate("scottish_child_payment", year)
+        impacts["top_rate_freeze"] = round(float(top_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
+
+        # 6. SCP inflation
+        if receives_uc:
+            scp_inf_sim = Simulation(situation=situation)
+            apply_scp_inflation(scp_inf_sim, year)
+            disable_scp_baby_boost(scp_inf_sim, year)
+            scp_inf_sim.calculate("scottish_child_payment", year)
+            scp_inf_net = float(scp_inf_sim.calculate("household_net_income", year)[0])
+            impacts["scp_inflation"] = round(scp_inf_net - baseline_net, 2)
+        else:
+            impacts["scp_inflation"] = 0.0
+
+        # 7. SCP baby boost
+        if receives_uc and year >= 2027:
+            baby_sim = Simulation(situation=situation)
+            apply_scp_inflation(baby_sim, year)
+            apply_scp_baby_boost(baby_sim, year)
+            baby_sim.calculate("scottish_child_payment", year)
+            baby_net = float(baby_sim.calculate("household_net_income", year)[0])
+            no_baby_sim = Simulation(situation=situation)
+            apply_scp_inflation(no_baby_sim, year)
+            disable_scp_baby_boost(no_baby_sim, year)
+            no_baby_sim.calculate("scottish_child_payment", year)
+            no_baby_net = float(no_baby_sim.calculate("household_net_income", year)[0])
+            impacts["scp_baby_boost"] = round(baby_net - no_baby_net, 2)
+        else:
+            impacts["scp_baby_boost"] = 0.0
+
+        total = sum(impacts.values())
+        return {"year": year, **impacts, "total": round(total, 2)}
+
+    def calculate_variation_for_year(inputs: dict, year: int, receives_uc: bool) -> list:
+        """Calculate variation across earnings for a single year."""
+        earnings_count = 201
+        situation = create_situation_with_axes(inputs, year, earnings_count)
+
+        # Baseline
+        baseline_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(baseline_sim, year)
+        disable_scp_baby_boost(baseline_sim, year)
+        baseline_sim.calculate("scottish_child_payment", year)
+        baseline_nets = baseline_sim.calculate("household_net_income", year)
+
+        # All reform simulations
+        basic_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(basic_sim, year)
+        disable_scp_baby_boost(basic_sim, year)
+        apply_basic_rate_uplift(basic_sim, year)
+        basic_sim.calculate("scottish_child_payment", year)
+        basic_impacts = basic_sim.calculate("household_net_income", year) - baseline_nets
+
+        intermediate_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(intermediate_sim, year)
+        disable_scp_baby_boost(intermediate_sim, year)
+        apply_intermediate_rate_uplift(intermediate_sim, year)
+        intermediate_sim.calculate("scottish_child_payment", year)
+        intermediate_impacts = intermediate_sim.calculate("household_net_income", year) - baseline_nets
+
+        higher_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(higher_sim, year)
+        disable_scp_baby_boost(higher_sim, year)
+        apply_higher_rate_freeze(higher_sim, year)
+        higher_sim.calculate("scottish_child_payment", year)
+        higher_impacts = higher_sim.calculate("household_net_income", year) - baseline_nets
+
+        advanced_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(advanced_sim, year)
+        disable_scp_baby_boost(advanced_sim, year)
+        apply_advanced_rate_freeze(advanced_sim, year)
+        advanced_sim.calculate("scottish_child_payment", year)
+        advanced_impacts = advanced_sim.calculate("household_net_income", year) - baseline_nets
+
+        top_sim = Simulation(situation=situation)
+        set_scp_baseline_rate(top_sim, year)
+        disable_scp_baby_boost(top_sim, year)
+        apply_top_rate_freeze(top_sim, year)
+        top_sim.calculate("scottish_child_payment", year)
+        top_impacts = top_sim.calculate("household_net_income", year) - baseline_nets
+
+        if receives_uc:
+            scp_inf_sim = Simulation(situation=situation)
+            apply_scp_inflation(scp_inf_sim, year)
+            disable_scp_baby_boost(scp_inf_sim, year)
+            scp_inf_sim.calculate("scottish_child_payment", year)
+            scp_baseline_sim = Simulation(situation=situation)
+            set_scp_baseline_rate(scp_baseline_sim, year)
+            disable_scp_baby_boost(scp_baseline_sim, year)
+            scp_baseline_sim.calculate("scottish_child_payment", year)
+            scp_inf_impacts = scp_inf_sim.calculate("household_net_income", year) - scp_baseline_sim.calculate("household_net_income", year)
+        else:
+            scp_inf_impacts = [0.0] * earnings_count
+
+        if receives_uc and year >= 2027:
+            baby_sim = Simulation(situation=situation)
+            apply_scp_inflation(baby_sim, year)
+            apply_scp_baby_boost(baby_sim, year)
+            baby_sim.calculate("scottish_child_payment", year)
+            no_baby_sim = Simulation(situation=situation)
+            apply_scp_inflation(no_baby_sim, year)
+            disable_scp_baby_boost(no_baby_sim, year)
+            no_baby_sim.calculate("scottish_child_payment", year)
+            baby_impacts = baby_sim.calculate("household_net_income", year) - no_baby_sim.calculate("household_net_income", year)
+        else:
+            baby_impacts = [0.0] * earnings_count
+
+        results = []
+        for i in range(earnings_count):
+            earnings = i * 1000
+            basic = float(basic_impacts[i])
+            intermediate = float(intermediate_impacts[i])
+            higher = float(higher_impacts[i])
+            advanced = float(advanced_impacts[i])
+            top = float(top_impacts[i])
+            scp_inf = float(scp_inf_impacts[i]) if receives_uc else 0.0
+            baby = float(baby_impacts[i]) if receives_uc else 0.0
+            total = basic + intermediate + higher + advanced + top + scp_inf + baby
+            results.append({
+                "earnings": earnings,
+                "income_tax_basic_uplift": round(basic, 2),
+                "income_tax_intermediate_uplift": round(intermediate, 2),
+                "higher_rate_freeze": round(higher, 2),
+                "advanced_rate_freeze": round(advanced, 2),
+                "top_rate_freeze": round(top, 2),
+                "scp_inflation": round(scp_inf, 2),
+                "scp_baby_boost": round(baby, 2),
+                "total": round(total, 2),
+            })
+        return results
+
+    @flask_app.route("/calculate-all", methods=["POST"])
+    def calculate_all():
+        """Combined endpoint: returns yearly data (2026-2030) and variation data in one request."""
+        try:
+            inputs = request.get_json()
+            selected_year = inputs.get("year", 2027)
+            receives_uc = inputs.get("receives_uc", True)
+
+            # Calculate for all years
+            years = [2026, 2027, 2028, 2029, 2030]
+            yearly_data = [calculate_for_year(inputs, year, receives_uc) for year in years]
+
+            # Calculate variation for selected year
+            variation_data = calculate_variation_for_year(inputs, selected_year, receives_uc)
+
+            return jsonify({
+                "yearly": yearly_data,
+                "variation": variation_data,
+            })
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return jsonify({"error": str(e)}), 500
+
     @flask_app.route("/health", methods=["GET"])
     def health():
         return jsonify({"status": "healthy"})

@@ -121,62 +121,28 @@ function HouseholdCalculator() {
     }));
   }, []);
 
-  // Combined calculate function for all years and variation
+  // Combined calculate function - single API request for all data
   const calculateAll = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Calculate for all years
-      const yearPromises = years.map((year) =>
-        fetch(`${API_BASE_URL}/calculate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...inputs, year }),
-        }).then((res) => res.json())
-      );
-
-      // Also get variation data for chart
-      const variationPromise = fetch(`${API_BASE_URL}/calculate-variation`, {
+      const response = await fetch(`${API_BASE_URL}/calculate-all`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          is_married: inputs.is_married,
-          partner_income: inputs.partner_income,
-          children_ages: inputs.children_ages,
-          receives_uc: inputs.receives_uc,
-          year: selectedYear,
-        }),
-      }).then((res) => res.json());
-
-      const [yearResults, variationResult] = await Promise.all([
-        Promise.all(yearPromises),
-        variationPromise,
-      ]);
-
-      // Process yearly data - API now returns all 7 reforms individually
-      const processedYearlyData = years.map((year, i) => {
-        const result = yearResults[i];
-        if (result.error) return { year, total: 0 };
-
-        return {
-          year,
-          income_tax_basic_uplift: result.impacts?.income_tax_basic_uplift ?? 0,
-          income_tax_intermediate_uplift: result.impacts?.income_tax_intermediate_uplift ?? 0,
-          higher_rate_freeze: result.impacts?.higher_rate_freeze ?? 0,
-          advanced_rate_freeze: result.impacts?.advanced_rate_freeze ?? 0,
-          top_rate_freeze: result.impacts?.top_rate_freeze ?? 0,
-          scp_inflation: result.impacts?.scp_inflation ?? 0,
-          scp_baby_boost: result.impacts?.scp_baby_boost ?? 0,
-          total: result.total ?? 0,
-        };
+        body: JSON.stringify({ ...inputs, year: selectedYear }),
       });
-      setYearlyData(processedYearlyData);
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      // Process yearly data
+      setYearlyData(result.yearly);
 
       // Set current year impacts
-      const currentYearData = processedYearlyData.find(
-        (d) => d.year === selectedYear
-      );
+      const currentYearData = result.yearly.find((d) => d.year === selectedYear);
       if (currentYearData) {
         setImpacts({
           income_tax_basic_uplift: currentYearData.income_tax_basic_uplift,
@@ -190,19 +156,17 @@ function HouseholdCalculator() {
         });
       }
 
-      // Process variation data
-      if (variationResult.data) {
-        setVariationData(variationResult.data);
-      }
+      // Set variation data
+      setVariationData(result.variation);
     } catch (err) {
       console.error("Error calculating:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [inputs, selectedYear, years]);
+  }, [inputs, selectedYear]);
 
-  // Update impacts and re-fetch variation data when year changes
+  // Update impacts when year changes (variation data re-fetched via calculate-all)
   useEffect(() => {
     if (yearlyData.length > 0) {
       const currentYearData = yearlyData.find((d) => d.year === selectedYear);
@@ -219,22 +183,16 @@ function HouseholdCalculator() {
         });
       }
 
-      // Re-fetch variation data for the new year
-      fetch(`${API_BASE_URL}/calculate-variation`, {
+      // Re-fetch variation data for the new year (single request)
+      fetch(`${API_BASE_URL}/calculate-all`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          is_married: inputs.is_married,
-          partner_income: inputs.partner_income,
-          children_ages: inputs.children_ages,
-          receives_uc: inputs.receives_uc,
-          year: selectedYear,
-        }),
+        body: JSON.stringify({ ...inputs, year: selectedYear }),
       })
         .then((res) => res.json())
         .then((result) => {
-          if (result.data) {
-            setVariationData(result.data);
+          if (result.variation) {
+            setVariationData(result.variation);
           }
         })
         .catch((err) => console.error("Error fetching variation data:", err));
