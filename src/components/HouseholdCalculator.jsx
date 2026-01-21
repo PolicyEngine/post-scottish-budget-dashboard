@@ -1006,12 +1006,7 @@ function HouseholdCalculator() {
                         className="reform-color"
                         style={{ backgroundColor: reform.color }}
                       />
-                      <div className="reform-details">
-                        <span className="reform-label">{reform.name}</span>
-                        <span className="reform-description">
-                          {reform.description}
-                        </span>
-                      </div>
+                      <span className="reform-label">{reform.name}</span>
                     </div>
                     <div
                       className={`reform-value ${displayValue > 0 ? "positive" : displayValue < 0 ? "negative" : ""}`}
