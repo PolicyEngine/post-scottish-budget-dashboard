@@ -7,6 +7,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
@@ -218,42 +219,6 @@ export default function DecileChart({
         )}
       </div>
 
-      {/* Custom legend showing all selected policies */}
-      {stacked && legendPolicies.length > 0 && (
-        <div className="custom-legend" style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "16px",
-          marginBottom: "12px",
-          maxWidth: "800px",
-          margin: "0 auto 12px auto"
-        }}>
-          {legendPolicies.map(name => (
-            <div key={name} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{
-                width: "12px",
-                height: "12px",
-                backgroundColor: POLICY_COLORS[name],
-                display: "inline-block"
-              }}></span>
-              <span style={{ fontSize: "13px", color: "#374151" }}>{name}</span>
-            </div>
-          ))}
-          {showNetChange && (
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{
-                width: "16px",
-                height: "2px",
-                backgroundColor: "#000000",
-                display: "inline-block"
-              }}></span>
-              <span style={{ fontSize: "13px", color: "#374151" }}>Net change</span>
-            </div>
-          )}
-        </div>
-      )}
-
       <ResponsiveContainer width="100%" height={350}>
         <ComposedChart
           data={chartData}
@@ -293,6 +258,20 @@ export default function DecileChart({
             }}
           />
           <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
+          {stacked && (
+            <Legend
+              payload={[
+                ...legendPolicies.map((name) => ({
+                  value: name,
+                  type: "rect",
+                  color: POLICY_COLORS[name],
+                })),
+                ...(showNetChange
+                  ? [{ value: "Net change", type: "line", color: "#000000" }]
+                  : []),
+              ]}
+            />
+          )}
           <Tooltip
             formatter={(value, name) => [
               formatValue(value),

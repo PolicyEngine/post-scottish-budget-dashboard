@@ -421,13 +421,16 @@ export default function Dashboard({ selectedPolicies = [] }) {
         );
         const value = row ? parseFloat(row.value) || 0 : 0;
         dataPoint[policyName] = value;
-        netImpact += value;
+        // Only include in netImpact if policy is selected
+        if (selectedPolicies.includes(policyId)) {
+          netImpact += value;
+        }
       });
 
       dataPoint.netImpact = netImpact;
       return dataPoint;
     });
-  }, [isStacked, rawBudgetaryData]);
+  }, [isStacked, rawBudgetaryData, selectedPolicies]);
 
   // Transform distributional data for stacked decile chart
   const stackedDecileData = useMemo(() => {
@@ -448,15 +451,18 @@ export default function Dashboard({ selectedPolicies = [] }) {
         const absValue = row ? parseFloat(row.absolute_change) || 0 : 0;
         dataPoint[`${policyName}_relative`] = relValue;
         dataPoint[`${policyName}_absolute`] = absValue;
-        netRelative += relValue;
-        netAbsolute += absValue;
+        // Only include in net if policy is selected
+        if (selectedPolicies.includes(policyId)) {
+          netRelative += relValue;
+          netAbsolute += absValue;
+        }
       });
 
       dataPoint.netRelative = netRelative;
       dataPoint.netAbsolute = netAbsolute;
       return dataPoint;
     });
-  }, [isStacked, rawDistributionalData, selectedYear]);
+  }, [isStacked, rawDistributionalData, selectedYear, selectedPolicies]);
 
   // Get decile data filtered by selected year - aggregate selected policies
   const decileDataForYear = useMemo(() => {

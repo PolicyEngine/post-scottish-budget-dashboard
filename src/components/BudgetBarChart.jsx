@@ -12,7 +12,7 @@ import {
   LabelList,
 } from "recharts";
 import "./BudgetBarChart.css";
-import { POLICY_COLORS, ALL_POLICY_NAMES } from "../utils/policyConfig";
+import { POLICY_COLORS, ALL_POLICY_NAMES, POLICY_NAMES } from "../utils/policyConfig";
 
 // Custom label component for net impact values
 const NetImpactLabel = (props) => {
@@ -52,7 +52,7 @@ const NetImpactLabel = (props) => {
   );
 };
 
-export default function BudgetBarChart({ data, title, description, stacked = false }) {
+export default function BudgetBarChart({ data, title, description, stacked = false, selectedPolicies = [] }) {
   if (!data || data.length === 0) {
     return <div className="budget-bar-chart">No data available</div>;
   }
@@ -64,22 +64,29 @@ export default function BudgetBarChart({ data, title, description, stacked = fal
 
   const formatYear = (year) => `${year}–${String(year + 1).slice(-2)}`;
 
-  // Check which policies have non-zero values
+  // Convert selected policy IDs to names
+  const selectedPolicyNames = selectedPolicies.map(id => POLICY_NAMES[id]);
+
+  // Check which policies have non-zero values AND are selected
   const hasNonZeroValues = (policyName) => {
     return data.some((d) => Math.abs(d[policyName] || 0) > 0.001);
   };
 
-  const activePolicies = ALL_POLICY_NAMES.filter(hasNonZeroValues);
+  const activePolicies = stacked
+    ? ALL_POLICY_NAMES.filter(name =>
+        hasNonZeroValues(name) && selectedPolicyNames.includes(name)
+      )
+    : ALL_POLICY_NAMES.filter(hasNonZeroValues);
 
   // Check if we should show net impact line (only when multiple policies have data)
   const showNetImpact = stacked && activePolicies.length > 1;
 
-  // Calculate Y-axis domain with padding
+  // Calculate Y-axis domain with padding (only for active/selected policies)
   const calculateYDomain = () => {
     let minVal = 0, maxVal = 0;
     data.forEach(d => {
       let negSum = 0, posSum = 0;
-      ALL_POLICY_NAMES.forEach(name => {
+      activePolicies.forEach(name => {
         const val = d[name] || 0;
         if (val < 0) negSum += val;
         else posSum += val;
@@ -139,7 +146,7 @@ export default function BudgetBarChart({ data, title, description, stacked = fal
           <ReferenceLine y={0} stroke="#374151" strokeWidth={1} />
 
           {stacked ? (
-            ALL_POLICY_NAMES.map((policyName) => (
+            activePolicies.map((policyName) => (
               <Bar
                 key={policyName}
                 dataKey={policyName}
