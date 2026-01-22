@@ -741,8 +741,8 @@ function HouseholdCalculator() {
             </div>
           `)
           .style("opacity", 1)
-          .style("left", `${x(closest.income) + margin.left - 90}px`)
-          .style("top", `${y(closest.total) + margin.top - 180}px`);
+          .style("left", `${x(closest.income) + margin.left - 200}px`)
+          .style("top", `${margin.top + 10}px`);
       })
       .on("mouseout", () => {
         tooltip.style("opacity", 0);
@@ -786,6 +786,22 @@ function HouseholdCalculator() {
         {/* Inputs */}
         <div className="calculator-inputs">
           <h4>Household details</h4>
+
+          {/* Year selector dropdown */}
+          <div className="input-group">
+            <label>Year</label>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="year-select"
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}-{(year + 1).toString().slice(-2)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Employment income slider */}
           {SLIDER_CONFIGS.map((config) => (
@@ -910,22 +926,8 @@ function HouseholdCalculator() {
 
         {/* Results */}
         <div className="calculator-results">
-          {/* Year selector and real terms toggle */}
+          {/* Real terms toggle */}
           <div className="results-controls">
-            <div className="year-selector">
-              <label>Year:</label>
-              <div className="year-buttons">
-                {years.map((year) => (
-                  <button
-                    key={year}
-                    className={`year-btn ${year === selectedYear ? "active" : ""}`}
-                    onClick={() => setSelectedYear(year)}
-                  >
-                    {year}-{(year + 1).toString().slice(-2)}
-                  </button>
-                ))}
-              </div>
-            </div>
             <div className="real-terms-toggle">
               <label>
                 <input
