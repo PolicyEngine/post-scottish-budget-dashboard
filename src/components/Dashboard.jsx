@@ -735,7 +735,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>2.</span>
-                <span>The £1,607 average rate is calculated as (89% × £1,500) + (11% × £2,500), where £1,500 and £2,500 are estimated rates for £1-2m and £2m+ bands respectively. The 89%/11% split comes from <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills 2024 data</a> (416 sales £1m-£2m, 50 sales £2m+).</span>
+                <span>We use UK benchmark rates of £1,500/year for properties £1-2m and £2,500/year for properties £2m+. Based on <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills 2024 sales data</a>, 89% of £1m+ sales are in the £1-2m band and 11% are £2m+, giving a weighted average rate of £1,607/year.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>3.</span>
