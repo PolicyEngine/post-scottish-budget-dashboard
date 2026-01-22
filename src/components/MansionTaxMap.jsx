@@ -309,7 +309,7 @@ export default function MansionTaxMap() {
           <div>
             <h3 className="chart-title">Mansion tax impact by constituency</h3>
             <p className="chart-description">
-              Number of high-value property sales by Scotland parliamentary constituency
+              Number of high-value property sales (more than £1 million) by Scotland parliamentary constituency
             </p>
           </div>
         </div>
