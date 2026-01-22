@@ -714,9 +714,12 @@ export default function Dashboard({ selectedPolicies = [] }) {
           Mansion tax
         </summary>
         <p className="chart-description" style={{ marginTop: "12px" }}>
-          The Scottish Budget 2026-27 <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/5/" target="_blank" rel="noopener noreferrer">introduced</a> new council tax bands for properties valued at £1 million or more,
-          effective from April 2028. The Finance Secretary <a href="https://www.lbc.co.uk/article/wealthy-scots-in-snp-sights-as-budget-proposes-mansion-house-tax-and-a-tax-on-pr-5HjdQg9_2/" target="_blank" rel="noopener noreferrer">estimated £16m</a> in annual revenue; using UK benchmark rates, we estimate £18.5m.
-          The map below shows each constituency's share. Edinburgh constituencies account for ~47% of total revenue.
+          The Scottish Budget 2026-27 <a href="https://www.gov.scot/publications/scottish-budget-2026-2027/pages/5/" target="_blank" rel="noopener noreferrer">introduced</a> two new council tax bands for properties with a 2026 market value above £1 million,
+          effective from April 2028. The Finance Secretary <a href="https://www.lbc.co.uk/article/wealthy-scots-in-snp-sights-as-budget-proposes-mansion-house-tax-and-a-tax-on-pr-5HjdQg9_2/" target="_blank" rel="noopener noreferrer">estimated £16m</a> in annual revenue.
+          The <a href="https://fiscalcommission.scot/publications/scotlands-economic-and-fiscal-forecasts-january-2026/" target="_blank" rel="noopener noreferrer">SFC</a> does not cost this policy as Council Tax is a local tax outside their remit; they assessed potential LBTT behavioral effects (e.g., rush sales before 2028) and concluded these are immaterial.
+        </p>
+        <p className="chart-description" style={{ marginTop: "8px" }}>
+          Using UK benchmark rates, we estimate £18.5m in annual revenue. The map below shows each constituency's share. Edinburgh constituencies account for ~47% of total revenue.
         </p>
         <details className="methodology-details" style={{ marginTop: "12px", marginBottom: "16px" }}>
           <summary style={{ cursor: "pointer", fontSize: "0.85rem", color: "#0F766E", fontWeight: 600 }}>How we calculate</summary>
@@ -730,23 +733,23 @@ export default function Dashboard({ selectedPolicies = [] }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>1.</span>
-                <span>We estimate total revenue by multiplying <strong>11,481 £1m+ properties</strong> (from <a href="https://www.savills.com/insight-and-opinion/savills-news/339380/" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills</a>) by the <strong>£1,607 average annual rate</strong> based on UK benchmark rates.</span>
+                <span><strong>Total revenue (£18.5m)</strong>: We multiply <strong>11,481 £1m+ properties</strong> in Scotland (from <a href="https://www.savills.com/insight-and-opinion/savills-news/339380/" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills</a>) by the <strong>£1,607 average annual rate</strong>.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>2.</span>
-                <span>We use council-level £1m+ sales data from <a href="https://www.ros.gov.uk/data-and-statistics/property-market-statistics/property-market-report-2024-25" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}><strong>Registers of Scotland</strong></a> to determine geographic distribution across Scotland.</span>
+                <span><strong>£1,607 rate derivation</strong>: Based on UK benchmark council tax rates for high-value properties, adjusted for Scottish property values. This represents the estimated additional council tax for properties in the new bands above current Band H rates.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>3.</span>
-                <span>Within each council, we allocate sales to constituencies based on population weighted by <a href="https://www.gov.uk/government/statistical-data-sets/uk-house-price-index-data-downloads-april-2025" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}><strong>Band H property concentration</strong></a>.</span>
+                <span><strong>Geographic distribution</strong>: We use council-level £1m+ sales data from <a href="https://www.ros.gov.uk/data-and-statistics/property-market-statistics/property-market-report-2024-25" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Registers of Scotland</a> to allocate revenue across Scotland.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>4.</span>
-                <span>We use Band H as a proxy because its threshold (&gt;£212k in 1991) equals approximately <strong>£1.06m today</strong>, closely matching the mansion tax's £1m threshold.</span>
+                <span><strong>Constituency allocation</strong>: Within each council, we allocate based on population weighted by <a href="https://www.gov.uk/government/statistical-data-sets/uk-house-price-index-data-downloads-april-2025" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Band H property concentration</a>. Band H threshold (&gt;£212k in 1991) equals ~£1.06m today, closely matching the £1m threshold.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>5.</span>
-                <span>Each constituency's revenue is calculated by multiplying its share of total sales by the <strong>£18.5m total revenue</strong>.</span>
+                <span><strong>Constituency revenue</strong>: Each constituency's share of total sales × £18.5m total revenue.</span>
               </div>
             </div>
             <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #e2e8f0" }}>
