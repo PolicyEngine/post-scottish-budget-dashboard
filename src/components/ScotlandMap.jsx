@@ -455,7 +455,7 @@ export default function ScotlandMap({
           <div>
             <h3 className="chart-title">Local authority impacts, {formatYearRange(selectedYear)}</h3>
             <p className="chart-description">
-              This map shows the average annual household gain from the {policyName}
+              This map shows the average annual household impact from the {policyName}
               across Scottish local authorities. Darker green indicates larger gains.
             </p>
           </div>
@@ -625,7 +625,7 @@ export default function ScotlandMap({
                 })}
                 <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "#6b7280" }}>/year</span>
               </p>
-              <p className="tooltip-label">Average household gain</p>
+              <p className="tooltip-label">Average household impact</p>
 
               {/* Policy breakdown - only show if multiple policies selected */}
               {tooltipData.policyBreakdown &&
