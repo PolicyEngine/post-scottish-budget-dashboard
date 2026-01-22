@@ -82,7 +82,7 @@ export default function BudgetBarChart({ data, title, description, stacked = fal
   const showNetImpact = stacked && activePolicies.length > 1;
 
   // Calculate symmetric Y-axis domain with round number increments
-  const calculateYDomain = () => {
+  const calculateYAxisConfig = () => {
     let minVal = 0, maxVal = 0;
     data.forEach(d => {
       let negSum = 0, posSum = 0;
@@ -94,28 +94,35 @@ export default function BudgetBarChart({ data, title, description, stacked = fal
       minVal = Math.min(minVal, negSum);
       maxVal = Math.max(maxVal, posSum);
     });
-    // Find the max absolute value and round up to nice number for symmetric axis
-    const maxAbs = Math.max(Math.abs(minVal), Math.abs(maxVal));
-    // Choose a nice round interval (50, 100, 150, etc.)
-    const interval = maxAbs <= 100 ? 50 : maxAbs <= 200 ? 50 : maxAbs <= 400 ? 100 : 150;
-    const roundedMax = Math.ceil((maxAbs * 1.1) / interval) * interval;
-    return [-roundedMax, roundedMax];
-  };
 
-  // Generate symmetric ticks including 0
-  const generateTicks = (domain) => {
-    const [min, max] = domain;
-    const range = max - min;
-    const interval = range <= 200 ? 50 : range <= 400 ? 100 : 150;
+    // Find the max absolute value
+    const maxAbs = Math.max(Math.abs(minVal), Math.abs(maxVal));
+
+    // Choose a nice round interval based on data range
+    let interval;
+    if (maxAbs <= 100) interval = 50;
+    else if (maxAbs <= 200) interval = 50;
+    else if (maxAbs <= 400) interval = 100;
+    else interval = 150;
+
+    // Round up to nice number for symmetric axis
+    const roundedMax = Math.ceil((maxAbs * 1.1) / interval) * interval || interval;
+
+    // Generate ticks from -roundedMax to +roundedMax, always including 0
     const ticks = [];
-    for (let i = min; i <= max; i += interval) {
+    for (let i = -roundedMax; i <= roundedMax; i += interval) {
       ticks.push(i);
     }
-    return ticks;
+
+    return {
+      domain: [-roundedMax, roundedMax],
+      ticks: ticks
+    };
   };
 
-  const yDomain = stacked ? calculateYDomain() : ['auto', 'auto'];
-  const yTicks = stacked ? generateTicks(yDomain) : undefined;
+  const yAxisConfig = stacked ? calculateYAxisConfig() : { domain: ['auto', 'auto'], ticks: undefined };
+  const yDomain = yAxisConfig.domain;
+  const yTicks = yAxisConfig.ticks;
 
   return (
     <div className="budget-bar-chart">
