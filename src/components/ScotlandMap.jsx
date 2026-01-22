@@ -654,17 +654,6 @@ export default function ScotlandMap({
                   </div>
                 )}
 
-              {tooltipData.povertyReduction !== undefined && (
-                <>
-                  <p
-                    className="tooltip-value-secondary"
-                    style={{ color: "#16a34a" }}
-                  >
-                    -{parseFloat(tooltipData.povertyReduction).toFixed(2)}pp
-                  </p>
-                  <p className="tooltip-label">Poverty rate reduction</p>
-                </>
-              )}
             </div>
           )}
         </div>
