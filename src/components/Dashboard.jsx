@@ -286,7 +286,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
   const [rawBudgetaryData, setRawBudgetaryData] = useState([]);
   const [rawDistributionalData, setRawDistributionalData] = useState([]);
   const [activeSection, setActiveSection] = useState("introduction");
-  const [selectedYear, setSelectedYear] = useState(2027);
+  const [selectedYear, setSelectedYear] = useState(2028);
 
   const AVAILABLE_YEARS = [2026, 2027, 2028, 2029, 2030];
 
