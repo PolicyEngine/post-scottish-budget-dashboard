@@ -21,16 +21,18 @@ const DEFAULT_INPUTS = {
   receives_uc: true, // UC or other qualifying benefit for SCP
 };
 
-// Chart colors matching REFORMS
+// Chart colors matching budget impact chart
+// Teal = costs to government (good for households)
+// Amber = revenue raisers (bad for households)
 const CHART_COLORS = {
   total: "#0F766E", // Teal 700
   income_tax_basic_uplift: "#0D9488", // Teal 600
-  income_tax_intermediate_uplift: "#14B8A6", // Teal 500
-  higher_rate_freeze: "#F97316", // Orange 500
-  advanced_rate_freeze: "#FB923C", // Orange 400
-  top_rate_freeze: "#FDBA74", // Orange 300
-  scp_inflation: "#2DD4BF", // Teal 400
-  scp_baby_boost: "#5EEAD4", // Teal 300
+  income_tax_intermediate_uplift: "#0F766E", // Teal 700
+  scp_inflation: "#14B8A6", // Teal 500
+  scp_baby_boost: "#2DD4BF", // Teal 400
+  higher_rate_freeze: "#78350F", // Amber 900 (darkest)
+  advanced_rate_freeze: "#92400E", // Amber 800
+  top_rate_freeze: "#B45309", // Amber 700
 };
 
 // Slider configurations
@@ -228,10 +230,21 @@ function HouseholdCalculator() {
       .range([0, width])
       .padding(0.3);
 
-    // Dynamic Y scale based on actual data values (handle both positive and negative)
-    const allTotals = processedData.map((d) => d.total);
-    const dataMax = Math.max(...allTotals);
-    const dataMin = Math.min(...allTotals);
+    // Dynamic Y scale based on stacked values (sum positives and negatives separately)
+    const policyKeysForScale = ['income_tax_basic_uplift', 'income_tax_intermediate_uplift', 'higher_rate_freeze', 'advanced_rate_freeze', 'top_rate_freeze', 'scp_inflation', 'scp_baby_boost'];
+    let dataMax = 0;
+    let dataMin = 0;
+    processedData.forEach((d) => {
+      let posSum = 0;
+      let negSum = 0;
+      policyKeysForScale.forEach((key) => {
+        const val = d[key] || 0;
+        if (val > 0) posSum += val;
+        else negSum += val;
+      });
+      dataMax = Math.max(dataMax, posSum);
+      dataMin = Math.min(dataMin, negSum);
+    });
     const yMax = dataMax > 0 ? dataMax * 1.2 : 10;
     const yMin = dataMin < 0 ? dataMin * 1.2 : 0;
     const y = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]).nice();
@@ -291,31 +304,63 @@ function HouseholdCalculator() {
       .attr("fill", "#6B7280")
       .attr("font-size", "11px");
 
-    // Bars - simple total bar (handles positive and negative)
+    // Stacked bars - draw each policy component
     const zeroY = y(0);
-    processedData.forEach((d) => {
-      const barY = d.total >= 0 ? y(d.total) : zeroY;
-      const barHeight = Math.abs(y(d.total) - zeroY);
+    const policyKeys = [
+      { key: 'income_tax_basic_uplift', color: CHART_COLORS.income_tax_basic_uplift },
+      { key: 'income_tax_intermediate_uplift', color: CHART_COLORS.income_tax_intermediate_uplift },
+      { key: 'higher_rate_freeze', color: CHART_COLORS.higher_rate_freeze },
+      { key: 'advanced_rate_freeze', color: CHART_COLORS.advanced_rate_freeze },
+      { key: 'top_rate_freeze', color: CHART_COLORS.top_rate_freeze },
+      { key: 'scp_inflation', color: CHART_COLORS.scp_inflation },
+      { key: 'scp_baby_boost', color: CHART_COLORS.scp_baby_boost },
+    ];
 
-      // Draw bar from zero line
-      if (barHeight > 0) {
-        g.append("rect")
-          .attr("class", `bar-${d.year}`)
-          .attr("x", x(d.year))
-          .attr("y", barY)
-          .attr("width", x.bandwidth())
-          .attr("height", barHeight)
-          .attr("fill", d.total >= 0 ? CHART_COLORS.income_tax_basic_uplift : "#F97316")
-          .attr("rx", 2);
-      }
+    processedData.forEach((d) => {
+      let posOffset = 0; // Tracks cumulative positive stack position
+      let negOffset = 0; // Tracks cumulative negative stack position
+
+      policyKeys.forEach(({ key, color }) => {
+        const value = d[key] || 0;
+        if (Math.abs(value) < 0.01) return; // Skip zero values
+
+        if (value >= 0) {
+          // Positive values stack upward from zero
+          const barHeight = zeroY - y(value);
+          g.append("rect")
+            .attr("x", x(d.year))
+            .attr("y", zeroY - posOffset - barHeight)
+            .attr("width", x.bandwidth())
+            .attr("height", barHeight)
+            .attr("fill", color);
+          posOffset += barHeight;
+        } else {
+          // Negative values stack downward from zero
+          const barHeight = y(value) - zeroY;
+          g.append("rect")
+            .attr("x", x(d.year))
+            .attr("y", zeroY + negOffset)
+            .attr("width", x.bandwidth())
+            .attr("height", barHeight)
+            .attr("fill", color);
+          negOffset += barHeight;
+        }
+      });
+
+      // Calculate total bar bounds for highlight
+      const totalPosHeight = posOffset;
+      const totalNegHeight = negOffset;
+      const barTop = zeroY - totalPosHeight;
+      const barBottom = zeroY + totalNegHeight;
+      const totalBarHeight = barBottom - barTop;
 
       // Highlight selected year
-      if (d.year === selectedYear) {
+      if (d.year === selectedYear && totalBarHeight > 0) {
         g.append("rect")
           .attr("x", x(d.year) - 2)
-          .attr("y", barY - 2)
+          .attr("y", barTop - 2)
           .attr("width", x.bandwidth() + 4)
-          .attr("height", barHeight + 4)
+          .attr("height", totalBarHeight + 4)
           .attr("fill", "none")
           .attr("stroke", CHART_COLORS.total)
           .attr("stroke-width", 2)
@@ -395,27 +440,27 @@ function HouseholdCalculator() {
               <span style="font-weight:500">${formatVal(d.income_tax_basic_uplift)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:#14B8A6">Intermediate uplift</span>
+              <span style="color:#0F766E">Intermediate uplift</span>
               <span style="font-weight:500">${formatVal(d.income_tax_intermediate_uplift)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:#F97316">Higher freeze</span>
+              <span style="color:#78350F">Higher freeze</span>
               <span style="font-weight:500">${formatVal(d.higher_rate_freeze)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:#FB923C">Advanced freeze</span>
+              <span style="color:#92400E">Advanced freeze</span>
               <span style="font-weight:500">${formatVal(d.advanced_rate_freeze)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:#FDBA74">Top rate freeze</span>
+              <span style="color:#B45309">Top rate freeze</span>
               <span style="font-weight:500">${formatVal(d.top_rate_freeze)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="color:#2DD4BF">SCP inflation</span>
+              <span style="color:#14B8A6">SCP inflation</span>
               <span style="font-weight:500">${formatVal(d.scp_inflation)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-              <span style="color:#5EEAD4">SCP baby boost</span>
+              <span style="color:#2DD4BF">SCP baby boost</span>
               <span style="font-weight:500">${formatVal(d.scp_baby_boost)}</span>
             </div>
             <div style="display:flex;justify-content:space-between;padding-top:6px;border-top:1px solid #e2e8f0">
@@ -534,23 +579,6 @@ function HouseholdCalculator() {
             </div>
           )}
 
-          {/* UC eligibility */}
-          <div className="input-group checkbox-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={inputs.receives_uc}
-                onChange={(e) =>
-                  handleInputChange("receives_uc", e.target.checked)
-                }
-              />
-              Receives Universal Credit
-            </label>
-            <span className="help-text">
-              Required for Scottish Child Payment
-            </span>
-          </div>
-
           {/* Children */}
           <div className="input-group">
             <label>Children</label>
@@ -649,8 +677,17 @@ function HouseholdCalculator() {
             <div className="error-message">Error: {error}. Please try again.</div>
           )}
 
-          {/* Total impact card */}
-          {!loading && (
+          {/* Prompt to calculate - shown when no calculation has been done */}
+          {!loading && yearlyData.length === 0 && (
+            <div className="total-impact-card neutral">
+              <div className="total-label" style={{ fontSize: "1rem", color: "white" }}>
+                Enter household details and click Calculate to see the impacts
+              </div>
+            </div>
+          )}
+
+          {/* Total impact card - shown after calculation */}
+          {!loading && yearlyData.length > 0 && (
             <div
               className={`total-impact-card ${impacts.total > 0 ? "positive" : impacts.total < 0 ? "negative" : "neutral"}`}
             >
@@ -669,8 +706,8 @@ function HouseholdCalculator() {
             </div>
           )}
 
-          {/* Breakdown by reform */}
-          {!loading && (
+          {/* Breakdown by reform - only shown after calculation */}
+          {!loading && yearlyData.length > 0 && (
             <div className="impact-breakdown">
               <h4>Breakdown by policy</h4>
               {REFORMS.map((reform) => {
