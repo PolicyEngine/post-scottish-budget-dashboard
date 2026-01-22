@@ -731,22 +731,18 @@ export default function Dashboard({ selectedPolicies = [] }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>1.</span>
-                <span>We estimate total revenue of £18.5m by multiplying 11,481 £1m+ properties in Scotland (from <a href="https://www.savills.com/insight-and-opinion/savills-news/339380/" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills</a>) by the £1,607 average annual rate.</span>
+                <span>We estimate total revenue of £18.5m by multiplying 11,481 £1m+ properties in Scotland (from <a href="https://www.savills.com/insight-and-opinion/savills-news/339380/" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills</a>) by a £1,607 average annual rate. This rate is based on the UK's <a href="https://www.gov.uk/government/publications/high-value-council-tax-surcharge/high-value-council-tax-surcharge" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>High Value Council Tax Surcharge</a> of £2,500/year for properties over £2m, from which we extrapolate £1,500/year for the Scottish £1-2m band. Using <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills 2024 sales data</a> (89% of sales £1-2m, 11% over £2m), we calculate the weighted average of £1,607/year.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <span style={{ color: "#0F766E", fontWeight: 600 }}>2.</span>
-                <span>The UK's <a href="https://www.gov.uk/government/publications/high-value-council-tax-surcharge/high-value-council-tax-surcharge" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>High Value Council Tax Surcharge</a> sets a rate of £2,500/year for properties over £2m. We extrapolate £1,500/year for the Scottish £1-2m band. Based on <a href="https://github.com/PolicyEngine/scotland-mansion-tax" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Savills 2024 sales data</a>, 89% of £1m+ sales are in the £1-2m band and 11% are £2m+, giving a weighted average rate of £1,607/year.</span>
-              </div>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <span style={{ color: "#0F766E", fontWeight: 600 }}>3.</span>
                 <span>We use council-level £1m+ sales data from <a href="https://www.ros.gov.uk/data-and-statistics/property-market-statistics/property-market-report-2024-25" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Registers of Scotland</a> to allocate revenue geographically across Scotland.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
-                <span style={{ color: "#0F766E", fontWeight: 600 }}>4.</span>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>3.</span>
                 <span>Within each council, we allocate to constituencies based on population weighted by <a href="https://www.gov.uk/government/statistical-data-sets/uk-house-price-index-data-downloads-april-2025" target="_blank" rel="noopener noreferrer" style={{ color: "#0F766E" }}>Band H property concentration</a>. Band H threshold (&gt;£212k in 1991) equals ~£1.06m today, closely matching the £1m threshold.</span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
-                <span style={{ color: "#0F766E", fontWeight: 600 }}>5.</span>
+                <span style={{ color: "#0F766E", fontWeight: 600 }}>4.</span>
                 <span>Each constituency's revenue is calculated as its share of total sales multiplied by the £18.5m total revenue.</span>
               </div>
             </div>
