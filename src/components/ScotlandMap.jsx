@@ -26,6 +26,7 @@ export default function ScotlandMap({
   onLocalAuthoritySelect = null,
   policyName = "SCP Premium for under-ones",
   selectedPolicies = [],
+  fixedColorExtent = null,
 }) {
   const svgRef = useRef(null);
   const [internalSelectedLocalAuthority, setInternalSelectedLocalAuthority] = useState(null);
@@ -78,7 +79,10 @@ export default function ScotlandMap({
   }, [localAuthorityData]);
 
   // Compute color scale extent from data (min/max of average_gain)
+  // Use fixedColorExtent if provided for consistent coloring across years
   const colorExtent = useMemo(() => {
+    if (fixedColorExtent) return fixedColorExtent;
+
     if (localAuthorityData.length === 0) return { min: 0, max: 35, type: 'positive' };
     const gains = localAuthorityData.map((d) => d.average_gain || 0);
     const min = Math.floor(Math.min(...gains));
@@ -90,7 +94,7 @@ export default function ScotlandMap({
     else if (max <= 0) type = 'negative';
 
     return { min, max, type };
-  }, [localAuthorityData]);
+  }, [localAuthorityData, fixedColorExtent]);
 
   // Highlight and zoom to controlled local authority when it changes
   useEffect(() => {
