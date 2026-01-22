@@ -638,7 +638,7 @@ export default function ScotlandMap({
                       .map(([reformId, data]) => (
                         <div key={reformId} className="tooltip-breakdown-row">
                           <span className="tooltip-breakdown-name">
-                            {POLICY_DISPLAY_NAMES[reformId] || reformId}
+                            {POLICY_DISPLAY_NAMES[reformId]}
                           </span>
                           <span
                             className="tooltip-breakdown-value"
