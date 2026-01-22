@@ -116,10 +116,7 @@ const TOP_RATE_THRESHOLD_DATA = [
 // Section definitions for navigation
 const SECTIONS = [
   { id: "introduction", label: "Introduction" },
-  { id: "budgetary-impact", label: "Budgetary impact" },
-  { id: "living-standards", label: "Living standards" },
-  { id: "poverty", label: "Poverty rate" },
-  { id: "local-authorities", label: "Impact by local authority" },
+  { id: "income-tax-benefits", label: "Income tax and benefits" },
   { id: "mansion-tax", label: "Mansion tax" },
 ];
 
@@ -647,8 +644,11 @@ export default function Dashboard({ selectedPolicies = [] }) {
         </details>
       </details>
 
+      {/* Income Tax and Benefits Section */}
+      <h2 className="section-title" id="income-tax-benefits" ref={(el) => (sectionRefs.current["income-tax-benefits"] = el)} style={{ marginTop: "32px" }}>Income tax and benefits</h2>
+
       {/* Budgetary Impact Section */}
-      <h2 className="section-title" id="budgetary-impact" ref={(el) => (sectionRefs.current["budgetary-impact"] = el)}>Budgetary impact</h2>
+      <h3 className="section-title" id="budgetary-impact" ref={(el) => (sectionRefs.current["budgetary-impact"] = el)} style={{ fontSize: "1.4rem", fontWeight: 600, color: "#374151", borderBottom: "none", marginTop: "24px", marginBottom: "12px", padding: "0" }}>Budgetary impact</h3>
       <p className="chart-description">
         This section shows the estimated fiscal cost of the budget measures to the Scottish Government.
       </p>
@@ -677,7 +677,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       <SFCComparisonTable />
 
       {/* Living Standards Section */}
-      <h2 className="section-title" id="living-standards" ref={(el) => (sectionRefs.current["living-standards"] = el)}>Living standards</h2>
+      <h3 className="section-title" id="living-standards" ref={(el) => (sectionRefs.current["living-standards"] = el)} style={{ fontSize: "1.4rem", fontWeight: 600, color: "#374151", borderBottom: "none", marginTop: "48px", paddingTop: "32px", borderTop: "1px solid #e5e7eb", marginBottom: "12px", padding: "32px 0 0 0" }}>Living standards</h3>
       <p className="chart-description">
         This section shows how household incomes in Scotland change as a result of the {policyInfo.name} policy.
       </p>
@@ -703,7 +703,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       ) : null}
 
       {/* Poverty Section */}
-      <h2 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)}>Poverty rate</h2>
+      <h3 className="section-title" id="poverty" ref={(el) => (sectionRefs.current["poverty"] = el)} style={{ fontSize: "1.4rem", fontWeight: 600, color: "#374151", borderBottom: "none", marginTop: "48px", paddingTop: "32px", borderTop: "1px solid #e5e7eb", marginBottom: "12px", padding: "32px 0 0 0" }}>Poverty rate</h3>
       <p className="chart-description">
         This section shows how poverty rates change under the budget measures.
         The UK uses four poverty measures: absolute vs relative poverty, each measured before or after housing costs.
@@ -721,7 +721,7 @@ export default function Dashboard({ selectedPolicies = [] }) {
       )}
 
       {/* Local Authority Impact Section */}
-      <h2 className="section-title" id="local-authorities" ref={(el) => (sectionRefs.current["local-authorities"] = el)}>Impact by local authority</h2>
+      <h3 className="section-title" id="local-authorities" ref={(el) => (sectionRefs.current["local-authorities"] = el)} style={{ fontSize: "1.4rem", fontWeight: 600, color: "#374151", borderBottom: "none", marginTop: "48px", paddingTop: "32px", borderTop: "1px solid #e5e7eb", marginBottom: "12px", padding: "32px 0 0 0" }}>Impact by local authority</h3>
       <p className="chart-description">
         This section shows how the budget measures affect different local authorities across Scotland.
         Select a local authority to see the estimated impact on households in that area.
@@ -735,9 +735,9 @@ export default function Dashboard({ selectedPolicies = [] }) {
       />
 
       {/* Mansion Tax Section */}
-      <details className="mansion-tax-section" id="mansion-tax" ref={(el) => (sectionRefs.current["mansion-tax"] = el)}>
-        <summary className="section-title expandable-section" style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
-          <span className="expand-icon" style={{ fontSize: "12px", transition: "transform 0.2s" }}>▶</span>
+      <details className="mansion-tax-section" id="mansion-tax" ref={(el) => (sectionRefs.current["mansion-tax"] = el)} style={{ marginTop: "32px" }}>
+        <summary className="section-title" style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+          <span className="expand-icon" style={{ fontSize: "12px" }}>▶</span>
           Mansion tax
         </summary>
         <p className="chart-description" style={{ marginTop: "12px" }}>
