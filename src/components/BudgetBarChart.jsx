@@ -14,6 +14,37 @@ import {
 import "./BudgetBarChart.css";
 import { POLICY_COLORS, ALL_POLICY_NAMES, POLICY_NAMES } from "../utils/policyConfig";
 
+// Custom tooltip that orders items correctly with Net impact last
+const CustomTooltip = ({ active, payload, label, formatValue, formatYear, activePolicies }) => {
+  if (!active || !payload || payload.length === 0) return null;
+
+  // Sort payload: policies in activePolicies order, Net impact last
+  const sortedPayload = [...payload].sort((a, b) => {
+    if (a.name === "Net impact") return 1;
+    if (b.name === "Net impact") return -1;
+    const aIndex = activePolicies.indexOf(a.name);
+    const bIndex = activePolicies.indexOf(b.name);
+    return aIndex - bIndex;
+  });
+
+  return (
+    <div style={{
+      background: "white",
+      border: "1px solid #e5e7eb",
+      borderRadius: "6px",
+      padding: "10px 14px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    }}>
+      <p style={{ margin: "0 0 8px 0", fontWeight: 600 }}>{formatYear(label)}</p>
+      {sortedPayload.map((entry, index) => (
+        <p key={index} style={{ margin: "4px 0", color: entry.color }}>
+          {entry.name} : {formatValue(entry.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 // Custom label component for net impact values
 const NetImpactLabel = (props) => {
   const { x, y, value } = props;
@@ -148,11 +179,11 @@ export default function BudgetBarChart({ data, title, description, stacked = fal
             tick={{ fontSize: 12 }}
           />
           <Tooltip
-            formatter={(value, name) => [
-              formatValue(value),
-              name === "Net impact" ? "Net impact" : name
-            ]}
-            labelFormatter={formatYear}
+            content={<CustomTooltip
+              formatValue={formatValue}
+              formatYear={formatYear}
+              activePolicies={activePolicies}
+            />}
           />
           {stacked && (
             <Legend

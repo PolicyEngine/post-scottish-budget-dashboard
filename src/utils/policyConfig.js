@@ -39,14 +39,14 @@ export const POLICY_NAMES = {
   top_rate_freeze: "Top rate threshold freeze",
 };
 
-// Order for stacked charts: costs first (teal), then revenue raisers (amber)
-// Within each category: largest to smallest
+// Order for stacked charts: largest to smallest within each category
+// This puts biggest bars at the base (closest to zero), smaller bars stack outward
 export const ALL_POLICY_IDS = [
-  // Costs to treasury (negative, teal) - largest to smallest
+  // Costs to treasury (negative, teal) - largest to smallest (largest at base near zero)
   "income_tax_basic_uplift",
   "income_tax_intermediate_uplift",
   "scp_baby_boost",
-  // Revenue raisers (positive, amber) - largest to smallest
+  // Revenue raisers (positive, amber) - largest to smallest (largest at base near zero)
   "higher_rate_freeze",
   "advanced_rate_freeze",
   "top_rate_freeze",

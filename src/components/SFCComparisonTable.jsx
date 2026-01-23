@@ -3,7 +3,7 @@ import "./SFCComparisonTable.css";
 
 function SFCComparisonTable() {
   const [comparisonData, setComparisonData] = useState(null);
-  const [showBehavioural, setShowBehavioural] = useState(true);
+  const [showBehavioural, setShowBehavioural] = useState(false);
 
   useEffect(() => {
     // Fetch both SFC comparison data and PolicyEngine budgetary impact data

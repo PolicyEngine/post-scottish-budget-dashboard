@@ -79,20 +79,29 @@ export default function ScotlandMap({
 
   // Compute color scale extent from data (min/max of average_gain)
   // Use fixedColorExtent if provided for consistent coloring across years
+  // Make symmetric with round numbers for cleaner legend
   const colorExtent = useMemo(() => {
     if (fixedColorExtent) return fixedColorExtent;
 
-    if (localAuthorityData.length === 0) return { min: 0, max: 35, type: 'positive' };
+    if (localAuthorityData.length === 0) return { min: -200, max: 200, type: 'mixed' };
     const gains = localAuthorityData.map((d) => d.average_gain || 0);
-    const min = Math.floor(Math.min(...gains));
-    const max = Math.ceil(Math.max(...gains));
+    const dataMin = Math.min(...gains);
+    const dataMax = Math.max(...gains);
 
-    // Determine type: all positive, all negative, or mixed
-    let type = 'mixed';
-    if (min >= 0) type = 'positive';
-    else if (max <= 0) type = 'negative';
+    // For symmetric legend with round numbers - dynamically based on data range
+    const maxAbs = Math.max(Math.abs(dataMin), Math.abs(dataMax));
 
-    return { min, max, type };
+    // Choose interval based on magnitude: 10, 25, 50, or 100
+    let interval;
+    if (maxAbs <= 30) interval = 10;
+    else if (maxAbs <= 75) interval = 25;
+    else if (maxAbs <= 150) interval = 50;
+    else interval = 100;
+
+    const roundedMax = Math.ceil(maxAbs / interval) * interval;
+
+    // Always use symmetric range with both colors (mixed type)
+    return { min: -roundedMax, max: roundedMax, type: 'mixed' };
   }, [localAuthorityData, fixedColorExtent]);
 
   // Highlight and zoom to controlled local authority when it changes

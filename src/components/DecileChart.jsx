@@ -14,6 +14,37 @@ import {
 import "./DecileChart.css";
 import { POLICY_COLORS, ALL_POLICY_NAMES, REVENUE_POLICIES, POLICY_NAMES } from "../utils/policyConfig";
 
+// Custom tooltip that orders items correctly with Net change last
+const CustomTooltip = ({ active, payload, label, formatValue, activePolicies }) => {
+  if (!active || !payload || payload.length === 0) return null;
+
+  // Sort payload: policies in activePolicies order, Net change last
+  const sortedPayload = [...payload].sort((a, b) => {
+    if (a.name === "Net change") return 1;
+    if (b.name === "Net change") return -1;
+    const aIndex = activePolicies.indexOf(a.name);
+    const bIndex = activePolicies.indexOf(b.name);
+    return aIndex - bIndex;
+  });
+
+  return (
+    <div style={{
+      background: "white",
+      border: "1px solid #e5e7eb",
+      borderRadius: "6px",
+      padding: "10px 14px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    }}>
+      <p style={{ margin: "0 0 8px 0", fontWeight: 600 }}>{label} decile</p>
+      {sortedPayload.map((entry, index) => (
+        <p key={index} style={{ margin: "4px 0", color: entry.color }}>
+          {entry.name} : {formatValue(entry.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 // Custom label component for net change values
 const NetChangeLabel = ({ x, y, value, viewMode }) => {
   if (value === undefined || value === null) return null;
@@ -302,17 +333,10 @@ export default function DecileChart({
             />
           )}
           <Tooltip
-            formatter={(value, name) => [
-              formatValue(value),
-              name === "Net change" ? "Net change" : name
-            ]}
-            labelFormatter={(label) => `${label} decile`}
-            contentStyle={{
-              background: "white",
-              border: "1px solid #e5e7eb",
-              borderRadius: "6px",
-              padding: "8px 12px",
-            }}
+            content={<CustomTooltip
+              formatValue={formatValue}
+              activePolicies={activePolicies}
+            />}
           />
           {stacked ? (
             activePolicies.map((policyName) => (
