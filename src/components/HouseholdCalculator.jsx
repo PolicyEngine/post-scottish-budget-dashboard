@@ -52,7 +52,7 @@ function HouseholdCalculator() {
   const [childAgeInput, setChildAgeInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedYear, setSelectedYear] = useState(2026);
+  const [selectedYear, setSelectedYear] = useState(2027);
   const [showRealTerms, setShowRealTerms] = useState(false);
   const [impacts, setImpacts] = useState({
     income_tax_basic_uplift: 0,
