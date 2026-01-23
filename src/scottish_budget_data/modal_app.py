@@ -181,7 +181,6 @@ def flask_app():
             "higher_rate_freeze": np.zeros(n),
             "advanced_rate_freeze": np.zeros(n),
             "top_rate_freeze": np.zeros(n),
-            "scp_inflation": np.zeros(n),
             "scp_baby_boost": np.zeros(n),
         }
 
@@ -230,16 +229,7 @@ def flask_app():
         top_nets = top_sim.calculate("household_net_income", year)
         results["top_rate_freeze"] = top_nets - baseline_nets
 
-        # 6. SCP inflation (only if receives UC)
-        if receives_uc:
-            scp_inf_sim = Simulation(situation=situation)
-            apply_scp_inflation(scp_inf_sim, year)
-            disable_scp_baby_boost(scp_inf_sim, year)
-            scp_inf_sim.calculate("scottish_child_payment", year)
-            scp_inf_nets = scp_inf_sim.calculate("household_net_income", year)
-            results["scp_inflation"] = scp_inf_nets - baseline_nets
-
-        # 7. SCP baby boost (only if receives UC and year >= 2027)
+        # 6. SCP baby boost (only if receives UC and year >= 2027)
         if receives_uc and year >= 2027:
             baby_sim = Simulation(situation=situation)
             apply_scp_inflation(baby_sim, year)
@@ -264,7 +254,6 @@ def flask_app():
                 "higher_rate_freeze": round(float(results["higher_rate_freeze"][i]), 2),
                 "advanced_rate_freeze": round(float(results["advanced_rate_freeze"][i]), 2),
                 "top_rate_freeze": round(float(results["top_rate_freeze"][i]), 2),
-                "scp_inflation": round(float(results["scp_inflation"][i]), 2),
                 "scp_baby_boost": round(float(results["scp_baby_boost"][i]), 2),
                 "total": round(total, 2),
             })
@@ -403,23 +392,7 @@ def flask_app():
             top_net = float(top_sim.calculate("household_net_income", year)[0])
             impacts["top_rate_freeze"] = round(top_net - baseline_net, 2)
 
-            # === 6. SCP inflation adjustment ===
-            if receives_uc:
-                scp_inf_sim = Simulation(situation=situation)
-                apply_scp_inflation(scp_inf_sim, year)
-                disable_scp_baby_boost(scp_inf_sim, year)
-                scp_inf_sim.calculate("scottish_child_payment", year)
-                scp_inf_net = float(scp_inf_sim.calculate("household_net_income", year)[0])
-                baseline_scp_sim = Simulation(situation=situation)
-                set_scp_baseline_rate(baseline_scp_sim, year)
-                disable_scp_baby_boost(baseline_scp_sim, year)
-                baseline_scp_sim.calculate("scottish_child_payment", year)
-                baseline_scp_net = float(baseline_scp_sim.calculate("household_net_income", year)[0])
-                impacts["scp_inflation"] = round(scp_inf_net - baseline_scp_net, 2)
-            else:
-                impacts["scp_inflation"] = 0.0
-
-            # === 7. SCP Premium for under-ones (baby boost) ===
+            # === 6. SCP Premium for under-ones (baby boost) ===
             if receives_uc and year >= 2027:
                 baby_sim = Simulation(situation=situation)
                 apply_scp_inflation(baby_sim, year)
@@ -503,18 +476,7 @@ def flask_app():
         top_sim.calculate("scottish_child_payment", year)
         impacts["top_rate_freeze"] = round(float(top_sim.calculate("household_net_income", year)[0]) - baseline_net, 2)
 
-        # 6. SCP inflation
-        if receives_uc:
-            scp_inf_sim = Simulation(situation=situation)
-            apply_scp_inflation(scp_inf_sim, year)
-            disable_scp_baby_boost(scp_inf_sim, year)
-            scp_inf_sim.calculate("scottish_child_payment", year)
-            scp_inf_net = float(scp_inf_sim.calculate("household_net_income", year)[0])
-            impacts["scp_inflation"] = round(scp_inf_net - baseline_net, 2)
-        else:
-            impacts["scp_inflation"] = 0.0
-
-        # 7. SCP baby boost
+        # 6. SCP baby boost
         if receives_uc and year >= 2027:
             baby_sim = Simulation(situation=situation)
             apply_scp_inflation(baby_sim, year)
