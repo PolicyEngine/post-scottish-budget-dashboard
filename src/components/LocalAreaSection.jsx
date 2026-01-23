@@ -42,7 +42,6 @@ function parseCSVLine(line) {
 
 const POLICY_DISPLAY_NAMES = {
   scp_baby_boost: "SCP Premium for under-ones",
-  scp_inflation: "SCP inflation adjustment",
   income_tax_basic_uplift: "basic rate threshold uplift",
   income_tax_intermediate_uplift: "intermediate rate threshold uplift",
 };
@@ -153,6 +152,7 @@ export default function LocalAreaSection({
   }, [localAuthorityData]);
 
   // Calculate fixed color extent across ALL years for consistent map coloring
+  // Use symmetric round numbers for cleaner legend
   const fixedColorExtent = useMemo(() => {
     if (!rawLocalAuthorityData.length || !selectedPolicies.length) return null;
 
@@ -184,16 +184,20 @@ export default function LocalAreaSection({
 
     if (globalMin === Infinity || globalMax === -Infinity) return null;
 
-    // Determine type
-    let type = 'mixed';
-    if (globalMin >= 0) type = 'positive';
-    else if (globalMax <= 0) type = 'negative';
+    // Round to symmetric nice numbers - dynamically based on data range
+    const maxAbs = Math.max(Math.abs(globalMin), Math.abs(globalMax));
 
-    return {
-      min: Math.floor(globalMin),
-      max: Math.ceil(globalMax),
-      type
-    };
+    // Choose interval based on magnitude: 10, 25, 50, or 100
+    let interval;
+    if (maxAbs <= 30) interval = 10;
+    else if (maxAbs <= 75) interval = 25;
+    else if (maxAbs <= 150) interval = 50;
+    else interval = 100;
+
+    const roundedMax = Math.ceil(maxAbs / interval) * interval;
+
+    // Always use symmetric range with both colors (mixed type)
+    return { min: -roundedMax, max: roundedMax, type: 'mixed' };
   }, [rawLocalAuthorityData, selectedPolicies, availableYears]);
 
   // Handle local authority selection from map
@@ -333,7 +337,7 @@ export default function LocalAreaSection({
             <li key={la.code} className="local-authority-list-item">
               <span className="local-authority-list-name">{la.name}</span>
               <span className={`local-authority-list-value ${la.avgGain >= 0 ? "positive" : "negative"}`}>
-                £{la.avgGain.toFixed(2)}
+                {la.avgGain >= 0 ? `£${la.avgGain.toFixed(2)}` : `-£${Math.abs(la.avgGain).toFixed(2)}`}
               </span>
             </li>
           ))}

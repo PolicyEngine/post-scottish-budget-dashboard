@@ -3,7 +3,7 @@ import "./SFCComparisonTable.css";
 
 function SFCComparisonTable() {
   const [comparisonData, setComparisonData] = useState(null);
-  const [showBehavioural, setShowBehavioural] = useState(true);
+  const [showBehavioural, setShowBehavioural] = useState(false);
 
   useEffect(() => {
     // Fetch both SFC comparison data and PolicyEngine budgetary impact data
@@ -252,8 +252,7 @@ function SFCComparisonTable() {
           the freeze was already in Budget 2025-26; SFC only costs the incremental
           extension through 2027-28/2028-29. SCP baby boost starts mid-2027-28.
           SFC reports combined basic + intermediate thresholds (~£50m total); we
-          apportion using PolicyEngine microsimulation. SCP inflation uprating has
-          no SFC costing as it's included in their baseline. See{" "}
+          apportion using PolicyEngine microsimulation. See{" "}
           <a
             href="https://fiscalcommission.scot/wp-content/uploads/2026/01/Scotlands-Economic-and-Fiscal-Forecasts-January-2026-revised-13-01-2026.pdf"
             target="_blank"
