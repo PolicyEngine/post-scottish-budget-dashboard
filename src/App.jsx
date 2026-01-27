@@ -180,7 +180,7 @@ function App() {
               <rect x="14" y="12" width="7" height="9" />
               <rect x="3" y="16" width="7" height="5" />
             </svg>
-            2026 Budget
+            Scotland analysis
           </button>
           <button
             className={`tab-button ${activeTab === "household" ? "active" : ""}`}

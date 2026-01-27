@@ -765,7 +765,7 @@ function HouseholdCalculator() {
         <h3>Calculate your household impact</h3>
         <p className="calculator-subtitle">
           Enter your household details to see how the Scottish Budget 2026-27
-          affects you over time. For descriptions of the policies, see the 2026 Budget tab.
+          affects you over time. For descriptions of the policies, see the Scotland analysis tab.
         </p>
       </div>
 

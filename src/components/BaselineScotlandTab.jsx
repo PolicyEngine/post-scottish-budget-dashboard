@@ -241,7 +241,7 @@ export default function BaselineScotlandTab() {
         </a>{" "}
         on 13 January 2026. It is organised into four sections: <strong>Baseline Scotland data</strong>{" "}
         projects household incomes and poverty rates through 2030 under current policy;{" "}
-        <strong>2026 Budget</strong> analyses the impact of the announced
+        <strong>Scotland analysis</strong> analyses the impact of the announced
         policy changes; <strong>Household calculator</strong> lets you explore impacts on specific household types; and <strong>Validation</strong> compares estimates against official government statistics.
       </p>
       <p className="chart-description" style={{ marginTop: "12px" }}>
