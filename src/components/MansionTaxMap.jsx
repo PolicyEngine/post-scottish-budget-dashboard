@@ -5,7 +5,7 @@ import "./MansionTaxMap.css";
 
 /**
  * Interactive D3 map showing Scottish Mansion Tax impact by Parliament Constituency.
- * Shows estimated revenue share from council tax reform for £1m+ properties.
+ * Shows distribution of properties valued over £1m by constituency.
  */
 export default function MansionTaxMap() {
   const svgRef = useRef(null);
@@ -327,9 +327,9 @@ export default function MansionTaxMap() {
       <div className="map-header">
         <div className="chart-header">
           <div>
-            <h3 className="chart-title">Mansion tax revenue by constituency</h3>
+            <h3 className="chart-title">Mansion tax: affected properties by constituency</h3>
             <p className="chart-description">
-              Estimated annual revenue from council tax reform for properties valued more than £1m
+              Distribution of properties valued over £1m that would be affected by new council tax bands
             </p>
           </div>
         </div>
@@ -448,11 +448,7 @@ export default function MansionTaxMap() {
               <p className="tooltip-value" style={{ color: "#0B7D73" }}>
                 {tooltipData.pct.toFixed(2)}%
               </p>
-              <p className="tooltip-label">Share of total revenue</p>
-              <p className="tooltip-value-secondary" style={{ color: "#374151" }}>
-                £{(tooltipData.rev / 1000000).toFixed(2)}m
-              </p>
-              <p className="tooltip-label">Est. annual revenue</p>
+              <p className="tooltip-label">Share of affected properties</p>
             </div>
           )}
         </div>

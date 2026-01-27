@@ -95,7 +95,7 @@ function App() {
     <div className="app">
       <header className="title-row">
         <div className="title-row-inner">
-          <h1>Scottish Budget 2026</h1>
+          <h1>Scottish Budget 2026-27</h1>
           <div className="policy-dropdown" ref={dropdownRef}>
             <button
               className="policy-dropdown-trigger"
